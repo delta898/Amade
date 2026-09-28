@@ -87,4 +87,4 @@ x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.2}
 AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.2
 ```
 
-Amade CLI 이미지 버전 자체의 기준은 구현 저장소 `StaticWeb/tools/amade/package.json`입니다. 일반 사용자는 이 source repository를 clone할 필요가 없습니다.
+Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
