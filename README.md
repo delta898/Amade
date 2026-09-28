@@ -2,7 +2,7 @@
 
 Amade는 Astro 기반 정적 사이트를 만들고, Cloudflare Workers Static Assets에 배포할 수 있게 돕는 CLI입니다. 이 저장소는 Amade 구현 코드가 아니라, **사용자 본인의 사이트 프로젝트 저장소를 시작하기 위한 GitHub Template**입니다.
 
-> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.4`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
+> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.5`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
 
 ## 시작하기
 
@@ -85,16 +85,16 @@ git push
 
 ## Amade CLI 이미지 버전
 
-템플릿의 기본 Amade CLI 버전은 이 템플릿 저장소에서 독립적으로 선택·검증합니다. 새 image가 GHCR에 게시되어도 pin은 자동 변경되지 않습니다. 현재 이 Template의 기본값은 compound `init`·`build`·`deploy` 명령을 포함한 `0.1.0-rc.4`입니다. 사용자가 다른 게시 버전을 선택할 수 있습니다.
+템플릿의 기본 Amade CLI 버전은 이 템플릿 저장소에서 독립적으로 선택·검증합니다. 새 image가 GHCR에 게시되어도 pin은 자동 변경되지 않습니다. 현재 이 Template의 기본값은 legacy 인증 volume 호환을 포함하고 실제 deploy smoke test를 통과한 `0.1.0-rc.5`입니다. 사용자는 원하면 `compose.yaml` 맨 위 `x-amade-image` 값을 다른 게시된 버전으로 바꿀 수 있습니다.
 
 ```yaml
-x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.4}
+x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.5}
 ```
 
 커밋하지 않고 일시적으로 다른 버전을 시험하려면 `.env`에서 `AMADE_IMAGE`를 지정할 수 있습니다. 이 값은 `compose.yaml`의 기본값보다 우선합니다.
 
 ```dotenv
-AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.4
+AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.5
 ```
 
 Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
