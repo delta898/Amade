@@ -1,6 +1,6 @@
 services:
   amade:
-    image: ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.1}
+    image: ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.2}
     working_dir: /workspace
     ports:
       - "127.0.0.1:4321:4321"
@@ -11,7 +11,7 @@ services:
 
   # Remote authentication is isolated from ordinary build/preview commands.
   amade-auth:
-    image: ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.1}
+    image: ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.2}
     working_dir: /workspace
     environment:
       AMADE_AUTH_STORE: docker-volume

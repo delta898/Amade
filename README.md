@@ -2,7 +2,7 @@
 
 Amade는 Astro 기반 정적 사이트를 만들고, Cloudflare Workers Static Assets에 배포할 수 있게 돕는 CLI입니다. 이 저장소는 Amade 구현 코드가 아니라, **사용자 본인의 사이트 프로젝트 저장소를 시작하기 위한 GitHub Template**입니다.
 
-> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.1`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
+> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.2`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
 
 ## 시작하기
 
@@ -75,10 +75,10 @@ git push
 
 ## 이미지 버전
 
-기본 설정은 검증된 공개 GHCR image `ghcr.io/delta898/amade:0.1.0-rc.1`을 사용합니다. 다른 게시 버전으로 바꾸려면 작업 폴더의 무시 파일인 `.env`에 다음처럼 지정할 수 있습니다.
+기본 설정은 검증된 공개 GHCR image `ghcr.io/delta898/amade:0.1.0-rc.2`을 사용합니다. 다른 게시 버전으로 바꾸려면 작업 폴더의 무시 파일인 `.env`에 다음처럼 지정할 수 있습니다.
 
 ```dotenv
-AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.1
+AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.2
 ```
 
 Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
