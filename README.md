@@ -73,12 +73,18 @@ git push
 
 인증 토큰, API key, `.env` 비밀값을 저장소에 넣지 마세요. `amade-auth` 서비스가 사용하는 Docker named volume은 Git 파일과 별도로 유지됩니다. Docker volume은 Docker host 접근 권한으로 보호되며 OS keychain처럼 자동 암호화되는 저장소는 아닙니다.
 
-## 이미지 버전
+## Amade CLI 이미지 버전
 
-기본 설정은 검증된 공개 GHCR image `ghcr.io/delta898/amade:0.1.0-rc.2`을 사용합니다. 다른 게시 버전으로 바꾸려면 작업 폴더의 무시 파일인 `.env`에 다음처럼 지정할 수 있습니다.
+템플릿의 기본 Amade CLI 버전은 이 템플릿 저장소에서 독립적으로 선택·검증합니다. 새 이미지가 GHCR에 게시되어도 템플릿의 기본 버전은 자동으로 바뀌지 않습니다. 기본 버전을 바꾸고 싶다면 사용자 저장소의 `compose.yaml` 맨 위 `x-amade-image` 값을 원하는 **게시·검증된 버전**으로 수정하세요. 두 서비스(`amade`, `amade-auth`)는 이 값을 함께 사용합니다.
+
+```yaml
+x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.2}
+```
+
+커밋하지 않고 일시적으로 다른 버전을 시험하려면 `.env`에서 `AMADE_IMAGE`를 지정할 수 있습니다. 이 값은 `compose.yaml`의 기본값보다 우선합니다.
 
 ```dotenv
 AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.2
 ```
 
-Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
+Amade CLI 이미지 버전 자체의 기준은 구현 저장소 `StaticWeb/tools/amade/package.json`입니다. 일반 사용자는 이 source repository를 clone할 필요가 없습니다.
