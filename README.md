@@ -2,7 +2,7 @@
 
 Amade는 Astro 기반 정적 사이트를 만들고, Cloudflare Workers Static Assets에 배포할 수 있게 돕는 CLI입니다. 이 저장소는 Amade 구현 코드가 아니라, **사용자 본인의 사이트 프로젝트 저장소를 시작하기 위한 GitHub Template**입니다.
 
-> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.2`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
+> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.4`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
 
 ## 시작하기
 
@@ -40,17 +40,26 @@ docker compose run --rm amade init
 docker compose run --rm amade site list
 ```
 
-`init`은 Project 설정을 준비하고 첫 Site/App을 추가하도록 안내합니다. 사이트 이름과 ID를 선택하면 `apps/<site-id>/`에 Astro 시작 앱이 만들어집니다. JSON 파일을 직접 편집할 필요는 없습니다.
+`init`은 Project 설정을 준비하고 첫 Site/App을 추가하도록 안내합니다. 사이트 이름과 ID를 선택하면 `amade/workspace/apps/<site-id>/`에 Astro 시작 앱이 만들어집니다. JSON 파일을 직접 편집할 필요는 없습니다.
 
-### 3. 빌드하고 브라우저에서 미리보기
+### 3. 기본 흐름: init, build, deploy
 
 ```sh
-docker compose run --rm amade deps install
-docker compose run --rm amade site build my-site
+docker compose run --rm amade init
+docker compose run --rm amade build my-site
+docker compose run --rm amade deploy my-site
+```
+
+`build`는 Astro 의존성이 없을 때 설치 여부를 묻고, 동의하면 설치 후 빌드합니다. `deploy`는 최신 사이트를 빌드하고 Cloudflare 로그인을 확인합니다. 로그인이 필요하면 device login으로 브라우저 승인을 안내한 뒤 계정과 Worker 대상을 보여주고 최종 확인을 받습니다. 첫 배포는 `workers.dev` 주소에서 확인할 수 있습니다.
+
+### 4. 로컬 미리보기
+
+```sh
+docker compose run --rm amade build my-site
 docker compose run --rm --service-ports amade site preview my-site
 ```
 
-`my-site`는 예시입니다. `site list`에 나온 실제 Site ID로 바꾸세요. Preview 중에는 `http://localhost:4321`을 열어 확인하고, 끝낼 때 터미널에서 `Ctrl+C`를 누릅니다. `apps/<site-id>/dist/`는 빌드 산출물이므로 Git에 커밋하지 않습니다.
+`my-site`는 예시입니다. 실제 Site ID로 바꾸세요. Preview는 `http://localhost:4321`에서 확인하고 끝낼 때 터미널에서 `Ctrl+C`를 누릅니다. `amade/workspace/apps/<site-id>/dist/`는 빌드 산출물이므로 Git에 커밋하지 않습니다. 세부 작업에는 `deps install`, `site build`, `auth cloudflare login/status`, `site plan` 같은 unit command도 사용할 수 있습니다.
 
 ## 변경사항 저장하기
 
@@ -66,25 +75,26 @@ git push
 
 ## 프로젝트 파일
 
-- `compose.yaml`: Amade 공개 Docker image를 실행하는 Compose 설정. 템플릿에는 고정 `name`이 없으므로 Compose가 이 프로젝트 폴더 이름으로 프로젝트와 인증 volume을 분리합니다.
-- `amade.config.json.sample`: 비밀정보가 없는 시작 설정. `amade init`이 실제 `amade.config.json`을 생성합니다.
-- `.gitignore`: dependency, build 산출물, 로컬 환경 설정을 Git에서 제외합니다.
-- `apps/`: `amade init`이 사이트를 생성하는 위치입니다.
+- `compose.yaml`: Amade 공개 Docker image를 실행하는 단일 service Compose 설정.
+- `.env`: 비밀값이 아닌 Amade host/container 경로 기본값입니다. Git으로 관리합니다.
+- `amade/config/amade.config.json.sample`: 비밀정보가 없는 시작 설정. `amade init`이 실제 설정을 생성합니다.
+- `amade/workspace/`: npm workspace root, Astro 앱, 콘텐츠와 build 결과를 둡니다.
+- `.gitignore`: dependency와 build 산출물을 Git에서 제외합니다.
 
-인증 토큰, API key, `.env` 비밀값을 저장소에 넣지 마세요. `amade-auth` 서비스가 사용하는 Docker named volume은 Git 파일과 별도로 유지됩니다. Docker volume은 Docker host 접근 권한으로 보호되며 OS keychain처럼 자동 암호화되는 저장소는 아닙니다.
+인증 token과 API key를 저장소나 `.env`에 넣지 마세요. 인증 정보는 Docker named volume에 보관됩니다. 다만 Amade와 사이트 build 코드는 같은 container 사용자로 실행되므로 dependency lifecycle/build script도 인증 정보에 접근할 수 있습니다. 이 보안 절충은 초기 사용자 경로에서 수용하기로 했습니다. 신뢰할 수 있는 사이트 코드와 dependency만 사용하세요. Docker volume은 OS keychain처럼 자동 암호화되지 않습니다.
 
 ## Amade CLI 이미지 버전
 
-템플릿의 기본 Amade CLI 버전은 이 템플릿 저장소에서 독립적으로 선택·검증합니다. 새 이미지가 GHCR에 게시되어도 템플릿의 기본 버전은 자동으로 바뀌지 않습니다. 기본 버전을 바꾸고 싶다면 사용자 저장소의 `compose.yaml` 맨 위 `x-amade-image` 값을 원하는 **게시·검증된 버전**으로 수정하세요. 두 서비스(`amade`, `amade-auth`)는 이 값을 함께 사용합니다.
+템플릿의 기본 Amade CLI 버전은 이 템플릿 저장소에서 독립적으로 선택·검증합니다. 새 image가 GHCR에 게시되어도 pin은 자동 변경되지 않습니다. 현재 이 Template의 기본값은 compound `init`·`build`·`deploy` 명령을 포함한 `0.1.0-rc.4`입니다. 사용자가 다른 게시 버전을 선택할 수 있습니다.
 
 ```yaml
-x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.2}
+x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.4}
 ```
 
 커밋하지 않고 일시적으로 다른 버전을 시험하려면 `.env`에서 `AMADE_IMAGE`를 지정할 수 있습니다. 이 값은 `compose.yaml`의 기본값보다 우선합니다.
 
 ```dotenv
-AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.2
+AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.4
 ```
 
 Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
