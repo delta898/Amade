@@ -5,5 +5,6 @@ dist/
 .env
 .env.*
 !.env.example
-!/.env
+/amade/workspace/*
+!/amade/workspace/.gitkeep
 .DS_Store

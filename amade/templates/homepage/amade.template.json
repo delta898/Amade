@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "homepage",
+  "files": [
+    { "source": "src/pages/index.astro", "target": "src/pages/index.astro" },
+    { "source": "src/styles/global.css", "target": "src/styles/global.css" },
+    { "source": "README.md", "target": "README.md" }
+  ]
+}

@@ -8,6 +8,7 @@ services:
       AMADE_AUTH_STORE: docker-volume
       AMADE_CONFIG_DIR: ${AMADE_CONFIG_DIR:-/amade/config}
       AMADE_WORKSPACE_DIR: ${AMADE_WORKSPACE_DIR:-/amade/workspace}
+      AMADE_TEMPLATE_DIR: ${AMADE_TEMPLATE_DIR:-/amade/templates}
       GH_CONFIG_DIR: /home/node/.config/gh
     ports:
       - "127.0.0.1:4321:4321"
@@ -15,6 +16,10 @@ services:
       - type: bind
         source: ${AMADE_PROJECT_HOST_DIR:-./amade}
         target: ${AMADE_PROJECT_CONTAINER_DIR:-/amade}
+      - type: bind
+        source: ${AMADE_TEMPLATE_HOST_DIR:-./amade/templates}
+        target: ${AMADE_TEMPLATE_DIR:-/amade/templates}
+        read_only: true
       - type: volume
         source: amade-node-modules
         target: ${AMADE_WORKSPACE_DIR:-/amade/workspace}/node_modules
