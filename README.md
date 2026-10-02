@@ -35,6 +35,8 @@ BlogGenius의 사이트 생성 화면은 catalog에서 이 유형을 조회하�
 
 ## 규격 간단 안내
 
+상세 규격, Astro project를 template으로 패키징하는 방법, manifest 필드, 버전 발행·갱신 절차는 [`amade/spec/README.md`](amade/spec/README.md)를 참고하세요. 규격 또는 지원 동작을 바꾸면 이 문서도 같은 변경에서 갱신합니다.
+
 - `catalog-index-v1.schema.json`: BlogGenius가 받아보는 전체 목록과 각 resource의 고정 revision을 검사합니다.
 - `resource.schema.json`: 모든 resource가 공유하는 ID, kind, version, 이름, preview, 라이선스, 호환성, package/checksum 형식입니다. `kind`에 따라 해당 유형의 세부 manifest를 요구합니다.
 - `site-hosting-v1.schema.json`: Astro source와 build/output, 사용자가 변경할 수 있는 필드 및 그 저장 위치, 게시 글의 content 경로와 URL/frontmatter 규칙입니다.
