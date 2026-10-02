@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/site-hosting-v1.schema.json",
+  "title": "Amade Site Hosting Template v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "astro",
+    "customization",
+    "publishing"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "astro": {
+      "type": "object",
+      "required": [
+        "source",
+        "build_command",
+        "output_directory"
+      ],
+      "properties": {
+        "source": {
+          "const": "astro"
+        },
+        "build_command": {
+          "type": "string"
+        },
+        "output_directory": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "customization": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "fields"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "type",
+              "default",
+              "target"
+            ],
+            "properties": {
+              "key": {
+                "enum": [
+                  "site_name",
+                  "logo",
+                  "navigation"
+                ]
+              },
+              "type": {
+                "enum": [
+                  "string",
+                  "image",
+                  "navigation"
+                ]
+              },
+              "label": {
+                "type": "string"
+              },
+              "default": {},
+              "required": {
+                "type": "boolean"
+              },
+              "target": {
+                "type": "object",
+                "required": [
+                  "file",
+                  "path"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "pattern": "^src/[A-Za-z0-9._/-]+\\.json$"
+                  },
+                  "path": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "publishing": {
+      "type": "object",
+      "required": [
+        "content_directory",
+        "route_pattern",
+        "frontmatter"
+      ],
+      "properties": {
+        "content_directory": {
+          "type": "string"
+        },
+        "route_pattern": {
+          "type": "string"
+        },
+        "frontmatter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

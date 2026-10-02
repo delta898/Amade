@@ -1,0 +1,5 @@
+{
+  "name": "나의 사이트",
+  "logo": "",
+  "navigation": [{ "label": "홈", "href": "/" }, { "label": "블로그", "href": "/blog/" }]
+}

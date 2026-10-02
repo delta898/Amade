@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import config from '../../site-config.json';
+import '../../styles/global.css';
+const posts = (await getCollection('posts')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<!doctype html>
+<html lang="ko">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>블로그 · {config.name}</title></head>
+  <body><header><a class="brand" href="/">{config.name}</a><nav>{config.navigation.map((item) => <a href={item.href}>{item.label}</a>)}</nav></header>
+    <main><p class="eyebrow">BLOG</p><h1>글</h1><section class="posts">{posts.map((post) => <article><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('ko-KR')}</time><h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2><p>{post.data.description}</p></article>)}</section></main><footer>Powered by Astro · BlogGenius</footer></body>
+</html>

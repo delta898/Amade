@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "id": "astro-homepage",
+  "kind": "site-hosting",
+  "version": "1.0.0",
+  "name": "Astro Homepage",
+  "description": "가벼운 홈페이지와 블로그를 함께 시작하는 Astro 템플릿입니다.",
+  "maintainer": "Amade",
+  "license": "MIT",
+  "preview": {
+    "path": "preview.svg",
+    "sha256": "ad3bf170e5993799be317140127fb2a84259b6a98d6a2aeb1dd956e3abd0b308",
+    "media_type": "image/svg+xml"
+  },
+  "compatibility": {
+    "astro": "7.3.5",
+    "bloggenius": ">=0.5.5"
+  },
+  "package": {
+    "path": ".",
+    "files": [
+      {
+        "path": "astro/LICENSE",
+        "sha256": "f28e0a79b26c00aafeaa0a73b52b78989e6bc4c647ac0fdfcd6e4e6b09be203a",
+        "size": 1075
+      },
+      {
+        "path": "astro/astro.config.mjs",
+        "sha256": "28d4a9a2c15ae2fefc8d2b0abdff1cb45e5d10c2daa68f278972e42270f18513",
+        "size": 97
+      },
+      {
+        "path": "astro/package-lock.json",
+        "sha256": "b096be416bfc16510ab64580566397070e278173dbd81cf9d1b52233f0c8912c",
+        "size": 144739
+      },
+      {
+        "path": "astro/package.json",
+        "sha256": "ad1d0a4ce5b0d96faa460d41b55e62a9d043d99e35272f4af2575cb723b46ca1",
+        "size": 205
+      },
+      {
+        "path": "astro/src/content/posts/welcome.md",
+        "sha256": "faf619379aac4145dcafa670fefe276c617123bad48675c8a65d46762b3b729f",
+        "size": 261
+      },
+      {
+        "path": "astro/src/content.config.ts",
+        "sha256": "5397eb9e127d4cbe49d5a889123a11a53f9683ae822a7dbafbbab1edbbcf336a",
+        "size": 370
+      },
+      {
+        "path": "astro/src/pages/blog/[...slug].astro",
+        "sha256": "ba6ec75e8d05275c19a56008735dfe0740b6aed9d7a1928f7081f325f12f9beb",
+        "size": 1061
+      },
+      {
+        "path": "astro/src/pages/blog/index.astro",
+        "sha256": "f7e126095466e30ebc1d4eeaa485b4f622aff2915ddad3a79b671484ba64207d",
+        "size": 970
+      },
+      {
+        "path": "astro/src/pages/index.astro",
+        "sha256": "fdcbb9648b6133979b8c2d46a4ae2a9657fd21ebd01e3a96b79fb62aa46438a7",
+        "size": 810
+      },
+      {
+        "path": "astro/src/site-config.json",
+        "sha256": "e8894a9afee01718b3c228bb56462853d74bbe0cbf80c116371432eae02ff4ec",
+        "size": 142
+      },
+      {
+        "path": "astro/src/styles/global.css",
+        "sha256": "148525119e00c0ff285d3fbddc8c5b0995f4b7936e9d6380a545795968c7a1ae",
+        "size": 1896
+      }
+    ]
+  },
+  "site_hosting": {
+    "schema_version": 1,
+    "astro": {
+      "source": "astro",
+      "build_command": "npm run build",
+      "output_directory": "dist"
+    },
+    "customization": {
+      "schema_version": 1,
+      "fields": [
+        {
+          "key": "site_name",
+          "type": "string",
+          "label": "사이트 이름",
+          "default": "나의 사이트",
+          "required": true,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "name"
+          }
+        },
+        {
+          "key": "logo",
+          "type": "image",
+          "label": "로고",
+          "default": "",
+          "required": false,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "logo"
+          }
+        },
+        {
+          "key": "navigation",
+          "type": "navigation",
+          "label": "메뉴",
+          "default": [
+            {
+              "label": "홈",
+              "href": "/"
+            },
+            {
+              "label": "블로그",
+              "href": "/blog/"
+            }
+          ],
+          "required": true,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "navigation"
+          }
+        }
+      ]
+    },
+    "publishing": {
+      "content_directory": "src/content/posts",
+      "route_pattern": "/blog/{slug}/",
+      "frontmatter": [
+        "title",
+        "description",
+        "pubDate"
+      ]
+    }
+  }
+}

@@ -95,6 +95,14 @@ git commit -m "Create the first site"
 
 인증 token과 API key를 저장소나 `.env`에 넣지 마세요. 인증 정보는 Docker named volume에 보관됩니다. 다만 Amade와 사이트 build 코드는 같은 container 사용자로 실행되므로 dependency lifecycle/build script도 인증 정보에 접근할 수 있습니다. 이 보안 절충은 초기 사용자 경로에서 수용하기로 했습니다. 신뢰할 수 있는 사이트 코드와 dependency만 사용하세요. Docker volume은 OS keychain처럼 자동 암호화되지 않습니다.
 
+## Template 규격과 공식 template
+
+BlogGenius가 외부 Astro Site를 생성할 때 사용하는 공식 Amade resource catalog는 `amade/catalog/index.json`에서 찾습니다. 공통 package envelope와 `site-hosting`, `bloggenius-style`의 타입별 규격은 `amade/spec/`에 있습니다.
+
+첫 `site-hosting` resource는 `amade/templates/site-hosting/astro-homepage/1.0.0/`입니다. Astro 프로젝트, preview 이미지, 제한된 이름/로고/메뉴 customization, 글 콘텐츠 경로(`src/content/posts`)와 공개 경로(`/blog/{slug}/`)를 함께 선언합니다. 생성된 사이트는 일반 Astro 프로젝트이며 BlogGenius는 템플릿 파일을 새 사이트에 복사한 뒤 사용자별 이름 설정을 기록합니다. Style resource는 BlogGenius의 semantic-token contract에 매핑되는 데이터 전용 format이며, 외부 Style 로딩/적용은 별도 기능입니다.
+
+`resource.json`은 개별 package 파일마다 SHA-256을 선언합니다. package 버전은 바뀌지 않는 immutable resource version이며, catalog index만 새 리소스 게시 때 갱신합니다. customization 필드는 대상 JSON 파일과 key path를 명시하며, BlogGenius가 사이트 생성 시 정해진 값만 기록합니다.
+
 ## Amade CLI 이미지 버전
 
 이 저장소의 Compose 기본 Amade CLI 버전은 이 upstream 저장소에서 독립적으로 선택·검증합니다. 새 image가 GHCR에 게시되어도 pin은 자동 변경되지 않습니다. 현재 기본값은 legacy 인증 volume 호환을 포함하고 실제 deploy smoke test를 통과한 `0.1.0-rc.5`입니다. 사용자는 원하면 `compose.yaml` 맨 위 `x-amade-image` 값을 다른 게시된 버전으로 바꿀 수 있습니다.
