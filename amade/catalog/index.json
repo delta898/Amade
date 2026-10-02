@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "catalog_id": "amade-official",
+  "name": "Amade Official Catalog",
+  "resources": [
+    {
+      "kind": "site-hosting",
+      "id": "astro-homepage",
+      "version": "1.0.0",
+      "revision": "6bf86200290017e82cab1013add3fc2320ca48b1",
+      "manifest": "amade/templates/site-hosting/astro-homepage/1.0.0/resource.json"
+    }
+  ]
+}
