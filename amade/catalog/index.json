@@ -9,6 +9,13 @@
       "version": "1.0.0",
       "revision": "6bf86200290017e82cab1013add3fc2320ca48b1",
       "manifest": "amade/templates/site-hosting/astro-homepage/1.0.0/resource.json"
+    },
+    {
+      "kind": "site-hosting",
+      "id": "studio-journal",
+      "version": "1.0.0",
+      "revision": "6530d405ac10ddd5ba35d118c5d99125af317a0f",
+      "manifest": "amade/templates/site-hosting/studio-journal/1.0.0/resource.json"
     }
   ]
 }
