@@ -42,7 +42,7 @@ amade/
       style.json             # token data package
 ```
 
-The current Site Hosting example is [`astro-homepage/1.0.0`](../templates/site-hosting/astro-homepage/1.0.0/README.md). It includes a normal Astro project, a preview, a manifest, and MIT license files. The manifest declares the BlogGenius customization and future post-publishing contracts.
+The initial Site Hosting example is [`astro-homepage/1.0.0`](../templates/site-hosting/astro-homepage/1.0.0/README.md). [`studio-journal/1.0.0`](../templates/site-hosting/studio-journal/1.0.0/README.md) is a more complete, brand-neutral studio and editorial site informed by the StaticWeb Astro projects. Each resource includes a normal Astro project, preview, manifest, and MIT license files. Their manifests declare the BlogGenius customization and post-publishing contracts.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 

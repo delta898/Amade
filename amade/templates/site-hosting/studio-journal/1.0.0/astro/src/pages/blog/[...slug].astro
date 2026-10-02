@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import siteConfig from '../../site-config.json';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return Promise.all(posts.map(async (post) => {
+    const { Content } = await render(post);
+    return { params: { slug: post.id }, props: { post, Content } };
+  }));
+}
+
+const { post, Content } = Astro.props;
+---
+<BaseLayout title={`${post.data.title} — ${siteConfig.name}`} description={post.data.description}>
+  <article class="article-shell">
+    <SiteHeader />
+    <main>
+      <p class="eyebrow">JOURNAL · {post.data.pubDate.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      <h1>{post.data.title}</h1>
+      <p class="description">{post.data.description}</p>
+      <div class="prose"><Content /></div>
+    </main>
+    <footer><a href="/blog/">← 이야기 목록</a><span>© {new Date().getFullYear()} {siteConfig.name}</span></footer>
+  </article>
+</BaseLayout>
+<style>
+  .article-shell { max-width: 920px; min-height: 100vh; margin: 0 auto; padding: 0 7%; display: flex; flex-direction: column; }
+  main { flex: 1; padding: 75px 0 100px; }
+  .eyebrow { color: var(--accent); font-size: 9px; font-weight: 600; letter-spacing: .13em; }
+  h1 { margin: 21px 0 14px; font-family: var(--serif); font-size: clamp(40px, 6.4vw, 68px); font-weight: 400; line-height: 1.28; letter-spacing: -.06em; }
+  .description { color: var(--muted); font-size: 13px; line-height: 1.8; }
+  .prose { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); color: #454941; font-size: 13px; line-height: 2; }
+  .prose :global(h2), .prose :global(h3) { margin: 2em 0 .65em; color: var(--ink); font-family: var(--serif); font-weight: 400; letter-spacing: -.04em; }
+  .prose :global(a) { color: var(--accent); }
+  .prose :global(img) { max-width: 100%; height: auto; }
+  footer { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 9px; }
+  footer a { text-decoration: none; }
+  @media (max-width: 640px) { .article-shell { padding: 0 22px; } main { padding: 58px 0 78px; }.prose { margin-top: 32px; } }
+</style>

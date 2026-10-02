@@ -1,0 +1,10 @@
+{
+  "name": "스튜디오",
+  "logo": "",
+  "navigation": [
+    { "label": "소개", "href": "/#about" },
+    { "label": "서비스", "href": "/#services" },
+    { "label": "이야기", "href": "/blog/" },
+    { "label": "문의", "href": "/#contact" }
+  ]
+}
