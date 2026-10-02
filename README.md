@@ -1,120 +1,43 @@
-# Amade로 정적 사이트 시작하기
+# Amade
 
-Amade는 Astro 기반 정적 사이트를 만들고, Cloudflare Workers Static Assets에 배포할 수 있게 돕는 CLI와 로컬 Homepage 템플릿 저장소입니다. 이 저장소를 일반 Git 저장소로 clone하면 Compose 설정, 문서, 사이트 템플릿을 함께 받습니다. CLI Docker image에는 사이트 템플릿이 포함되지 않으며, 실행 때 이 저장소의 `amade/templates/`를 읽기 전용으로 참조합니다.
+Amade는 BlogGenius가 외부에서 가져오는 버전 관리형 사이트 템플릿과 외모 스타일 catalog입니다. 리소스는 이 저장소에서 검토·관리하며, BlogGenius는 공개 catalog와 각 리소스의 고정된 Git revision을 읽습니다.
 
-> 현재 공개 시험판입니다. 기본 image는 `0.1.0-rc.5`이며, 명령·설정 형식은 정식 1.0 이전에 바뀔 수 있습니다.
+## 제공 리소스
 
-## 시작하기
+### Site Hosting (`site-hosting`)
 
-### 1. Amade 저장소 받기
+일반 Astro 프로젝트를 복사해 새 BlogGenius Site를 만드는 템플릿입니다. 리소스는 미리보기 이미지, 지원하는 사용자 설정, 빌드 경로와 글 저장 위치·URL 규칙을 선언합니다. 현재 첫 리소스는 MIT 라이선스의 `Astro Homepage 1.0.0`입니다.
 
-```sh
-git clone https://github.com/delta898/Amade.git
-cd Amade
-```
+BlogGenius의 사이트 생성 화면은 catalog에서 이 유형을 조회하고 템플릿 미리보기를 보여줍니다. Amade catalog에 새 리소스나 새 버전을 등록하면 목록에 반영되는 구조입니다.
 
-Amade 저장소의 `git pull`로 Compose 설정과 공식 템플릿을 업데이트할 수 있습니다. `amade/workspace/`는 이 upstream 저장소의 Git 추적에서 제외되어 사이트 코드·콘텐츠가 실수로 Amade 저장소에 섞이지 않습니다. 사용자 사이트 코드를 별도 Git으로 관리하려면 `amade/workspace/` 안에서 사용자가 직접 별도 저장소를 초기화하거나 clone하면 됩니다. Git 사용은 선택 사항입니다.
+### BlogGenius Style (`bloggenius-style`)
 
-최초 한 번, 추적되지 않는 로컬 설정 파일을 준비합니다. `.env`가 아직 없을 때만 예제 파일을 복사하세요. 이미 `.env`가 있으면 다시 복사해 덮어쓰지 않습니다.
+`BlogGenius > 설정 > 앱 > 외모`에서 고르는 스타일 팩입니다. 임의의 앱 코드 대신 BlogGenius의 semantic design token 값으로 구성합니다. 현재는 리소스 형식만 정의되어 있으며, BlogGenius에서 외부 스타일을 조회하고 적용하는 기능은 후속 개발입니다.
 
-macOS/Linux:
+## 저장소 구조
 
-```sh
-test -f .env || cp .env.example .env
-```
+- `amade/catalog/index.json` — 공식 리소스 목록. 각 항목은 유형, ID, 버전, manifest 경로와 불변 Git commit revision을 가리킵니다.
+- `amade/spec/` — 공통 catalog/resource 규격과 각 리소스 유형별 JSON Schema.
+- `amade/templates/site-hosting/{id}/{version}/` — 버전이 고정된 Site Hosting 패키지, 미리보기, manifest와 라이선스.
+- `amade/templates/bloggenius-style/{id}/{version}/` — 향후 Style 패키지 위치.
 
-Windows PowerShell:
+리소스 manifest는 파일별 SHA-256 checksum을 선언합니다. BlogGenius는 해당 파일을 내려받을 때 checksum을 검사하고 Site에 선택된 리소스 revision을 기록합니다. 기존 리소스 버전의 내용을 바꾸지 말고, 변경은 새 버전으로 추가한 뒤 catalog를 갱신하세요.
 
-```powershell
-if (!(Test-Path .env)) { Copy-Item .env.example .env }
-```
+## 새 리소스를 추가하는 흐름
 
-경로를 바꿔야 하는 경우 `.env`만 수정합니다. `.env.example`은 Git에 올리는 공유 기본값이며, `.env`는 각 컴퓨터의 로컬 파일입니다.
+1. 유형별 schema에 맞춰 버전 폴더에 패키지와 preview를 추가합니다.
+2. manifest에 ID, 버전, 라이선스, 호환성, 파일 checksum과 유형별 설정을 기록합니다.
+3. 패키지를 별도 Git commit으로 고정합니다.
+4. 그 commit SHA와 manifest 경로를 `amade/catalog/index.json`에 등록합니다.
+5. 변경을 검토한 뒤 pull request로 제출합니다.
 
-### 2. 필수 도구 확인 및 첫 사이트 생성
+현재 catalog는 관리자가 검토해 반영합니다. 사용자 업로드, 공개 marketplace, 평점·결제 기능은 포함하지 않습니다. 각 리소스는 manifest에 자체 라이선스를 명시하며, 현재 Astro Homepage 패키지는 MIT입니다.
 
-Docker Engine과 Docker Compose v2, Git이 필요합니다. Docker Desktop에는 보통 Compose가 포함됩니다. 터미널에서 다음 명령이 동작하는지 확인하세요.
+## 규격 간단 안내
 
-```sh
-docker version
-docker compose version
-git --version
-```
+- `catalog-index-v1.schema.json`: BlogGenius가 받아보는 전체 목록과 각 resource의 고정 revision을 검사합니다.
+- `resource.schema.json`: 모든 resource가 공유하는 ID, kind, version, 이름, preview, 라이선스, 호환성, package/checksum 형식입니다. `kind`에 따라 해당 유형의 세부 manifest를 요구합니다.
+- `site-hosting-v1.schema.json`: Astro source와 build/output, 사용자가 변경할 수 있는 필드 및 그 저장 위치, 게시 글의 content 경로와 URL/frontmatter 규칙입니다.
+- `bloggenius-style-v1.schema.json`: `bloggenius-style-tokens-1.0`에 필요한 semantic token을 빠짐없이 제공하는 데이터 전용 Style 형식입니다.
 
-`.env`를 준비한 뒤 이 저장소 루트에서 실행합니다. 기본 경로는 보통 수정할 필요가 없습니다. 템플릿 디렉터리는 컨테이너에 읽기 전용으로 연결됩니다.
-
-```sh
-docker compose run --rm amade doctor
-docker compose run --rm amade init
-docker compose run --rm amade site list
-```
-
-`init`은 Project 설정을 준비하고 첫 Site/App을 추가하도록 안내합니다. 사이트 이름과 ID를 선택하면 `amade/workspace/apps/<site-id>/`에 Astro 시작 앱이 만들어집니다. JSON 파일을 직접 편집할 필요는 없습니다.
-
-### 3. 기본 흐름: init, build, deploy
-
-```sh
-docker compose run --rm amade init
-docker compose run --rm amade build my-site
-docker compose run --rm amade deploy my-site
-```
-
-`build`는 Astro 의존성이 없을 때 설치 여부를 묻고, 동의하면 설치 후 빌드합니다. `deploy`는 최신 사이트를 빌드하고 Cloudflare 로그인을 확인합니다. 로그인이 필요하면 device login으로 브라우저 승인을 안내한 뒤 계정과 Worker 대상을 보여주고 최종 확인을 받습니다. 첫 배포는 `workers.dev` 주소에서 확인할 수 있습니다.
-
-### 4. 로컬 미리보기
-
-```sh
-docker compose run --rm amade build my-site
-docker compose run --rm --service-ports amade site preview my-site
-```
-
-`my-site`는 예시입니다. 실제 Site ID로 바꾸세요. Preview는 `http://localhost:4321`에서 확인하고 끝낼 때 터미널에서 `Ctrl+C`를 누릅니다. `amade/workspace/apps/<site-id>/dist/`는 빌드 산출물이므로 Git에 커밋하지 않습니다. 세부 작업에는 `deps install`, `site build`, `auth cloudflare login/status`, `site plan` 같은 unit command도 사용할 수 있습니다.
-
-## 사용자 사이트 변경사항 저장하기 (선택)
-
-Amade upstream Git은 Compose, 문서, 공식 템플릿 업데이트를 받는 용도입니다. `amade/workspace/`는 그 저장소에서 무시되므로, 사이트 코드와 콘텐츠를 Git으로 관리하려면 workspace 안에서 별도 저장소를 사용합니다. 예를 들어 사이트를 만든 뒤 다음처럼 초기화할 수 있습니다.
-
-```sh
-cd amade/workspace
-git init
-git add .
-git commit -m "Create the first site"
-```
-
-원격 GitHub/GitLab 저장소 연결과 push는 사용자가 선택·관리합니다. Amade가 Git remote나 CI/CD를 만들지 않습니다. Cloudflare 자동 배포를 구성하지 않았다면 Git push만으로 사이트가 갱신되지는 않습니다. 먼저 개발·콘텐츠 작업을 진행한 뒤, 배포가 필요할 때 Amade의 Cloudflare 인증 및 배포 안내를 따르세요.
-
-## 프로젝트 파일
-
-- `compose.yaml`: Amade 공개 Docker image를 실행하는 단일 service Compose 설정.
-- `.env.example`: Git 추적 대상인 비밀 없는 경로 설정 예제입니다. 새 환경에서 `.env`를 만들 때 복사합니다.
-- `.env`: 각 컴퓨터의 로컬 설정 파일이며 Git에서 제외합니다. 필요한 경우 경로를 수정합니다. 인증 token/API key는 여기에 넣지 않습니다.
-- `amade/config/amade.config.json.sample`: 비밀정보가 없는 시작 설정. `amade init`이 실제 설정을 생성합니다.
-- `amade/templates/homepage/`: manifest와 Astro/CSS/README starter 파일. `site add`가 이를 복사하며, 기존 생성 앱은 이후 upstream 템플릿 업데이트로 바뀌지 않습니다.
-- `amade/workspace/`: npm workspace root, Astro 앱, 콘텐츠와 build 결과를 둡니다. 상위 Amade Git 저장소에서 무시됩니다.
-- `.gitignore`: dependency와 build 산출물을 Git에서 제외합니다.
-
-인증 token과 API key를 저장소나 `.env`에 넣지 마세요. 인증 정보는 Docker named volume에 보관됩니다. 다만 Amade와 사이트 build 코드는 같은 container 사용자로 실행되므로 dependency lifecycle/build script도 인증 정보에 접근할 수 있습니다. 이 보안 절충은 초기 사용자 경로에서 수용하기로 했습니다. 신뢰할 수 있는 사이트 코드와 dependency만 사용하세요. Docker volume은 OS keychain처럼 자동 암호화되지 않습니다.
-
-## Template 규격과 공식 template
-
-BlogGenius가 외부 Astro Site를 생성할 때 사용하는 공식 Amade resource catalog는 `amade/catalog/index.json`에서 찾습니다. 공통 package envelope와 `site-hosting`, `bloggenius-style`의 타입별 규격은 `amade/spec/`에 있습니다.
-
-첫 `site-hosting` resource는 `amade/templates/site-hosting/astro-homepage/1.0.0/`입니다. Astro 프로젝트, preview 이미지, 제한된 이름/로고/메뉴 customization, 글 콘텐츠 경로(`src/content/posts`)와 공개 경로(`/blog/{slug}/`)를 함께 선언합니다. 생성된 사이트는 일반 Astro 프로젝트이며 BlogGenius는 템플릿 파일을 새 사이트에 복사한 뒤 사용자별 이름 설정을 기록합니다. Style resource는 BlogGenius의 semantic-token contract에 매핑되는 데이터 전용 format이며, 외부 Style 로딩/적용은 별도 기능입니다.
-
-`resource.json`은 개별 package 파일마다 SHA-256을 선언합니다. package 버전은 바뀌지 않는 immutable resource version이며, catalog index만 새 리소스 게시 때 갱신합니다. customization 필드는 대상 JSON 파일과 key path를 명시하며, BlogGenius가 사이트 생성 시 정해진 값만 기록합니다.
-
-## Amade CLI 이미지 버전
-
-이 저장소의 Compose 기본 Amade CLI 버전은 이 upstream 저장소에서 독립적으로 선택·검증합니다. 새 image가 GHCR에 게시되어도 pin은 자동 변경되지 않습니다. 현재 기본값은 legacy 인증 volume 호환을 포함하고 실제 deploy smoke test를 통과한 `0.1.0-rc.5`입니다. 사용자는 원하면 `compose.yaml` 맨 위 `x-amade-image` 값을 다른 게시된 버전으로 바꿀 수 있습니다.
-
-```yaml
-x-amade-image: &amade-image ${AMADE_IMAGE:-ghcr.io/delta898/amade:0.1.0-rc.5}
-```
-
-커밋하지 않고 일시적으로 다른 버전을 시험하려면 `.env`에서 `AMADE_IMAGE`를 지정할 수 있습니다. 이 값은 `compose.yaml`의 기본값보다 우선합니다.
-
-```dotenv
-AMADE_IMAGE=ghcr.io/delta898/amade:0.1.0-rc.5
-```
-
-Amade CLI의 source repository는 구현·유지보수용입니다. 일반 사용자는 이를 clone할 필요가 없습니다.
+두 리소스 유형은 catalog와 공통 resource envelope를 공유하지만 세부 스키마와 소비 기능은 분리되어 있습니다.

@@ -1,10 +1,5 @@
 node_modules/
 dist/
 .astro/
-.wrangler/
-.env
-.env.*
-!.env.example
-/amade/workspace/*
-!/amade/workspace/.gitkeep
 .DS_Store
+.env*
