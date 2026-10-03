@@ -1,0 +1,24 @@
+---
+import config from '../site-config.json';
+import '../styles/global.css';
+
+export function getStaticPaths() {
+  return (config.pages || []).map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={`${page.label} · ${config.name}`} />
+    <title>{page.label} · {config.name}</title>
+  </head>
+  <body>
+    <header><a class="brand" href="/">{config.logo && <img src={config.logo} alt="" />}{config.name}</a><nav>{config.navigation.map((item) => <a href={item.href}>{item.label}</a>)}</nav></header>
+    <main><p class="eyebrow">PAGE</p><h1>{page.label}</h1><p class="intro">이 페이지를 편집해 사이트에 필요한 내용을 채워 보세요.</p><a class="back" href="/">홈으로 돌아가기</a></main>
+    <footer>Powered by Astro · BlogGenius</footer>
+  </body>
+</html>

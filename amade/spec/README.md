@@ -42,7 +42,7 @@ amade/
       style.json             # token data package
 ```
 
-The initial Site Hosting example is [`astro-homepage/1.0.0`](../templates/site-hosting/astro-homepage/1.0.0/README.md). [`studio-journal/1.0.0`](../templates/site-hosting/studio-journal/1.0.0/README.md) is a more complete, brand-neutral studio and editorial site informed by the StaticWeb Astro projects. Each resource includes a normal Astro project, preview, manifest, and MIT license files. Their manifests declare the BlogGenius customization and post-publishing contracts.
+The initial Site Hosting example is [`astro-homepage/1.0.0`](../templates/site-hosting/astro-homepage/1.0.0/README.md). [`studio-journal/1.0.0`](../templates/site-hosting/studio-journal/1.0.0/README.md) is a more complete, brand-neutral studio and editorial site informed by the StaticWeb Astro projects. Version 1.1.0 of both packages adds the declared internal placeholder page capability. Each resource includes a normal Astro project, preview, manifest, and MIT license files. Their manifests declare the BlogGenius customization, optional page, and post-publishing contracts.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 
@@ -107,9 +107,11 @@ Each `customization.fields[]` entry declares a value BlogGenius may apply to a J
 - `target.file`: JSON file under the Astro source, such as `src/site-config.json`.
 - `target.path`: dotted JSON key path to update, such as `name` or `navigation`.
 
-Keep customizable values in a small, explicit config file instead of asking BlogGenius to rewrite arbitrary Astro/JavaScript source. In v1, `target` is limited to JSON paths, and unsupported `key` or `type` values must not be invented without a schema and consumer update. The current create flow applies declared defaults and records the values; a complete customization editor is a later feature.
+Keep customizable values in a small, explicit config file instead of asking BlogGenius to rewrite arbitrary Astro/JavaScript source. In v1, `target` is limited to JSON paths, and unsupported `key` or `type` values must not be invented without a schema and consumer update. The Site creation flow can apply declared name/logo/navigation customization; added placeholder pages are available only when the selected template declares `site_hosting.pages` and includes the matching Astro route.
 
 ### Future BlogGenius publishing contract
+
+`site_hosting.pages`, when present, declares the template-supported internal placeholder page behavior. In v1, `mode: static_placeholders` means the Astro package has a dynamic static route that reads the page list from its declared JSON target and emits one page per entry. BlogGenius derives a safe one-segment slug from the user's menu name, respects the reserved slugs and item limit, and stores `{ label, slug }` in the declared target. The template must render a useful placeholder with a path back to the home page. External URLs and user-authored paths are not accepted.
 
 `site_hosting.publishing` declares:
 
@@ -117,7 +119,7 @@ Keep customizable values in a small, explicit config file instead of asking Blog
 - `route_pattern`: public article route; the first template uses `/blog/{slug}/`.
 - `frontmatter`: fields required by the content collection; the first template uses `title`, `description`, and `pubDate`.
 
-This gives a future BlogGenius publishing adapter an explicit destination and URL rule. BlogGenius does not yet publish written posts into these files; the current declaration is a contract for that follow-up, not evidence that article publishing is implemented.
+This gives a future BlogGenius publishing adapter an explicit destination and URL rule. It is separate from navigation pages. BlogGenius does not yet publish written posts into these files; the current declaration is a contract for that follow-up, not evidence that article publishing is implemented.
 
 ## 6. BlogGenius Style contract
 
@@ -132,20 +134,27 @@ The required token list must remain synchronized with BlogGenius `DESIGN_STYLE_R
 
 ## 7. Adding or updating a resource
 
+### Development and production catalogs
+
+- `dev` is the development catalog consumed by BlogGenius local/development builds. Use it to exercise new resources and manifest changes before production.
+- `main` is the production catalog consumed by BlogGenius production builds. Promote reviewed, validated catalog entries from `dev` to `main`; development-only resources must not be added directly to `main`.
+- Package versions remain immutable in both branches. The catalog entry pins the package's commit SHA, so promotion updates the catalog reference without changing the package contents.
+- BlogGenius can override the catalog URL for controlled checks with `BLOGGENIUS_SITE_TEMPLATE_CATALOG_URL`; normal runtime selection is local/development → `dev`, production → `main`.
+
 ### New resource
 
-1. Choose the kind, stable ID, version, license, and compatibility range.
+1. Work on `dev`. Choose the kind, stable ID, version, license, and compatibility range.
 2. For `site-hosting`, prepare a complete buildable Astro project and preview image. For `bloggenius-style`, supply the required token data and preview if available.
 3. Write the kind-specific fields in `resource.json` and list every shipped package file.
 4. Recompute each package file's size and SHA-256 after the final file edit. Recompute the preview SHA-256 too.
 5. Validate the JSON against `catalog-index-v1.schema.json`, `resource.schema.json`, and the corresponding kind schema. Run the template build for a Site Hosting package.
 6. Commit the complete package. Add its commit SHA and manifest path to `amade/catalog/index.json` in a subsequent commit, then validate the catalog again.
-7. Review the license, package contents, file hashes, preview, and user-facing metadata; submit the change for maintainer review.
+7. Review the license, package contents, file hashes, preview, and user-facing metadata on `dev`. After validation and approval, promote the package/catalog change to `main`.
 
 ### Resource update
 
 - Published versions are immutable. Any change to source, customization behavior, publishing rules, preview, or license creates a new `version` directory and updates the package manifest's hashes.
-- Commit the new package first, then point the catalog entry at that package commit and version.
+- On `dev`, commit the new package first, then point the catalog entry at that package commit and version. Validate through BlogGenius development before promoting the catalog update to `main`.
 - Keep existing Sites on their copied source. Template upgrades and preserving hand-edited files during upgrades require a separate migration design.
 - If the JSON contract itself changes incompatibly, publish a new `schema_version` and schema document; do not reinterpret old manifests in place. Update this guide, the root README, validation, and the BlogGenius consumer together where applicable.
 

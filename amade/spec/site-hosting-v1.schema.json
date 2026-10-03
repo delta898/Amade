@@ -100,6 +100,37 @@
       },
       "additionalProperties": false
     },
+    "pages": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "mode",
+        "max_items",
+        "route_pattern",
+        "target"
+      ],
+      "properties": {
+        "schema_version": { "const": 1 },
+        "mode": { "const": "static_placeholders" },
+        "max_items": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "route_pattern": { "const": "/{slug}/" },
+        "reserved_slugs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 48 },
+          "uniqueItems": true
+        },
+        "target": {
+          "type": "object",
+          "required": [ "file", "path" ],
+          "properties": {
+            "file": { "type": "string", "pattern": "^src/[A-Za-z0-9._/-]+\\.json$" },
+            "path": { "type": "string", "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "publishing": {
       "type": "object",
       "required": [

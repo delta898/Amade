@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "id": "studio-journal",
+  "kind": "site-hosting",
+  "version": "1.1.0",
+  "name": "Studio Journal",
+  "description": "스튜디오와 작은 비즈니스를 위한 소개 페이지와 글 목록·상세 페이지를 갖춘 Astro 템플릿입니다.",
+  "maintainer": "Amade",
+  "license": "MIT",
+  "preview": {
+    "path": "preview.svg",
+    "sha256": "d993199828b71c1866f7f26b8079f3be6d3c345b76f74da7e31aac6b5afd9ce0",
+    "media_type": "image/svg+xml"
+  },
+  "compatibility": {
+    "astro": "7.3.5",
+    "bloggenius": ">=0.5.5"
+  },
+  "package": {
+    "path": ".",
+    "files": [
+      {
+        "path": "astro/LICENSE",
+        "sha256": "f28e0a79b26c00aafeaa0a73b52b78989e6bc4c647ac0fdfcd6e4e6b09be203a",
+        "size": 1075
+      },
+      {
+        "path": "astro/astro.config.mjs",
+        "sha256": "28d4a9a2c15ae2fefc8d2b0abdff1cb45e5d10c2daa68f278972e42270f18513",
+        "size": 97
+      },
+      {
+        "path": "astro/package-lock.json",
+        "sha256": "c4a04747306fabbac5f1cc75ea2d9136d62af48e217fdec2674ef9d61e120f04",
+        "size": 144739
+      },
+      {
+        "path": "astro/package.json",
+        "sha256": "893ad33172d6c0a2aa07418c52cbc80da1b97ef48b22e9a38ed1d0af57637a44",
+        "size": 205
+      },
+      {
+        "path": "astro/public/favicon.svg",
+        "sha256": "40ac8491916c660338d3fec8b77eb1662baded6590e91a37c3a0b15d2faac9d9",
+        "size": 244
+      },
+      {
+        "path": "astro/public/robots.txt",
+        "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+        "size": 23
+      },
+      {
+        "path": "astro/src/components/SiteHeader.astro",
+        "sha256": "477d9f734121900b171e744386834447af81e0986f40a06a469e3337a9669767",
+        "size": 1562
+      },
+      {
+        "path": "astro/src/content/posts/a-place-for-your-stories.md",
+        "sha256": "b823de1c37d2cd0d3be3bfc58614a71c366cefc8bc5ac297030e33e67f805661",
+        "size": 719
+      },
+      {
+        "path": "astro/src/content/posts/starting-with-a-question.md",
+        "sha256": "8cea092d198b12c1a6af2b190329879091fcef4769f5cb405b0e8adf5e6f58e0",
+        "size": 772
+      },
+      {
+        "path": "astro/src/content.config.ts",
+        "sha256": "f6a8fa56519729347f1a43ddd5231f5d38e65082a32c04ce6507def6e2bac9cb",
+        "size": 507
+      },
+      {
+        "path": "astro/src/layouts/BaseLayout.astro",
+        "sha256": "ec736ae9925fb7a49896eefa6a86b837ae60fc1c0553955b34fdf200d57daa2e",
+        "size": 2540
+      },
+      {
+        "path": "astro/src/pages/blog/[...slug].astro",
+        "sha256": "1150ecab0b3ac2d061accca103360bd15f44de5726710e49cf530c83ab63ef57",
+        "size": 2382
+      },
+      {
+        "path": "astro/src/pages/blog/index.astro",
+        "sha256": "8ba678c4fe770b85ec8410e085d7a28bd456b2d5493d8b29db8c7b8233484daf",
+        "size": 3519
+      },
+      {
+        "path": "astro/src/pages/[slug].astro",
+        "sha256": "210f604fa3992b224ae1771287429323669ff053752003e16bbe2c06a23dd469",
+        "size": 1271
+      },
+      {
+        "path": "astro/src/pages/index.astro",
+        "sha256": "60487c5fa42624d1f84c341f988a64311d32f6fa2f3a90adab521197c0170e95",
+        "size": 10974
+      },
+      {
+        "path": "astro/src/site-config.json",
+        "sha256": "d0a557a2d55ca0cff49855f10ab459df68bc949cf617c2749504e888cff8e26d",
+        "size": 274
+      }
+    ]
+  },
+  "site_hosting": {
+    "schema_version": 1,
+    "astro": {
+      "source": "astro",
+      "build_command": "npm run build",
+      "output_directory": "dist"
+    },
+    "customization": {
+      "schema_version": 1,
+      "fields": [
+        {
+          "key": "site_name",
+          "type": "string",
+          "label": "사이트 이름",
+          "default": "스튜디오",
+          "required": true,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "name"
+          }
+        },
+        {
+          "key": "logo",
+          "type": "image",
+          "label": "로고",
+          "default": "",
+          "required": false,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "logo"
+          }
+        },
+        {
+          "key": "navigation",
+          "type": "navigation",
+          "label": "메뉴",
+          "default": [
+            {
+              "label": "소개",
+              "href": "/#about"
+            },
+            {
+              "label": "서비스",
+              "href": "/#services"
+            },
+            {
+              "label": "이야기",
+              "href": "/blog/"
+            },
+            {
+              "label": "문의",
+              "href": "/#contact"
+            }
+          ],
+          "required": true,
+          "target": {
+            "file": "src/site-config.json",
+            "path": "navigation"
+          }
+        }
+      ]
+    },
+    "pages": {
+      "schema_version": 1,
+      "mode": "static_placeholders",
+      "max_items": 12,
+      "route_pattern": "/{slug}/",
+      "reserved_slugs": ["blog"],
+      "target": { "file": "src/site-config.json", "path": "pages" }
+    },
+    "publishing": {
+      "content_directory": "src/content/posts",
+      "route_pattern": "/blog/{slug}/",
+      "frontmatter": [
+        "title",
+        "description",
+        "pubDate"
+      ]
+    }
+  }
+}
