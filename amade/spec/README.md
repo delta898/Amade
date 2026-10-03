@@ -42,7 +42,7 @@ amade/
       style.json             # token data package
 ```
 
-The public development catalog currently points to 1.2.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.2.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.2.0/README.md). Local 1.3.0 drafts keep the same starter menus and clarify the simple menu/publishing contract; they are not active in the catalog.
+The public development catalog points to 1.3.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.3.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.3.0/README.md). These versions clarify the simple menu/publishing contract while keeping each template’s existing starter menu.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 

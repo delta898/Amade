@@ -6,16 +6,16 @@
     {
       "kind": "site-hosting",
       "id": "astro-homepage",
-      "version": "1.2.0",
-      "revision": "52ad2a32f34c1f077109cd94081ae492cf28cf2f",
-      "manifest": "amade/templates/site-hosting/astro-homepage/1.2.0/resource.json"
+      "version": "1.3.0",
+      "revision": "7e0b02cb3c34f780de5a1f16d524cd6cc2e902bb",
+      "manifest": "amade/templates/site-hosting/astro-homepage/1.3.0/resource.json"
     },
     {
       "kind": "site-hosting",
       "id": "studio-journal",
-      "version": "1.2.0",
-      "revision": "52ad2a32f34c1f077109cd94081ae492cf28cf2f",
-      "manifest": "amade/templates/site-hosting/studio-journal/1.2.0/resource.json"
+      "version": "1.3.0",
+      "revision": "7e0b02cb3c34f780de5a1f16d524cd6cc2e902bb",
+      "manifest": "amade/templates/site-hosting/studio-journal/1.3.0/resource.json"
     }
   ]
 }
