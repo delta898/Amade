@@ -13,7 +13,7 @@ Both kinds share a catalog and common resource envelope. Their kind-specific con
 
 ```text
 Amade catalog index
-  ├─ common resource metadata: id, kind, version, license, preview, compatibility, package files
+  ├─ common resource metadata: id, kind, name, description, author, version, license, links, preview, screenshots
   ├─ site_hosting: Astro source, customization targets, publishing contract
   └─ bloggenius_style: BlogGenius token-contract ID and token values
 ```
@@ -42,13 +42,13 @@ amade/
       style.json             # token data package
 ```
 
-The initial Site Hosting example is [`astro-homepage/1.0.0`](../templates/site-hosting/astro-homepage/1.0.0/README.md). [`studio-journal/1.0.0`](../templates/site-hosting/studio-journal/1.0.0/README.md) is a more complete, brand-neutral studio and editorial site informed by the StaticWeb Astro projects. Version 1.1.0 of both packages adds the declared internal placeholder page capability. Each resource includes a normal Astro project, preview, manifest, and MIT license files. Their manifests declare the BlogGenius customization, optional page, and post-publishing contracts.
+The public development catalog offers 1.2.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.2.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.2.0/README.md). These versions add creator/support metadata and the verified Markdown post-bundle publishing contract. Version 1.1.0 remains immutable in Git history.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 
 ## 3. Catalog index
 
-`amade/catalog/index.json` is the entry point BlogGenius reads from the Amade `main` branch. It identifies the catalog and points to each active resource manifest.
+`amade/catalog/index.json` is the entry point BlogGenius reads from a branch selected by runtime environment: `dev` for local/development and `main` for production. It identifies the catalog and points to each active resource manifest.
 
 Each catalog resource entry contains:
 
@@ -58,7 +58,7 @@ Each catalog resource entry contains:
 - `revision`: full 40-character Git commit SHA containing the manifest and package files.
 - `manifest`: path to `resource.json` within that commit.
 
-BlogGenius reads the catalog from `main`, then fetches the referenced manifest and files from the immutable `revision`. Therefore catalog updates can add a template without an app release, while a package fetch remains pinned to the exact commit chosen by the catalog.
+BlogGenius reads the environment's catalog branch, then fetches the referenced manifest and files from the immutable `revision`. Therefore catalog updates can add a template without an app release, while a package fetch remains pinned to the exact commit chosen by the catalog.
 
 For the initial BlogGenius consumer, keep one active catalog entry per `kind` and `id`. To release a replacement, bump the package version and update that entry's version and revision. Do not overwrite a published package version. Older revisions remain in Git history, and already-created Sites have their own copied source plus the selected source revision in their metadata.
 
@@ -69,10 +69,16 @@ Every resource has an `amade/templates/<kind>/<id>/<version>/resource.json` mani
 | Field | Meaning |
 | --- | --- |
 | `schema_version` | Version of the common manifest shape; currently `1`. |
-| `id`, `kind`, `version` | Stable identity, resource type, and immutable package version. |
-| `name`, `description`, `maintainer` | User-facing metadata and maintainer attribution. |
+| `id`, `kind` | Stable identity and resource type. |
+| `name`, `description` | User-facing template identity and summary. |
+| `author` | Public creator name or handle. New resources should include it; `maintainer` is retained as a legacy field. |
+| `version` | Immutable release version for the resource package. A published version is never overwritten. |
 | `license` | License identifier or clear license label for this package. Every resource chooses its own license. |
-| `preview` | Preview file path, SHA-256, and optional media type. The preview is separate from the source package file list. |
+| `homepage` | Optional HTTPS link to the creator or resource website. |
+| `support` | Optional support contact, currently an email address or HTTPS link. |
+| `created_at` | Optional ISO date when the resource was first created; keep it stable across later versions. |
+| `preview` | One representative image for template cards; includes file path, SHA-256, and optional media type. It is separate from the source package file list. |
+| `screenshots` | Optional array of additional images for a future detail view. Each entry has a path, SHA-256, and optional media type; these files are separate from the source package file list. |
 | `compatibility` | Compatibility declarations such as Astro and BlogGenius versions. |
 | `package.path` | Base directory for the package files. v1 templates use `.`. |
 | `package.files[]` | Each package file's relative path, SHA-256, and optional byte size. |
@@ -81,7 +87,9 @@ Every resource has an `amade/templates/<kind>/<id>/<version>/resource.json` mani
 
 The `preview.path` is relative to the directory containing `resource.json`; each `package.files[].path` is relative to `package.path`. In the current package layout, both happen to resolve under the version directory because `package.path` is `.`.
 
-Paths must be relative and must not escape their declared base directory. SHA-256 is computed from the exact file bytes. `size`, when included, is the file length in bytes. Keep the manifest, preview, license, and all project files in the pinned revision.
+The current list UI is BlogGenius's Site creation template picker. It shows the resource name, author, description, and preview; when `homepage` is present, it shows an icon link. Amade currently provides the catalog and packages rather than a separate browse website, but a future Amade page can reuse the same metadata.
+
+Paths must be relative and must not escape their declared base directory. SHA-256 is computed from the exact file bytes. `size`, when included, is the file length in bytes. Keep the manifest, preview, screenshots, license, and all project files in the pinned revision. Recompute hashes for `preview` and every `screenshots[]` image after edits; these media entries are not repeated in `package.files[]`.
 
 ## 5. Site Hosting contract
 
@@ -113,13 +121,37 @@ Keep customizable values in a small, explicit config file instead of asking Blog
 
 `site_hosting.pages`, when present, declares the template-supported internal placeholder page behavior. In v1, `mode: static_placeholders` means the Astro package has a dynamic static route that reads the page list from its declared JSON target and emits one page per entry. BlogGenius derives a safe one-segment slug from the user's menu name, respects the reserved slugs and item limit, and stores `{ label, slug }` in the declared target. The template must render a useful placeholder with a path back to the home page. External URLs and user-authored paths are not accepted.
 
-`site_hosting.publishing` declares:
+`site_hosting.publishing` schema version 2 declares the content contract that both 1.2.0 templates implement:
 
-- `content_directory`: relative to the Astro source; the first template uses `src/content/posts`.
-- `route_pattern`: public article route; the first template uses `/blog/{slug}/`.
-- `frontmatter`: fields required by the content collection; the first template uses `title`, `description`, and `pubDate`.
+- `format: markdown`: post bodies are Markdown. YAML frontmatter is a separate Amade/BlogGenius convention; it is not part of the CommonMark syntax itself.
+- `content_directory`: relative to the Astro source, currently `src/content/posts`.
+- `post_layout`: each post is a directory named by its URL slug, containing `index.md` and an `images/` folder. Markdown image paths are relative to `index.md`, for example `![Alt](./images/photo.jpg)`.
+- `frontmatter`: required `title` (string), `description` (string), and `pubDate` (date); optional `is_public` (boolean) defaults to `false`.
+- `visibility`: only `is_public: true` posts are included in the listing and static detail routes. Missing visibility is treated as private.
+- `routes.listing` and `routes.detail`: the public collection route (`/blog/`) and item route (`/blog/{slug}/`).
 
-This gives a future BlogGenius publishing adapter an explicit destination and URL rule. It is separate from navigation pages. BlogGenius does not yet publish written posts into these files; the current declaration is a contract for that follow-up, not evidence that article publishing is implemented.
+A minimal post bundle looks like this:
+
+```text
+src/content/posts/<slug>/
+  index.md
+  images/
+    photo.jpg
+```
+
+The legacy unversioned `publishing` shape remains accepted for already-published 1.1.0 resources. The two 1.2.0 working packages use schema version 2. The verification record below is a focused Astro build proof, not a claim that BlogGenius publishing has shipped.
+
+### Focused publishing-contract verification
+
+On 2026-10-03, temporary copies of both Astro Homepage and Studio Journal 1.2.0 were built with Astro 7.3.5. Each build included a fixture with `is_public: true`, one with `is_public: false`, and one with `is_public` omitted; every fixture referenced an entry-relative `./images/proof.svg`. Results for both templates:
+
+- The public post appeared in `/blog/` and generated `/blog/<slug>/` HTML.
+- The private post generated neither a listing item nor a detail route.
+- The post missing `is_public` was also excluded because the collection schema defaults it to `false`. Studio Journal's homepage recent-post section also excluded private fixtures.
+- The relative SVG reference was rewritten to a hashed `/_astro/` asset, and that generated file existed in `dist`.
+- Both builds completed successfully from temporary copies; the Amade package source was not modified by the build output.
+
+This validates the selected bundle layout, visibility, and route behavior in both Astro templates. BlogGenius does not yet create or publish these post bundles; that remains a tracked follow-up.
 
 ## 6. BlogGenius Style contract
 
@@ -144,20 +176,20 @@ The required token list must remain synchronized with BlogGenius `DESIGN_STYLE_R
 ### New resource
 
 1. Work on `dev`. Choose the kind, stable ID, version, license, and compatibility range.
-2. For `site-hosting`, prepare a complete buildable Astro project and preview image. For `bloggenius-style`, supply the required token data and preview if available.
+2. For `site-hosting`, prepare a complete buildable Astro project, one representative preview image, and optional additional screenshots. For `bloggenius-style`, supply the required token data and preview if available.
 3. Write the kind-specific fields in `resource.json` and list every shipped package file.
-4. Recompute each package file's size and SHA-256 after the final file edit. Recompute the preview SHA-256 too.
+4. Recompute each package file's size and SHA-256 after the final file edit. Recompute the preview and each additional screenshot SHA-256 too.
 5. Validate the JSON against `catalog-index-v1.schema.json`, `resource.schema.json`, and the corresponding kind schema. Run the template build for a Site Hosting package.
 6. Commit the complete package. Add its commit SHA and manifest path to `amade/catalog/index.json` in a subsequent commit, then validate the catalog again.
 7. Review the license, package contents, file hashes, preview, and user-facing metadata on `dev`. After validation and approval, promote the package/catalog change to `main`.
 
 ### Resource update
 
-- Published versions are immutable. Any change to source, customization behavior, publishing rules, preview, or license creates a new `version` directory and updates the package manifest's hashes.
+- Published versions are immutable. Any change to source, customization behavior, publishing rules, preview, screenshots, or license creates a new `version` directory and updates the package manifest's hashes.
 - On `dev`, commit the new package first, then point the catalog entry at that package commit and version. Validate through BlogGenius development before promoting the catalog update to `main`.
 - Keep existing Sites on their copied source. Template upgrades and preserving hand-edited files during upgrades require a separate migration design.
 - If the JSON contract itself changes incompatibly, publish a new `schema_version` and schema document; do not reinterpret old manifests in place. Update this guide, the root README, validation, and the BlogGenius consumer together where applicable.
 
 ## 8. Compatibility and current implementation boundary
 
-The schemas define the intended versioned interchange format. BlogGenius currently consumes the public catalog, Site Hosting metadata/preview/package, checksum list, and JSON customization targets for Site creation. It currently does not provide a full arbitrary Astro project importer UI, external Style selection, template upgrading, or post publishing into the declared content directory. Keep documentation explicit about these boundaries as implementation grows.
+The schemas define the intended versioned interchange format. BlogGenius currently consumes the public catalog, Site Hosting metadata/preview/package, checksum list, JSON customization targets for Site creation, and the declared post contract for template behavior. The BlogGenius publishing adapter is still follow-up work. It currently does not provide a full arbitrary Astro project importer UI, external Style selection, template upgrading, or post publishing into the declared content directory. Keep documentation explicit about these boundaries as implementation grows.

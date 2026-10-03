@@ -44,7 +44,35 @@
     },
     "maintainer": {
       "type": "string",
+      "maxLength": 100,
+      "deprecated": true,
+      "description": "Legacy attribution field. New resources should use author."
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
       "maxLength": 100
+    },
+    "homepage": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^https://"
+    },
+    "support": {
+      "type": "string",
+      "maxLength": 2048,
+      "anyOf": [
+        {
+          "format": "email"
+        },
+        {
+          "pattern": "^https://"
+        }
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date"
     },
     "license": {
       "type": "string",
@@ -90,6 +118,13 @@
     },
     "bloggenius_style": {
       "$ref": "bloggenius-style-v1.schema.json"
+    },
+    "screenshots": {
+      "type": "array",
+      "description": "Additional resource screenshots for detail views. The preview remains the single representative image.",
+      "items": {
+        "$ref": "#/$defs/file"
+      }
     }
   },
   "$defs": {

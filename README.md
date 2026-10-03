@@ -6,9 +6,9 @@ Amade는 BlogGenius가 외부에서 가져오는 버전 관리형 사이트 템�
 
 ### Site Hosting (`site-hosting`)
 
-일반 Astro 프로젝트를 복사해 새 BlogGenius Site를 만드는 템플릿입니다. 리소스는 미리보기 이미지, 지원하는 사용자 설정, 빌드 경로와 글 저장 위치·URL 규칙을 선언합니다. 현재 MIT 라이선스의 `Astro Homepage 1.0.0`과 `Studio Journal 1.0.0`을 제공합니다. Studio Journal은 StaticWeb의 두 Astro 사이트에서 검증된 소개 페이지와 글 목록·상세 패턴을 브랜드 중립적으로 재구성했습니다.
+일반 Astro 프로젝트를 복사해 새 BlogGenius Site를 만드는 템플릿입니다. 리소스는 미리보기, 설명, 제작자, 라이선스, 지원 링크, 사용자 설정, 빌드 경로와 글 저장 위치·URL 규칙을 선언합니다. 공개 dev 카탈로그는 `Astro Homepage 1.2.0`과 `Studio Journal 1.2.0`을 제공합니다. Studio Journal은 StaticWeb의 두 Astro 사이트에서 검증된 소개 페이지와 글 목록·상세 패턴을 브랜드 중립적으로 재구성했습니다.
 
-BlogGenius의 사이트 생성 화면은 catalog에서 이 유형을 조회하고 템플릿 미리보기를 보여줍니다. Amade catalog에 새 리소스나 새 버전을 등록하면 목록에 반영되는 구조입니다.
+BlogGenius의 사이트 생성 화면은 개발 환경에서 `dev`, 운영 환경에서 `main` 카탈로그를 조회합니다. Amade catalog에 새 리소스나 새 버전을 등록하면 해당 환경의 템플릿 목록에 반영됩니다.
 
 ### BlogGenius Style (`bloggenius-style`)
 
