@@ -73,6 +73,10 @@
     {
       "style_id": "goblincore",
       "manifest": "amade/styles/goblincore/style.json"
+    },
+    {
+      "style_id": "remote-test-style",
+      "manifest": "amade/styles/remote-test-style/style.json"
     }
   ]
 }
