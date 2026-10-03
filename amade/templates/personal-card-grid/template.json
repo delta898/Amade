@@ -17,9 +17,14 @@
   "description": "개인 홈페이지의 글과 작업을 카드 그리드로 보여주는 상단 메뉴형 Astro 템플릿.",
   "author": "amadejjs",
   "version": "0.1.0",
+  "created_at": "2026-10-03",
   "license": "MIT",
   "preview": "preview.png",
   "status": "active",
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": { "id": "bloggenius-site-hosting-template", "version": "0.1.0" }
+  },
   "homepage": "https://www.bloggenius.kr",
   "support": "mailto:amadejjs@naver.com"
 }

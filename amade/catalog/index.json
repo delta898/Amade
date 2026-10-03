@@ -8,17 +8,71 @@
       "family_id": "company-homepage",
       "manifest": "amade/families/company-homepage/family.json",
       "templates": [
-        { "template_id": "company-service-cards", "manifest": "amade/templates/company-service-cards/template.json" },
-        { "template_id": "company-service-list", "manifest": "amade/templates/company-service-list/template.json" }
+        {
+          "template_id": "company-service-cards",
+          "manifest": "amade/templates/company-service-cards/template.json"
+        },
+        {
+          "template_id": "company-service-list",
+          "manifest": "amade/templates/company-service-list/template.json"
+        }
       ]
     },
     {
       "family_id": "personal-homepage",
       "manifest": "amade/families/personal-homepage/family.json",
       "templates": [
-        { "template_id": "personal-card-grid", "manifest": "amade/templates/personal-card-grid/template.json" },
-        { "template_id": "personal-post-list", "manifest": "amade/templates/personal-post-list/template.json" }
+        {
+          "template_id": "personal-card-grid",
+          "manifest": "amade/templates/personal-card-grid/template.json"
+        },
+        {
+          "template_id": "personal-post-list",
+          "manifest": "amade/templates/personal-post-list/template.json"
+        }
       ]
+    }
+  ],
+  "styles": [
+    {
+      "style_id": "warm-editorial",
+      "manifest": "amade/styles/warm-editorial/style.json"
+    },
+    {
+      "style_id": "quiet-sage-studio",
+      "manifest": "amade/styles/quiet-sage-studio/style.json"
+    },
+    {
+      "style_id": "autumn-night-library",
+      "manifest": "amade/styles/autumn-night-library/style.json"
+    },
+    {
+      "style_id": "hanji-dancheong",
+      "manifest": "amade/styles/hanji-dancheong/style.json"
+    },
+    {
+      "style_id": "retro-terminal",
+      "manifest": "amade/styles/retro-terminal/style.json"
+    },
+    {
+      "style_id": "minimalism",
+      "manifest": "amade/styles/minimalism/style.json"
+    },
+    {
+      "style_id": "cerulean-atelier",
+      "manifest": "amade/styles/cerulean-atelier/style.json"
+    },
+    {
+      "style_id": "amethyst-salon",
+      "manifest": "amade/styles/amethyst-salon/style.json"
+    },
+    {
+      "style_id": "techwear",
+      "manifest": "amade/styles/techwear/style.json"
+    },
+    {
+      "style_id": "goblincore",
+      "manifest": "amade/styles/goblincore/style.json"
     }
   ]
 }

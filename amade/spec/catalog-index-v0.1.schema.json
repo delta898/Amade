@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/catalog-index-v0.1.schema.json",
+  "title": "Amade grouped catalog 0.1",
+  "type": "object",
+  "required": ["spec_version", "status", "catalog_id", "name", "families", "styles"],
+  "properties": {
+    "spec_version": { "const": "0.1.0" },
+    "status": { "const": "experimental" },
+    "catalog_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "families": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["family_id", "manifest", "templates"],
+        "properties": {
+          "family_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "manifest": { "$ref": "#/$defs/familyManifest" },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["template_id", "manifest"],
+              "properties": {
+                "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+                "manifest": { "$ref": "#/$defs/templateManifest" }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "styles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["style_id", "manifest"],
+        "properties": {
+          "style_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "manifest": { "$ref": "#/$defs/styleManifest" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "familyManifest": { "type": "string", "pattern": "^amade/families/[a-z0-9-]+/family\\.json$" },
+    "templateManifest": { "type": "string", "pattern": "^amade/templates/[a-z0-9-]+/template\\.json$" },
+    "styleManifest": { "type": "string", "pattern": "^amade/styles/[a-z0-9-]+/style\\.json$" }
+  },
+  "additionalProperties": false
+}

@@ -16,9 +16,14 @@
   "description": "회사 서비스 정보를 왼쪽 메뉴와 목록으로 탐색하는 Astro 템플릿.",
   "author": "amadejjs",
   "version": "0.1.0",
+  "created_at": "2026-10-03",
   "license": "MIT",
   "preview": "preview.png",
   "status": "active",
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": { "id": "bloggenius-site-hosting-template", "version": "0.1.0" }
+  },
   "homepage": "https://www.bloggenius.kr",
   "support": "mailto:amadejjs@naver.com"
 }

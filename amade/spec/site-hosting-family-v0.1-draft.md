@@ -32,9 +32,17 @@ Astro content loaders read Markdown from `site-data/data/`; `publicDir` exposes 
 
 ## Catalog discovery index
 
-`amade/catalog/index.json` is the discovery index. It groups each available `family_id` with the path to its `family.json` contract and an ordered list of that family's `template_id` plus `template.json` paths. The index owns membership and display order; names, descriptions, requirements, and other detailed metadata remain canonical in the referenced manifests to avoid maintaining duplicate copies. References are repository-root-relative and must begin under `amade/families/` or `amade/templates/` respectively.
+`amade/catalog/index.json` is the shared discovery index. It groups Site Hosting `family_id` entries with an ordered list of their templates, and has a separate `styles[]` collection for BlogGenius UI Styles. The index owns membership and display order; names, descriptions, requirements, and other detailed metadata remain canonical in the referenced manifests. References are repository-root-relative and must begin under their matching `amade/families/`, `amade/templates/`, or `amade/styles/` directory. `catalog-index-v0.1.schema.json` validates the index, `site-hosting-family-v0.1.schema.json` validates family data contracts, and `site-hosting-template-v0.1.schema.json` validates selectable template manifests.
 
-A consumer first reads the catalog index, then resolves the referenced family and template manifests (requests may be fetched concurrently). Manifest references are relative to the Amade repository root, may not escape it, and must point under the matching `families/` or `templates/` directory. It should pin all reads to the same immutable Amade revision so a catalog update cannot mix entries from different revisions. It validates that family IDs and template IDs match their manifest contents and that every listed template declares the containing `family_id`. Template Builder can enumerate families, inspect each family contract, and then enumerate available templates without inferring membership from directory names. The current catalog index is experimental; a formal JSON Schema and generated-index workflow remain future work.
+A consumer first reads the catalog index, then resolves the referenced package manifests (requests may be fetched concurrently). Manifest references are relative to the Amade repository root, may not escape it, and must point under the matching resource directory. It should pin all reads to the same immutable Amade revision so a catalog update cannot mix entries from different revisions. It validates that family IDs and template IDs match their manifest contents and that every listed template declares the containing `family_id`. Template Builder can enumerate families, inspect each family contract, and then enumerate available templates without inferring membership from directory names. BlogGenius can enumerate UI Styles independently of site templates.
+
+## Shared selectable-package metadata and UI Styles
+
+Selectable Site Hosting Templates and BlogGenius UI Styles use shared common metadata defined in `common-metadata-v0.1.schema.json`: `name`, `description`, `author`, package `version`, `license`, `created_at`, `categories`, `tags`, representative `preview`, optional `screenshots`, `homepage`, `support`, `status`, and required `compatibility`. Families remain grouping/data contracts, not selectable packages, and do not use this envelope.
+
+Every selectable package must declare `compatibility.min_bloggenius_version` and `compatibility.contract.id` plus `compatibility.contract.version`. Both are required for both resource kinds. Current packages require BlogGenius `0.6.0`. Site Hosting Templates declare contract `bloggenius-site-hosting-template` version `0.1.0`; UI Styles declare `bloggenius-ui-style-tokens` version `1.0`. The contract ID names the interface and the version identifies its shape/semantics, so contract versions from different IDs are never compared. The minimum app version gates the package on BlogGenius application releases; a valid resource requiring a newer app is skipped for selection, while malformed/missing compatibility is a manifest error.
+
+UI Style packages live in `amade/styles/<style-id>/style.json` and are validated by `bloggenius-ui-style-v0.1.schema.json`. They carry a `style_id`, the contract declaration above, and token values only. They do not carry CSS selectors, scripts, or arbitrary executable code. The Amade package `spec_version` (`0.1.0`), package release version, minimum BlogGenius version, and BlogGenius contract version have separate meanings and must be checked independently.
 
 ```json
 {
@@ -73,6 +81,8 @@ Each `template.json` contains the following common metadata in addition to its t
 - `homepage`: optional public template or creator homepage URL.
 - `support`: optional support contact URL or `mailto:` URL.
 - `status`: required lifecycle state: `active`, `deprecated`, or `withdrawn`.
+- `compatibility.min_bloggenius_version`: required stable SemVer minimum BlogGenius app version (`0.6.0` for current packages; prerelease versions are not allowed).
+- `compatibility.contract`: required `{ id, version }` identifying the BlogGenius integration contract (`bloggenius-site-hosting-template@0.1.0` for templates; `bloggenius-ui-style-tokens@1.0` for UI Styles).
 
 Preview and screenshot references must resolve to files included in the package. Categories and tags are discovery labels only; they do not grant capabilities or establish family compatibility. `version` changes when the template package is updated; it does not change the specification version.
 
@@ -103,6 +113,10 @@ The catalog status (`experimental`) describes the maturity of the catalog/specif
   "homepage": "https://www.bloggenius.kr",
   "support": "mailto:amadejjs@naver.com",
   "status": "active",
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": { "id": "bloggenius-site-hosting-template", "version": "0.1.0" }
+  },
   "astro_project": "template/astro",
   "site_data": "../../site-data",
   "layout": "list"
@@ -221,4 +235,4 @@ Keep the spec experimental until these checks and remaining design decisions are
 - Negative schema tests and failed-build recovery behavior during an actual template conversion.
 - How BlogGenius detects user edits that a same-family conversion would replace.
 - Existing 1.x resources remain legacy and are excluded from the isolated 0.1 experimental catalog; 0.1 lifecycle states govern only resources conforming to this new manifest format.
-- Compatibility declarations for Astro and BlogGenius, including whether explicit minimum BlogGenius app versions are needed.
+- Astro runtime compatibility declarations remain follow-up. BlogGenius app compatibility is required on both resource types: current packages target minimum BlogGenius `0.6.0` and declare their type-specific BlogGenius contract ID/version.

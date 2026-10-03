@@ -1,8 +1,36 @@
-# Amade resource format v1 — Legacy reference
+# Amade package formats
 
 > This document and the `*-v1.schema.json` files describe the original Amade package format. They remain the reference for existing 1.x resources and the current legacy catalog integration, but they are **not** the contract for new Site Hosting templates.
 >
-> The next-generation Site Hosting format starts at spec version `0.1.0` and is documented in [Site Hosting Template Family 0.1.0 draft](site-hosting-family-v0.1-draft.md), with build examples in the [experiment fixtures](../experiments/site-hosting-family-v0.1/README.md). Amade `dev` and BlogGenius development now use this grouped catalog. The v1 material below remains a historical reference for retained legacy packages.
+> **Current experimental format:** Site Hosting Templates and BlogGenius UI Styles share the grouped catalog at `amade/catalog/index.json`, but use separate package schemas. This format starts at `0.1.0` and remains experimental until the packages and BlogGenius consumers have been validated together. The v1 material below is retained as a historical reference for legacy packages.
+
+## Current 0.1 package layout
+
+```text
+amade/
+  catalog/index.json                   # groups families/templates and UI styles
+  families/<family-id>/family.json     # shared site data and content contract
+  templates/<template-id>/template.json
+  styles/<style-id>/style.json         # BlogGenius appearance tokens
+  spec/
+    common-metadata-v0.1.schema.json
+    catalog-index-v0.1.schema.json
+    site-hosting-family-v0.1.schema.json
+    site-hosting-template-v0.1.schema.json
+    bloggenius-ui-style-v0.1.schema.json
+```
+
+Each **Template** package and **UI Style** package shares user-facing metadata: name, description, author, package version, license, creation date, categories, tags, preview, optional screenshots, homepage, support, lifecycle status, and required BlogGenius compatibility. Families are grouping and content-contract definitions, not selectable packages, so their manifests do not use this common package metadata.
+
+The catalog exposes `families[]` with their `templates[]`, and `styles[]` as a separate resource type. Site Hosting Templates contain a complete Astro project and reference a family data contract. UI Styles contain only token data for the versioned BlogGenius semantic token contract; they do not distribute executable JavaScript or arbitrary CSS. Consumers list only packages whose status is `active`. `deprecated` and `withdrawn` remain in the catalog for history and existing references but are not offered for new selection.
+
+Both package kinds require `compatibility.min_bloggenius_version` and `compatibility.contract` (`id` plus `version`). The current experimental packages require BlogGenius `0.6.0`. Site Hosting Templates use `bloggenius-site-hosting-template` contract `0.1.0`; UI Styles use `bloggenius-ui-style-tokens` contract `1.0`. Amade's package `spec_version`, package release `version`, minimum BlogGenius app version, and type-specific BlogGenius contract version are separate axes. Consumers reject malformed declarations, do not offer resources requiring a newer app or unsupported contract, and preserve their fallback.
+
+Validation and BlogGenius adoption status are tracked in the corresponding design record in the BlogGenius repository.
+
+## Legacy v1 reference
+
+The sections below document the original package format and schemas. They do not define the 0.1 package or catalog contract.
 
 This document preserves the v1 package layout, schema meanings, and authoring workflow. The JSON Schemas below are authoritative only for v1 manifests. Update this guide alongside a v1 schema or supported-behavior change. For new Site Hosting work on `dev`, follow the 0.1 family spec instead.
 
