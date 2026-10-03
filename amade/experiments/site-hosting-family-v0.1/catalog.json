@@ -1,0 +1,34 @@
+{
+  "spec_version": "0.1.0",
+  "status": "experimental",
+  "families": [
+    {
+      "family_id": "company-homepage",
+      "manifest": "families/company-homepage/family.json",
+      "templates": [
+        {
+          "template_id": "company-service-cards",
+          "manifest": "templates/company-service-cards/template.json"
+        },
+        {
+          "template_id": "company-service-list",
+          "manifest": "templates/company-service-list/template.json"
+        }
+      ]
+    },
+    {
+      "family_id": "personal-homepage",
+      "manifest": "families/personal-homepage/family.json",
+      "templates": [
+        {
+          "template_id": "personal-card-grid",
+          "manifest": "templates/personal-card-grid/template.json"
+        },
+        {
+          "template_id": "personal-post-list",
+          "manifest": "templates/personal-post-list/template.json"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "spec_version": "0.1.0",
+  "template_id": "company-service-cards",
+  "family_id": "company-homepage",
+  "name": "상단 메뉴 · 서비스 카드형",
+  "astro_project": "astro",
+  "site_data": "../../site-data",
+  "categories": [
+    "Business Website"
+  ],
+  "tags": [
+    "Top Navigation",
+    "Service Cards"
+  ],
+  "layout": "cards",
+  "description": "회사 소개와 서비스를 카드 중심으로 보여주는 상단 메뉴형 Astro 템플릿.",
+  "author": "amadejjs",
+  "version": "0.1.0",
+  "license": "MIT",
+  "preview": "preview.png",
+  "status": "active",
+  "homepage": "https://www.bloggenius.kr",
+  "support": "mailto:amadejjs@naver.com"
+}

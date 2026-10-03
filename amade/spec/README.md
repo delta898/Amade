@@ -1,10 +1,14 @@
-# Amade resource format v1
+# Amade resource format v1 — Legacy reference
 
-This document explains how to package and maintain resources published by Amade. The JSON Schemas in this directory are the machine-readable contract; this page explains their intent, file layout, and authoring workflow. Update this page in the same change whenever a schema or its supported behavior changes.
+> This document and the `*-v1.schema.json` files describe the original Amade package format. They remain the reference for existing 1.x resources and the current legacy catalog integration, but they are **not** the contract for new Site Hosting templates.
+>
+> The next-generation Site Hosting format starts at spec version `0.1.0` and is documented in [Site Hosting Template Family 0.1.0 draft](site-hosting-family-v0.1-draft.md), with build examples in the [experiment fixtures](../experiments/site-hosting-family-v0.1/README.md). Amade `dev` and BlogGenius development now use this grouped catalog. The v1 material below remains a historical reference for retained legacy packages.
+
+This document preserves the v1 package layout, schema meanings, and authoring workflow. The JSON Schemas below are authoritative only for v1 manifests. Update this guide alongside a v1 schema or supported-behavior change. For new Site Hosting work on `dev`, follow the 0.1 family spec instead.
 
 ## 1. Resource model
 
-Amade publishes two kinds of resources for BlogGenius:
+The v1 format defines two kinds of resources for BlogGenius:
 
 - `site-hosting`: a complete, buildable Astro project used to create a new Site.
 - `bloggenius-style`: a data-only appearance pack for `BlogGenius > Settings > App > Appearance`.
@@ -42,13 +46,13 @@ amade/
       style.json             # token data package
 ```
 
-The public development catalog points to 1.3.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.3.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.3.0/README.md). These versions clarify the simple menu/publishing contract while keeping each template’s existing starter menu.
+The historical v1 development catalog pointed to 1.3.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.3.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.3.0/README.md). The current dev catalog uses 0.1 Template Families instead; these legacy packages remain as reference material.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 
 ## 3. Catalog index
 
-`amade/catalog/index.json` is the entry point BlogGenius reads from a branch selected by runtime environment: `dev` for local/development and `main` for production. It identifies the catalog and points to each active resource manifest.
+`amade/catalog/index.json` is the v1 entry point BlogGenius reads from a branch selected by runtime environment: `dev` for local/development and, when published, `main` for production. As of 2026-10-04, the local `dev` branch contains the v1 catalog while `main` contains only `README.md`. V1 has no per-template lifecycle field: presence in the catalog array determines whether a package is offered for new creation. Removing an entry hides it from new discovery but does not erase its immutable Git revision or copied source in existing Sites.
 
 Each catalog resource entry contains:
 
@@ -64,7 +68,7 @@ For the initial BlogGenius consumer, keep one active catalog entry per `kind` an
 
 ## 4. Common resource manifest
 
-Every resource has an `amade/templates/<kind>/<id>/<version>/resource.json` manifest validated by `resource.schema.json` and the appropriate kind schema.
+Every v1 resource has an `amade/templates/<kind>/<id>/<version>/resource.json` manifest validated by `resource.schema.json` and the appropriate kind schema. V1 has no `active`/`deprecated`/`withdrawn` field; do not infer those states from the 0.1 manifest rules.
 
 | Field | Meaning |
 | --- | --- |
@@ -176,8 +180,8 @@ The required token list must remain synchronized with BlogGenius `DESIGN_STYLE_R
 
 ### Development and production catalogs
 
-- `dev` is the development catalog consumed by BlogGenius local/development builds. Use it to exercise new resources and manifest changes before production.
-- `main` is the production catalog consumed by BlogGenius production builds. Promote reviewed, validated catalog entries from `dev` to `main`; development-only resources must not be added directly to `main`.
+- Historically, `dev` was the v1 development catalog. It now contains the 0.1 grouped Site Hosting catalog consumed by BlogGenius local/development builds.
+- `main` is the intended production catalog branch. As of 2026-10-04 it contains only `README.md` and has no production catalog; do not interpret this historical v1 workflow as a current production publication.
 - Package versions remain immutable in both branches. The catalog entry pins the package's commit SHA, so promotion updates the catalog reference without changing the package contents.
 - BlogGenius can override the catalog URL for controlled checks with `BLOGGENIUS_SITE_TEMPLATE_CATALOG_URL`; normal runtime selection is local/development → `dev`, production → `main`.
 
@@ -198,6 +202,19 @@ The required token list must remain synchronized with BlogGenius `DESIGN_STYLE_R
 - Keep existing Sites on their copied source. Template upgrades and preserving hand-edited files during upgrades require a separate migration design.
 - If the JSON contract itself changes incompatibly, publish a new `schema_version` and schema document; do not reinterpret old manifests in place. Update this guide, the root README, validation, and the BlogGenius consumer together where applicable.
 
-## 8. Compatibility and current implementation boundary
+## 8. Compatibility and v1 implementation boundary
 
-The schemas define the intended versioned interchange format. BlogGenius currently consumes the public catalog, Site Hosting metadata/preview/package, checksum list, JSON customization targets for Site creation, and the declared post contract for template behavior. The BlogGenius publishing adapter is still follow-up work. It currently does not provide a full arbitrary Astro project importer UI, external Style selection, template upgrading, or post publishing into the declared content directory. Keep documentation explicit about these boundaries as implementation grows.
+The v1 schemas define the original versioned interchange format. BlogGenius currently consumes the public catalog, Site Hosting metadata/preview/package, checksum list, JSON customization targets for Site creation, and the declared post contract for template behavior. The BlogGenius publishing adapter is still follow-up work. It currently does not provide a full arbitrary Astro project importer UI, external Style selection, template upgrading, or post publishing into the declared content directory. Keep documentation explicit about these boundaries as implementation grows.
+
+
+## Specification generations and current status
+
+| Generation | Documents and resources | Status and use |
+| --- | --- | --- |
+| Legacy Amade resource format v1 | `resource.schema.json`, `catalog-index-v1.schema.json`, `site-hosting-v1.schema.json`, `bloggenius-style-v1.schema.json`; historical packages under `amade/templates/site-hosting/` | Historical package contract retained for reference. The dev catalog and BlogGenius development consumer now use 0.1. Its schemas must not be applied to 0.1 manifests. |
+| Site Hosting Template Family 0.1.0 | [`site-hosting-family-v0.1-draft.md`](site-hosting-family-v0.1-draft.md), `amade/catalog/index.json`, `amade/families/`, `amade/templates/` | Experimental grouped catalog integrated on Amade `dev` and consumed by BlogGenius development. It defines `families[]`, family/template manifests, common metadata, lifecycle states, and durable `site-data/`. The experiment folder retains fixtures and verification scripts. |
+| BlogGenius Style next generation | Not yet designed against the 0.1 family model | Deferred. The v1 Style schema remains a legacy format reference only. |
+
+The 0.1 proof has two families with two Astro presentation templates each. It verifies A→B→A builds, lowercase ASCII content IDs, path/kind matching, nested internal page routes, and same-family data preservation. The four manifests include required name/description/author/package version/license/categories/tags/representative preview/status; screenshots, homepage, and support are optional. The lifecycle values are `active`, `deprecated`, and `withdrawn`; current proof templates use `active`. Its catalog status `experimental` is distinct from each template's lifecycle status.
+
+Do not combine v1 and 0.1 manifests in one catalog or claim automatic compatibility. Keep the 0.1 spec experimental until the remaining negative/route-edge cases, formal JSON Schema, and BlogGenius materialization/filtering behavior are validated. Promote it to `1.0.0` only after that validation and an explicit spec decision.

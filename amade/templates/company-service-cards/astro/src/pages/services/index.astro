@@ -1,0 +1,5 @@
+---
+import { getCollection } from 'astro:content'; import '../../styles.css';
+const items=await getCollection('content',({data})=>data.is_public&&data.kind==='service');
+---
+<html lang="ko"><head><meta charset="utf-8"/><title>서비스</title></head><body><main class="shell"><h1>서비스</h1>{items.map(item=><article><a href={`/services/${item.id.split('/').at(-1)}/`}><h2>{item.data.title}</h2></a><p>{item.data.description}</p></article>)}</main></body></html>

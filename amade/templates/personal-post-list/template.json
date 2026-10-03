@@ -1,0 +1,28 @@
+{
+  "spec_version": "0.1.0",
+  "template_id": "personal-post-list",
+  "family_id": "personal-homepage",
+  "name": "상단 메뉴 · 글 목록형",
+  "astro_project": "astro",
+  "site_data": "../../site-data",
+  "categories": [
+    "Personal Website",
+    "Blog"
+  ],
+  "tags": [
+    "Top Navigation",
+    "Chronological List"
+  ],
+  "layout": "list",
+  "description": "개인 홈페이지의 글과 작업을 시간 순서 목록으로 보여주는 상단 메뉴형 Astro 템플릿.",
+  "author": "amadejjs",
+  "version": "0.1.0",
+  "license": "MIT",
+  "preview": "preview.png",
+  "status": "active",
+  "homepage": "https://www.bloggenius.kr",
+  "support": "mailto:amadejjs@naver.com",
+  "screenshots": [
+    "screenshots/full-page.png"
+  ]
+}

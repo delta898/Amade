@@ -1,21 +1,24 @@
 {
-  "schema_version": 1,
+  "spec_version": "0.1.0",
+  "status": "experimental",
   "catalog_id": "amade-official",
   "name": "Amade Official Catalog",
-  "resources": [
+  "families": [
     {
-      "kind": "site-hosting",
-      "id": "astro-homepage",
-      "version": "1.3.0",
-      "revision": "7e0b02cb3c34f780de5a1f16d524cd6cc2e902bb",
-      "manifest": "amade/templates/site-hosting/astro-homepage/1.3.0/resource.json"
+      "family_id": "company-homepage",
+      "manifest": "amade/families/company-homepage/family.json",
+      "templates": [
+        { "template_id": "company-service-cards", "manifest": "amade/templates/company-service-cards/template.json" },
+        { "template_id": "company-service-list", "manifest": "amade/templates/company-service-list/template.json" }
+      ]
     },
     {
-      "kind": "site-hosting",
-      "id": "studio-journal",
-      "version": "1.3.0",
-      "revision": "7e0b02cb3c34f780de5a1f16d524cd6cc2e902bb",
-      "manifest": "amade/templates/site-hosting/studio-journal/1.3.0/resource.json"
+      "family_id": "personal-homepage",
+      "manifest": "amade/families/personal-homepage/family.json",
+      "templates": [
+        { "template_id": "personal-card-grid", "manifest": "amade/templates/personal-card-grid/template.json" },
+        { "template_id": "personal-post-list", "manifest": "amade/templates/personal-post-list/template.json" }
+      ]
     }
   ]
 }

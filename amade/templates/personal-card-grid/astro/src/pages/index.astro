@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import '../styles.css';
+import site from '../site-data';
+const all=await getCollection('content',({data})=>data.is_public);
+const posts=all.filter(x=>x.data.kind==='post');
+const items=all.filter(x=>x.data.kind==='work');
+const pages=all.filter(x=>x.data.kind==='page');
+---
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>{site.displayName}</title></head><body><main class:list={['shell','']}><header><strong><img src={site.logo} alt=""/>{site.displayName}</strong><nav>{site.navigation.map(link=><a href={link.path}>{link.label}</a>)}</nav></header><section><p>personal-homepage · grid</p><h1>{site.headline}</h1><p>{site.biography}</p></section><section><h2>작업</h2><div class="items">{items.map(item=><article><a href={`/work/${item.id.split('/').at(-1)}/`}><h3>{item.data.title}</h3></a><p>{item.data.description}</p></article>)}</div></section><section><h2>글</h2><div class="items">{posts.map(post=><article><a href={`/blog/${post.id.split('/').at(-1)}/`}><h3>{post.data.title}</h3></a><p>{post.data.description}</p></article>)}</div></section><footer>Family data proof · personal-card-grid</footer></main></body></html>

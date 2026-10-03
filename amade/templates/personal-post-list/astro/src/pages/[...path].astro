@@ -1,0 +1,6 @@
+---
+import { getCollection, render } from 'astro:content'; import '../styles.css';
+export async function getStaticPaths(){const pages=await getCollection('content',({data})=>data.is_public&&data.kind==='page');return pages.map(page=>({params:{path:page.data.path.replace(/^\/+|\/+$/g,'')},props:{page}}));}
+const {page}=Astro.props;const {Content}=await render(page);
+---
+<html lang="ko"><head><meta charset="utf-8"/><title>{page.data.title}</title></head><body><main class="shell"><a href="/">홈</a><h1>{page.data.title}</h1><Content/></main></body></html>

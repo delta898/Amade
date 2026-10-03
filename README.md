@@ -2,13 +2,27 @@
 
 Amade는 BlogGenius가 외부에서 가져오는 버전 관리형 사이트 템플릿과 외모 스타일 catalog입니다. 리소스는 이 저장소에서 검토·관리하며, BlogGenius는 공개 catalog와 각 리소스의 고정된 Git revision을 읽습니다.
 
-## 제공 리소스
+> **규격 세대 주의:** `dev`의 `amade/catalog/index.json`은 Site Hosting Template Family **0.1.0 experimental** grouped catalog이며 BlogGenius 개발 환경이 이를 읽습니다. 기존 1.x 패키지와 문서는 legacy로 보존되어 있으나 새 catalog에는 포함하지 않습니다. `main`은 production 전환 전까지 기존 정책대로 별도 관리합니다. 두 형식은 호환되지 않습니다.
+
+## 규격 세대
+
+| 규격 | 문서 / 위치 | 현재 역할 |
+| --- | --- | --- |
+| Amade resource v1 (legacy) | [`amade/spec/README.md`](amade/spec/README.md), 역사적 `amade/templates/site-hosting/` 경로 | 기존 패키지 형식과 당시 연동 동작을 참고용으로 기록합니다. 신규 0.1 템플릿에 적용하지 않습니다. |
+| Site Hosting Template Family 0.1.0 (experimental) | [`spec draft`](amade/spec/site-hosting-family-v0.1-draft.md), `amade/families/`, `amade/templates/` | Family 계약, 템플릿 metadata/status, 공통 site-data 및 4개 Astro 템플릿을 정의합니다. dev catalog와 BlogGenius 개발 환경에 연결되어 검증 중입니다. |
+| BlogGenius Style next generation | 후속 설계 | 기존 v1 Style schema는 보존하며, 새 규격 적용은 Site Hosting 검증 뒤에 결정합니다. |
+
+## 제공 리소스 (dev: Site Hosting Family 0.1.0)
+
+dev catalog groups templates by family: Personal Homepage (`personal-post-list`, `personal-card-grid`) and Company Homepage (`company-service-cards`, `company-service-list`). Packages are under `amade/families/` and `amade/templates/`; the four templates are experimental and offered for development validation. Legacy v1 package files remain in their historical folders and are not listed in the 0.1 catalog.
+
+## Legacy v1 리소스 참고
 
 ### Site Hosting (`site-hosting`)
 
-일반 Astro 프로젝트를 복사해 새 BlogGenius Site를 만드는 템플릿입니다. 리소스는 미리보기, 설명, 제작자, 라이선스, 지원 링크, 사용자 설정, 빌드 경로와 글 저장 위치·URL 규칙을 선언합니다. 공개 dev 카탈로그는 `Astro Homepage 1.3.0`과 `Studio Journal 1.3.0`을 제공합니다. Studio Journal은 StaticWeb의 두 Astro 사이트에서 검증된 소개 페이지와 글 목록·상세 패턴을 브랜드 중립적으로 재구성했습니다.
+일반 Astro 프로젝트를 복사해 새 BlogGenius Site를 만드는 템플릿입니다. Legacy v1 리소스는 미리보기, 설명, 제작자, 라이선스, 지원 링크, 사용자 설정, 빌드 경로와 글 저장 위치·URL 규칙을 선언합니다. 과거 v1 dev catalog에는 `Astro Homepage 1.3.0`과 `Studio Journal 1.3.0`이 있었습니다. Studio Journal은 StaticWeb의 두 Astro 사이트에서 검증된 소개 페이지와 글 목록·상세 패턴을 브랜드 중립적으로 재구성했습니다.
 
-BlogGenius의 사이트 생성 화면은 개발 환경에서 `dev`, 운영 환경에서 `main` 카탈로그를 조회합니다. Amade catalog에 새 리소스나 새 버전을 등록하면 해당 환경의 템플릿 목록에 반영됩니다.
+이 설명은 legacy v1 catalog 동작의 기록입니다. 현재 dev Site Hosting은 Template Family 0.1.0 grouped catalog를 사용하며, 새 템플릿은 `active` 상태일 때 선택 목록에 표시됩니다.
 
 ### BlogGenius Style (`bloggenius-style`)
 
@@ -16,24 +30,22 @@ BlogGenius의 사이트 생성 화면은 개발 환경에서 `dev`, 운영 환�
 
 ## 저장소 구조
 
-- `amade/catalog/index.json` — 공식 리소스 목록. 각 항목은 유형, ID, 버전, manifest 경로와 불변 Git commit revision을 가리킵니다.
+- `amade/catalog/index.json` — 현재 dev family 목록. 각 family는 family manifest와 순서가 있는 template 목록을 가리킵니다. BlogGenius는 catalog branch의 commit SHA를 pinning 기준으로 사용합니다.
 - `amade/spec/` — 공통 catalog/resource 규격과 각 리소스 유형별 JSON Schema.
-- `amade/templates/site-hosting/{id}/{version}/` — 버전이 고정된 Site Hosting 패키지, 미리보기, manifest와 라이선스.
+- `amade/families/{family-id}/` — family manifest 및 초기 site-data seed.
+- `amade/templates/{template-id}/` — complete Astro project, preview/screenshots 및 template manifest.
+- `amade/templates/site-hosting/{id}/{version}/` — 보존된 legacy v1 Site Hosting 패키지.
 - `amade/templates/bloggenius-style/{id}/{version}/` — 향후 Style 패키지 위치.
 
-리소스 manifest는 파일별 SHA-256 checksum을 선언합니다. BlogGenius는 해당 파일을 내려받을 때 checksum을 검사하고 Site에 선택된 리소스 revision을 기록합니다. 기존 리소스 버전의 내용을 바꾸지 말고, 변경은 새 버전으로 추가한 뒤 catalog를 갱신하세요.
+Legacy v1 resource manifest는 파일별 SHA-256 checksum을 선언하며 BlogGenius는 내려받을 때 이를 검사합니다. 0.1 packages are pinned to one immutable Amade Git commit revision; do not overwrite a published template package version.
 
-## 새 리소스를 추가하는 흐름
+## Legacy v1 리소스 형식
 
-1. 유형별 schema에 맞춰 버전 폴더에 패키지와 preview를 추가합니다.
-2. manifest에 ID, 버전, 라이선스, 호환성, 파일 checksum과 유형별 설정을 기록합니다.
-3. 패키지를 별도 Git commit으로 고정합니다.
-4. 그 commit SHA와 manifest 경로를 `amade/catalog/index.json`에 등록합니다.
-5. 변경을 검토한 뒤 pull request로 제출합니다.
+기존 v1 파일의 위치와 동작은 아래 legacy 문서를 참고합니다. 신규 Site Hosting 템플릿은 0.1 family 규격을 사용하며 v1 schema로 검증하지 않습니다.
 
 현재 catalog는 관리자가 검토해 반영합니다. 사용자 업로드, 공개 marketplace, 평점·결제 기능은 포함하지 않습니다. 각 리소스는 manifest에 자체 라이선스를 명시하며, 현재 Astro Homepage 패키지는 MIT입니다.
 
-## 규격 간단 안내
+## Legacy v1 규격 간단 안내
 
 상세 규격, Astro project를 template으로 패키징하는 방법, manifest 필드, 버전 발행·갱신 절차는 [`amade/spec/README.md`](amade/spec/README.md)를 참고하세요. 규격 또는 지원 동작을 바꾸면 이 문서도 같은 변경에서 갱신합니다.
 
@@ -42,4 +54,4 @@ BlogGenius의 사이트 생성 화면은 개발 환경에서 `dev`, 운영 환�
 - `site-hosting-v1.schema.json`: Astro source와 build/output, 사용자가 변경할 수 있는 필드 및 그 저장 위치, 게시 글의 content 경로와 URL/frontmatter 규칙입니다.
 - `bloggenius-style-v1.schema.json`: `bloggenius-style-tokens-1.0`에 필요한 semantic token을 빠짐없이 제공하는 데이터 전용 Style 형식입니다.
 
-두 리소스 유형은 catalog와 공통 resource envelope를 공유하지만 세부 스키마와 소비 기능은 분리되어 있습니다.
+두 v1 리소스 유형은 catalog와 공통 resource envelope를 공유하지만 세부 스키마와 소비 기능은 분리되어 있습니다. 이 설명은 v1에만 적용됩니다. 0.1.0의 공통 metadata, lifecycle status, family grouping 규칙은 새 spec draft가 기준입니다.

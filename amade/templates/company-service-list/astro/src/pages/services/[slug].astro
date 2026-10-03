@@ -1,0 +1,6 @@
+---
+import { getCollection, render } from 'astro:content'; import '../../styles.css';
+export async function getStaticPaths(){const items=await getCollection('content',({data})=>data.is_public&&data.kind==='service');return items.map(item=>({params:{slug:item.id.split('/').at(-1)},props:{item}}));}
+const {item}=Astro.props;const {Content}=await render(item);
+---
+<html lang="ko"><head><meta charset="utf-8"/><title>{item.data.title}</title></head><body><main class="shell"><a href="/services/">목록</a><h1>{item.data.title}</h1><Content/></main></body></html>
