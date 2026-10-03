@@ -42,7 +42,7 @@ amade/
       style.json             # token data package
 ```
 
-The public development catalog offers 1.2.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.2.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.2.0/README.md). These versions add creator/support metadata and the verified Markdown post-bundle publishing contract. Version 1.1.0 remains immutable in Git history.
+The public development catalog currently points to 1.2.0 of [`astro-homepage`](../templates/site-hosting/astro-homepage/1.2.0/README.md) and [`studio-journal`](../templates/site-hosting/studio-journal/1.2.0/README.md). Local 1.3.0 drafts keep the same starter menus and clarify the simple menu/publishing contract; they are not active in the catalog.
 
 A Site Hosting resource contains the Astro project itself. It is not merely a screenshot or a link to another repository: BlogGenius copies the declared Astro source into a new Site so it can be edited, built, previewed, and deployed as an ordinary Astro project. Existing Astro projects can be used as a starting point for a package; remove personal data and secrets, decide which files are reusable, and declare only supported customization points.
 
@@ -115,7 +115,15 @@ Each `customization.fields[]` entry declares a value BlogGenius may apply to a J
 - `target.file`: JSON file under the Astro source, such as `src/site-config.json`.
 - `target.path`: dotted JSON key path to update, such as `name` or `navigation`.
 
-Keep customizable values in a small, explicit config file instead of asking BlogGenius to rewrite arbitrary Astro/JavaScript source. In v1, `target` is limited to JSON paths, and unsupported `key` or `type` values must not be invented without a schema and consumer update. The Site creation flow can apply declared name/logo/navigation customization; added placeholder pages are available only when the selected template declares `site_hosting.pages` and includes the matching Astro route.
+Keep customizable values in a small, explicit config file instead of asking BlogGenius to rewrite arbitrary Astro/JavaScript source. In v1, `target` is limited to JSON paths, and unsupported `key` or `type` values must not be invented without a schema and consumer update. The Site creation flow can apply the declared name, logo, and starter navigation. Navigation defaults are the `label` and internal `href` values in the `navigation` customization field. `publishing.routes.listing` identifies the default menu destination for the post list and must match one default `href`. When users edit menus or choose another menu for the post list, BlogGenius validates and applies those values during site creation/build. For a custom internal path, BlogGenius creates a placeholder page using the template’s declared `site_hosting.pages` behavior.
+
+### Navigation and publishing menu
+
+The manifest uses the existing `customization.fields` navigation default as the starter menu. Each item contains a visible `label` and an internal `href` (for example `/about/`). Keep this data as the template’s initial menu; user edits belong to the generated Site configuration.
+
+`publishing.routes.listing` is the initial post-list path and must match one navigation default `href`. During Site creation, BlogGenius lets the user select which menu item opens the post list; the selected item’s internal path becomes that Site’s listing route. BlogGenius owns path validation and generates a placeholder page for custom internal menu paths, while the template provides the default pages and its declared placeholder-page route.
+
+The manifest does not declare editable fields, item-count rules, path policies, or UI behavior. Keeping those rules out of the template avoids duplicating behavior that belongs to BlogGenius.
 
 ### Future BlogGenius publishing contract
 
