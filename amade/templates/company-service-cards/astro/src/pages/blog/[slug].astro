@@ -1,6 +1,50 @@
 ---
-import { getCollection, render } from 'astro:content'; import '../../styles.css';
-export async function getStaticPaths(){const posts=await getCollection('content',({data})=>data.kind==='post'&&(data.publication!=='none'));return posts.map(post=>({params:{slug:post.id.split('/').at(-1)},props:{post}}));}
-const {post}=Astro.props;const {Content}=await render(post);
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../../content-utils';
+import { getCollection, render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import '../../styles.css';
+import site from '../../site-data';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('content', (entry) => contentKind(entry) === 'post' && isContentDeployed(entry));
+  return posts.map((post) => ({ params: { slug: post.id.split('/').at(-1) }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const slug = post.id.split('/').at(-1);
+const route = `/blog/${slug}/`;
+const canonicalUrl = Astro.site ? new URL(route, Astro.site).href : undefined;
+const title = `${contentTitle(post)} | ${site.displayName}`;
+const cover = post.data.cover ? await getImage({ src: post.data.cover, format: post.data.cover.format === 'svg' ? 'svg' : 'webp' }) : undefined;
+const imageUrl = cover && Astro.site ? new URL(cover.src, Astro.site).href : undefined;
+const publishedAt = post.data.published_at;
+const publishedAtDate = publishedAt ? new Date(publishedAt) : undefined;
+const publishedAtIso = publishedAtDate?.toISOString();
+const displayPublishedAt = publishedAtDate?.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
 ---
-<html lang="ko"><head><meta charset="utf-8"/><title>{post.data.title}</title></head><body><main class="shell"><a href="/blog/">글 목록</a><h1>{post.data.title}</h1><Content/></main></body></html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    {contentDescription(post) && <meta name="description" content={contentDescription(post)} />}
+    <meta property="og:title" content={title} />
+    {contentDescription(post) && <meta property="og:description" content={contentDescription(post)} />}
+    <meta property="og:type" content="article" />
+    {contentAuthor(post) && <meta name="author" content={contentAuthor(post)} />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {post.data.publication === 'private' && <meta name="robots" content="noindex, nofollow" />}
+    {publishedAt && <meta property="article:published_time" content={publishedAtIso} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && <meta property="og:image:alt" content={post.data.cover_alt || ''} />}
+  </head>
+  <body>
+    <main class="shell">
+      <a href="/blog/">글 목록</a>
+      {(!hasContentHeading(post) || post.data.title) && <h1>{contentTitle(post)}</h1>}
+      {publishedAt && <time datetime={publishedAtIso}>{displayPublishedAt}</time>}
+      <Content />
+    </main>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 ---
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../content-utils';
 import { getCollection, render } from 'astro:content'; import '../styles.css';
-export async function getStaticPaths(){const pages=await getCollection('content',({data})=>data.is_public&&data.kind==='page');return pages.map(page=>({params:{path:page.data.path.replace(/^\/+|\/+$/g,'')},props:{page}}));}
+export async function getStaticPaths(){const pages=await getCollection('content',(entry)=>contentKind(entry)==='page'&&isContentPublic(entry));return pages.map(page=>({params:{path:contentPath(page)},props:{page}}));}
 const {page}=Astro.props;const {Content}=await render(page);
 ---
-<html lang="ko"><head><meta charset="utf-8"/><title>{page.data.title}</title></head><body><main class="shell"><a href="/">홈</a><h1>{page.data.title}</h1><Content/></main></body></html>
+<html lang="ko"><head><meta charset="utf-8"/><title>{contentTitle(page)}</title></head><body><main class="shell"><a href="/">홈</a>{(!hasContentHeading(page) || page.data.title) && <h1>{contentTitle(page)}</h1>}<Content/></main></body></html>

@@ -1,10 +1,12 @@
 ---
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../content-utils';
 import { getCollection } from 'astro:content';
 import '../styles.css';
+import { sortPostsNewestFirst } from '../post-order';
 import site from '../site-data';
-const all=await getCollection('content',({data})=>data.kind==='post'?(data.publication==='public'):data.is_public);
-const posts=all.filter(x=>x.data.kind==='post');
-const items=all.filter(x=>x.data.kind==='service');
-const pages=all.filter(x=>x.data.kind==='page');
+const all=await getCollection('content',(entry)=>isContentPublic(entry));
+const posts=sortPostsNewestFirst(all.filter(x=>contentKind(x)==='post'));
+const items=all.filter(x=>contentKind(x)==='service');
+const pages=all.filter(x=>contentKind(x)==='page');
 ---
-<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>{site.displayName}</title></head><body><main class:list={['shell','left-list']}><header><strong><img src={site.logo} alt=""/>{site.displayName}</strong><nav>{site.navigation.map(link=><a href={link.path}>{link.label}</a>)}</nav></header><section><p>company-homepage · left-list</p><h1>{site.tagline}</h1><p>{site.about}</p></section><section><h2>서비스</h2><div class="items">{items.map(item=><article><a href={`/services/${item.id.split('/').at(-1)}/`}><h3>{item.data.title}</h3></a><p>{item.data.description}</p></article>)}</div></section><section><h2>글</h2><div class="items">{posts.map(post=><article><a href={`/blog/${post.id.split('/').at(-1)}/`}><h3>{post.data.title}</h3></a><p>{post.data.description}</p></article>)}</div></section><footer>Family data proof · company-service-list</footer></main></body></html>
+<html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>{site.displayName}</title></head><body><main class:list={['shell','left-list']}><header><strong><img src={site.logo} alt=""/>{site.displayName}</strong><nav>{site.navigation.map(link=><a href={link.path}>{link.label}</a>)}</nav></header><section><p>company-homepage · left-list</p><h1>{site.tagline}</h1><p>{site.about}</p></section><section><h2>서비스</h2><div class="items">{items.map(item=><article><a href={`/services/${item.id.split('/').at(-1)}/`}><h3>{contentTitle(item)}</h3></a>{contentDescription(item) && <p>{contentDescription(item)}</p>}</article>)}</div></section><section><h2>글</h2><div class="items">{posts.map(post=><article><a href={`/blog/${post.id.split('/').at(-1)}/`}><h3>{contentTitle(post)}</h3></a>{contentDescription(post) && <p>{contentDescription(post)}</p>}</article>)}</div></section><footer>Family data proof · company-service-list</footer></main></body></html>

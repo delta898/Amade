@@ -139,31 +139,31 @@ This section records the currently tested contract shape, not a final compatibil
 
 The family-specific profile fields are required strings in this proof: Personal Homepage has `headline` and `biography`; Company Homepage has `tagline` and `about`. Both have the shared `displayName` and optional `logo`.
 
-### Markdown content and identity
+### Markdown content and identity (content contract 0.7.1)
 
-All content bodies are Markdown. Identity comes from the stable path within `site-data/data/`, rather than a separate frontmatter ID:
+Markdown files are identified by safe source paths under `site-data/data/`; frontmatter is optional and extensible. No frontmatter field is universally required. If the frontmatter block is absent, the entry is still valid. The path supplies content kind and stable content ID; an optional `kind` must match that path. Unknown properties are preserved by Astro's content schema and ignored unless a future contract gives them meaning.
 
-| Content | Storage and identity | Required frontmatter | Optional frontmatter | Public URL |
+| Content | Storage and identity | Required frontmatter | Optional frontmatter | Default output behavior |
 |---|---|---|---|---|
-| Page | `pages/<id>.md`; `<id>` is its stable file ID | `kind: page`, `title`, `path` | `is_public` (defaults to `false`) | `path` is a root-relative internal URL; nested paths are supported |
-| Post | `posts/<slug>/index.md`; directory slug is stable | `kind: post`, `title`, `description`; optional `date` (`YYYY-MM-DD`) | `editorial_status` (`draft`/`complete`, default `draft`); `publication` (`none`/`private`/`public`, default `none`) | `/blog/` and `/blog/<slug>/` |
-| Work item (Personal Homepage only) | `work/<slug>/index.md`; directory slug is stable | `kind: work`, `title`, `description` | `order` (non-negative integer), `is_public` (defaults to `false`) | `/work/` and `/work/<slug>/` |
-| Service (Company Homepage only) | `services/<slug>/index.md`; directory slug is stable | `kind: service`, `title`, `description` | `order` (non-negative integer), `is_public` (defaults to `false`) | `/services/` and `/services/<slug>/` |
+| Page | `pages/<id>.md`; filename stem is stable ID | None | `kind`, `title`, `path`, `is_public`, and user-defined metadata | `is_public` defaults to false. If `path` is absent, route is `/<id>/`. |
+| Post | `posts/<slug>/index.md`; directory slug is stable ID | None | `kind`, `title`, `description`, optional `author`, `cover` (entry-relative local image), `cover_alt`, `date` (`YYYY-MM-DD`), `published_at` (ISO 8601 with explicit offset), `editorial_status`, `publication`, tags/categories, and any user-defined metadata | `publication` defaults to `none` (no output); `editorial_status` defaults to `draft`. |
+| Work item (Personal Homepage) | `work/<slug>/index.md`; directory slug is stable ID | None | `kind`, `title`, `description`, `order`, `is_public`, and user-defined metadata | `is_public` defaults to false. |
+| Service (Company Homepage) | `services/<slug>/index.md`; directory slug is stable ID | None | `kind`, `title`, `description`, `order`, `is_public`, and user-defined metadata | `is_public` defaults to false. |
 
-`kind` is required and must match its family. Content IDs (page filename stems and collection directory slugs) use lowercase ASCII letters, digits, and single hyphens between groups; they cannot start or end with a hyphen. Template loaders validate both the path shape and its matching `kind`. User-facing titles remain Unicode. Unknown frontmatter properties are rejected by the current strict Astro schemas. For pages, work, and services, a missing `is_public` means private; only `true` entries generate their public routes. Posts use the independently versioned 0.4.0 contract: `editorial_status` defaults to `draft`; `publication` defaults to `none`. Editorial status is independent from publication. `none` stays in local Site data and emits no route; `private` emits a deployed detail route but is omitted from public listings; `public` emits and lists the route. Direct URLs for `private` posts remain accessible. Optional post `date` is a validated date-only `YYYY-MM-DD` value. Route collisions and whether built-in paths remain customizable are still open. A template must generate the same family routes and use the same slug identity as its siblings.
+Content ID path segments use lowercase ASCII letters, digits, and single hyphens between groups; they cannot start or end with a hyphen. Unsupported path shapes and an explicit `kind` that disagrees with the path remain errors. The family-specific Astro schemas validate known fields but use pass-through behavior for additional properties. Missing title falls back to the first Markdown H1, then to the path-derived slug. Missing description is omitted. Optional `author` is emitted as author metadata only when explicitly supplied. Invalid optional `date` and `published_at` values are ignored; invalid publication/editorial enum values remain errors.
 
-Images referenced by Markdown live in that entry's sibling `images/` directory and use entry-relative paths such as `./images/photo.svg`. Site-level logos live under `site-data/public/` and use a root-relative public URL. The proof validates an SVG; accepted production image formats, size limits, and broken-reference diagnostics remain to be specified.
+For posts, `publication: none` stays in local Site data and emits no route; `private` emits a deployed detail route but is omitted from public listings; `public` emits and lists the route. Missing publication is equivalent to `none`. Direct URLs for `private` posts remain accessible. Public post lists sort descending by `published_at`, falling back to `date`, then ascending stable content ID for ties and entries without dates. `cover` is the optional representative-image source relative to the post file; BlogGenius writes the first image block there and copies its title to `cover_alt`. Astro consumes this value for list thumbnails and `og:image` when an absolute public site URL is known; a template never modifies the source Markdown. Each post detail title is `<post title> | <site displayName>`. A template must generate the same family routes and use the same slug identity as its siblings.
 
 ### Family-specific data
 
 - **Personal Homepage:** `site-data/data/work/<slug>/index.md` is a public or private work item with title, description, optional order, Markdown body, and entry images. Both family templates must render work items and posts, even when one presentation emphasizes posts.
 - **Company Homepage:** `site-data/data/services/<slug>/index.md` is a public or private service with title, description, optional order, Markdown body, and entry images. Both family templates must render services and posts/news.
 
-The four template builds now use family-specific discriminated frontmatter schemas: personal templates accept `page`, `post`, and `work`; company templates accept `page`, `post`, and `service`. Required/optional fields and defaults above are enforced; unknown frontmatter properties are rejected. This prevents a template from silently accepting the other family's content type. Positive fixtures pass across the four templates; scratch negative builds confirmed that unknown fields, non-canonical IDs, and path/kind mismatches are rejected. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
+The initial four-template proof used family-specific discriminated frontmatter schemas. Contract 0.7.1 supersedes that strictness: path shape determines family content kind and stable ID, fields are optional, and unknown frontmatter properties pass through without interpretation. Invalid explicit `kind` mismatches and invalid deployment enums remain errors. This prevents a template from silently accepting the other family's content type. Positive fixtures pass across the four templates; the 0.7.1 contract permits absent and unknown metadata while retaining path safety and explicit kind matching. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
 
 Verified route patterns are `/`, page paths from frontmatter (including `/about/team/`), `/blog/` and `/blog/{slug}/`, plus `/work/` and `/work/{slug}/` for Personal Homepage or `/services/` and `/services/{slug}/` for Company Homepage. The route patterns for posts and family-specific collections are shared by all templates in a family. Route collisions and canonical slash/Unicode normalization still need tests.
 
-The test runner performs A→B→A builds by replacing the template project in one materialized Site root. Both families retained identical SHA-256 hashes for all nine fixture data/media files. All four Astro 7.3.5 templates rendered the same site-data navigation and generated public listings/details and the nested `/about/team/` page, omitted private entries, copied the family logo, and emitted entry-relative Markdown image assets. Loaders resolve `site-data/data/` and reject file paths whose shape or `kind` does not match the family content contract. See `../experiments/site-hosting-family-v0.1/README.md` and its `scripts/build_and_verify.py`.
+The test runner performs A→B→A builds by replacing the template project in one materialized Site root. Both families retained identical SHA-256 hashes for all nine fixture data/media files. All four Astro 7.3.5 templates rendered the same site-data navigation and generated public listings/details and the nested `/about/team/` page, applied publication/visibility rules, copied the family logo, and emitted entry-relative Markdown image assets. Loaders resolve `site-data/data/`, derive IDs from supported paths, and reject unsupported shapes or explicit kind mismatches. See `../experiments/site-hosting-family-v0.1/README.md` and its `scripts/build_and_verify.py`.
 
 ## Initial proof families and template examples
 
@@ -197,7 +197,7 @@ These route patterns are provisional. The proof must decide whether each family 
 The current `1.x` resources are legacy, but their independently verified behavior is useful evidence:
 
 - A Markdown post can be a per-entry directory with `index.md` and a sibling `images/` directory using entry-relative references.
-- `title`, `description`, optional `date`, `editorial_status` (`draft`/`complete`), and `publication` (`none`/`private`/`public`) define the 0.4.0 post contract.
+- `title`, `description`, optional `date`, `editorial_status` (`draft`/`complete`), and `publication` (`none`/`private`/`public`) define the 0.5.0 post contract.
 - Astro builds can verify listing/detail routes, public filtering, and image URLs.
 - Immutable package revisions, checksums, author/license attribution, and representative preview media are useful package practices.
 
@@ -215,12 +215,12 @@ Completed in the current proof:
 - Verified the fixture's profile, logo, full navigation, nested authored page, public/private post, family-specific content, listing/detail routes, and entry-relative images in each template.
 - Ran A → B → A per family and confirmed all nine family data/media file hashes stayed identical.
 - Added strict per-family content schemas and Site JSON validation; all valid fixtures build successfully.
-- Confirmed through isolated negative builds that unknown frontmatter, non-canonical IDs, and mismatched path/kind are rejected.
+- The initial isolated negative builds confirmed strict-schema behavior that was later superseded by contract 0.7.0; path and explicit kind mismatch checks remain.
 
 Remaining before the format can be considered stable:
 
-- Add negative cases for malformed `site.json`, missing/unknown frontmatter, unsupported content kind, and invalid path.
-- Turn the negative checks for IDs, path/kind, and unknown frontmatter into repeatable fixtures; add malformed/missing `site.json` cases.
+- Add repeatable checks for malformed `site.json`, unsupported content kind, explicit path/kind mismatch, and invalid path. Contract 0.7.0 explicitly permits absent/unknown frontmatter.
+- Turn path/ID and explicit kind mismatch checks into repeatable fixtures; add malformed/missing `site.json` cases and positive fixtures for absent/unknown frontmatter.
 - Define and test Unicode route output, reserved paths, duplicate/colliding routes, and optional-field edge cases.
 - Verify that a failed conversion/build never replaces the last usable presentation or changes family data.
 - Formalize JSON Schema for family and template manifests and run the contract through BlogGenius materialization.
@@ -236,3 +236,20 @@ Keep the spec experimental until these checks and remaining design decisions are
 - How BlogGenius detects user edits that a same-family conversion would replace.
 - Existing 1.x resources remain legacy and are excluded from the isolated 0.1 experimental catalog; 0.1 lifecycle states govern only resources conforming to this new manifest format.
 - Astro runtime compatibility declarations remain follow-up. BlogGenius app compatibility is required on both resource types: current packages target minimum BlogGenius `0.6.0` and declare their type-specific BlogGenius contract ID/version.
+
+
+## 2026-10-05 — Content contract 0.7.0: optional and extensible frontmatter
+
+- User decision: no frontmatter field is universally required. The source path supplies stable content identity and kind; an optional `kind` must match the path.
+- All four templates accept absent frontmatter, use optional known fields, preserve unknown frontmatter keys without interpreting them, and derive missing display titles from first H1 then path slug. Missing descriptions are omitted.
+- `publication` defaults to `none`; posts without an explicit publication intent do not generate output. `editorial_status` defaults to `draft`; pages/work/services default to `is_public: false`.
+- Invalid optional `date`/`published_at` values are ignored. Invalid enum values that affect deployment remain build errors.
+- Existing materialized Sites keep their copied template version; consuming contract updates requires updating/recreating the template source.
+
+
+## 2026-10-05 — Content contract 0.7.1: representative image
+
+- Added optional post fields `cover` (entry-relative image path) and `cover_alt` (optional alternative text). BlogGenius records the first image block and its title when available.
+- All four templates use `cover` for blog-list thumbnails and `og:image` / optional `og:image:alt`; they do not modify source frontmatter. Raster images are optimized, while SVG covers pass through as SVG.
+- Both family manifests now declare content contract `0.7.1`; four packages advance to `0.4.4`. BlogGenius requires exact contract `0.7.1`.
+- Build and verification use canonical Amade package and family sources, not stale duplicate experiment copies. Existing materialized Sites keep their copied template version and must be recreated or upgraded to consume it.

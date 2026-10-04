@@ -13,7 +13,8 @@
     "site_profile",
     "navigation",
     "media",
-    "content_types"
+    "content_types",
+    "content_frontmatter_policy"
   ],
   "properties": {
     "spec_version": {
@@ -176,10 +177,54 @@
           "detail_route": {
             "type": "string",
             "pattern": "^/"
+          },
+          "frontmatter_policy": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "additionalProperties": false
       }
+    },
+    "content_frontmatter_policy": {
+      "type": "object",
+      "required": [
+        "required_fields",
+        "path_is_identity_source",
+        "kind_may_be_omitted_and_is_inferred_from_path",
+        "unknown_properties",
+        "post_publication_default",
+        "post_author",
+        "post_representative_image"
+      ],
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "path_is_identity_source": {
+          "type": "boolean"
+        },
+        "kind_may_be_omitted_and_is_inferred_from_path": {
+          "type": "boolean"
+        },
+        "unknown_properties": {
+          "const": "preserve-and-ignore"
+        },
+        "post_publication_default": {
+          "const": "none"
+        },
+        "post_author": {
+          "const": "optional string; omitted unless explicitly supplied"
+        },
+        "post_representative_image": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {

@@ -1,5 +1,8 @@
 ---
-import { getCollection } from 'astro:content'; import '../../styles.css';
-const posts=await getCollection('content',({data})=>data.kind==='post'&&(data.publication==='public'));
+import { contentKind, contentTitle, contentDescription, isContentPublic } from '../../content-utils';
+import { getCollection } from 'astro:content'; import '../../styles.css'; import { sortPostsNewestFirst } from '../../post-order';
+import { getImage } from 'astro:assets';
+const posts=sortPostsNewestFirst(await getCollection('content',(entry)=>contentKind(entry)==='post'&&isContentPublic(entry)));
+const cards=await Promise.all(posts.map(async post=>({post, thumbnail:post.data.cover ? await getImage({src:post.data.cover,format:post.data.cover.format==='svg'?'svg':'webp',...(post.data.cover.format==='svg'?{}:{width:720})}) : undefined})));
 ---
-<html lang="ko"><head><meta charset="utf-8"/><title>글 목록</title></head><body><main class="shell"><h1>글 목록</h1>{posts.map(post=><article><h2>{post.data.title}</h2><p>{post.data.description}</p></article>)}</main></body></html>
+<html lang="ko"><head><meta charset="utf-8"/><title>글 목록</title></head><body><main class="shell"><h1>글 목록</h1>{cards.map(({post,thumbnail})=><article>{thumbnail && <img class="post-thumbnail" src={thumbnail.src} width={thumbnail.attributes.width} height={thumbnail.attributes.height} alt={post.data.cover_alt || ''} loading="lazy"/>}<h2>{contentTitle(post)}</h2>{contentDescription(post) && <p>{contentDescription(post)}</p>}</article>)}</main></body></html>

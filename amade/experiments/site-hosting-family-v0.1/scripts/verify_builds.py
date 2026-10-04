@@ -4,17 +4,18 @@ from html.parser import HTMLParser
 from pathlib import Path
 import sys, json
 ROOT=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().parents[1]
-SOURCE=Path(__file__).resolve().parents[1]
+SOURCE=Path(__file__).resolve().parents[4]
 def read_manifest(reference, area):
  ref=Path(reference)
- assert not ref.is_absolute() and '..' not in ref.parts and ref.parts and ref.parts[0]==area, f'unsafe {area} manifest reference: {reference}'
+ expected_prefix='amade/families' if area=='families' else 'amade/templates'
+ assert not ref.is_absolute() and '..' not in ref.parts and str(ref).startswith(expected_prefix + '/'), f'unsafe {area} manifest reference: {reference}'
  path=(SOURCE/ref).resolve()
  assert SOURCE.resolve() in path.parents and path.is_file(), f'missing or escaped manifest reference: {reference}'
  expected='family.json' if area=='families' else 'template.json'
  assert path.name==expected, f'unexpected manifest type at reference: {reference}'
  return json.loads(path.read_text())
 CASES={'personal-post-list':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'personal-card-grid':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'company-service-cards':('company-homepage','services/research','다음연구소','사용자 조사','첫 기록','소식'),'company-service-list':('company-homepage','services/research','다음연구소','사용자 조사','첫 기록','소식')}
-catalog=json.loads((SOURCE/'catalog.json').read_text())
+catalog=json.loads((SOURCE/'amade/catalog/index.json').read_text())
 assert catalog.get('spec_version')=='0.1.0' and catalog.get('status')=='experimental', 'catalog version/status missing'
 listed_templates=set();listed_families=set()
 for family_ref in catalog.get('families',[]):
@@ -39,8 +40,8 @@ for family_ref in catalog.get('families',[]):
     assert not rel.is_absolute() and SOURCE.resolve() in resolved.parents and resolved.is_file(), f'{template_id}: missing or escaped {key} asset: {asset}'
   for key in ('homepage','support'):
    if key in template_manifest: assert isinstance(template_manifest[key],str) and template_manifest[key].startswith(('https://','mailto:')), f'{template_id}: invalid {key} URL'
-assert listed_families=={p.parent.name for p in (SOURCE/'families').glob('*/family.json')}, 'catalog family index is incomplete'
-assert listed_templates=={p.parent.name for p in (SOURCE/'templates').glob('*/template.json')}, 'catalog template index is incomplete'
+assert listed_families=={p.parent.name for p in (SOURCE/'amade/families').glob('*/family.json')}, 'catalog family index is incomplete'
+assert listed_templates=={p.parent.name for p in (SOURCE/'amade/templates').glob('*/template.json')}, 'catalog template index is incomplete'
 print(f'PASS catalog: {len(listed_families)} families and {len(listed_templates)} linked templates')
 class Markup(HTMLParser):
  def __init__(self): super().__init__(); self.images=[]; self.links=[]
@@ -59,17 +60,27 @@ for tid,(family,item_route,site_name,item_title,post_title,nav_label) in CASES.i
  assert (dist/'about/team/index.html').is_file(), f'{tid}: multi-level internal page route missing'
  assert (dist/item_route/'index.html').is_file(), f'{tid}: family item route missing'
  assert (dist/'blog/first-steps/index.html').is_file(), f'{tid}: public post detail missing'
- assert not (dist/'blog/local-only/index.html').exists(), f'{tid}: publication=none route was built'
+ detail_html=(dist/'blog/first-steps/index.html').read_text(errors='ignore')
+ listing_html=(dist/'blog/index.html').read_text(errors='ignore')
+ assert 'post-thumbnail' in listing_html and '<img' in listing_html, f'{tid}: representative image thumbnail missing from blog list'
+ assert 'cover_alt' not in listing_html, f'{tid}: cover metadata leaked into visible listing text'
+ assert 'proof.' in listing_html, f'{tid}: optimized representative thumbnail asset missing from blog list'
+ assert '<title>첫 기록 |' in detail_html and '<h1 id="첫-기록">첫 기록</h1>' in detail_html, f'{tid}: path/content title fallback missing'
+ assert '<meta property="og:image" content="https://example.test/' in detail_html, f'{tid}: absolute representative image metadata missing'
+ assert '<meta property="og:image:alt" content="증명 이미지"' in detail_html, f'{tid}: representative image alt metadata missing'
+ assert 'name="author"' in detail_html and '민서' in detail_html, f'{tid}: optional author metadata missing'
+ assert 'address' not in detail_html and '서울특별시 종로구' not in detail_html, f'{tid}: unknown metadata was unexpectedly rendered'
+ assert not (dist/'blog/local-only/index.html').exists(), f'{tid}: frontmatter-free post did not default to publication none'
  page=Markup(); page.feed((dist/'index.html').read_text(errors='ignore'))
  assert '/about/team/' in page.links and '/blog/first-steps/' in page.links, f'{tid}: navigation/post links missing'
  assert nav_label in (dist/'index.html').read_text(errors='ignore') and '/blog/' in page.links, f'{tid}: site-data navigation missing'
- site=json.loads((SOURCE/'families'/family/'data/site.json').read_text())
+ site=json.loads((SOURCE/'amade/families'/family/'data/site.json').read_text())
  for menu in site['navigation']: assert menu['label'] in (dist/'index.html').read_text(errors='ignore') and menu['path'] in page.links, f"{tid}: menu item lost: {menu['id']}"
  assert f'/{item_route}/' in page.links, f'{tid}: family item link missing'
  assert '/logo.svg' in page.images and (dist/'logo.svg').is_file(), f'{tid}: logo missing'
- manifest=json.loads((Path(__file__).resolve().parents[1]/'templates'/tid/'template.json').read_text())
+ manifest=json.loads((SOURCE/'amade/templates'/tid/'template.json').read_text())
  assert manifest['family_id']==family and manifest.get('categories') and isinstance(manifest.get('tags'),list), f'{tid}: discovery metadata missing'
  detail=Markup(); detail.feed((dist/'blog/first-steps/index.html').read_text(errors='ignore'))
  assert detail.images, f'{tid}: Markdown image missing'
  for image in detail.images: assert (dist/image.lstrip('/')).is_file(), f'{tid}: built image absent: {image}'
- print(f'PASS {tid}: profile, full navigation, pages, public/unlisted/local-only publication states, family routes, metadata, logo, Markdown image')
+ print(f'PASS {tid}: profile, full navigation, pages, public/unlisted/local-only publication states, family routes, author/cover metadata, thumbnails, logo, Markdown image')

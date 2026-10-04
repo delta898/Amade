@@ -68,17 +68,17 @@
       "fields": {
         "kind": {
           "type": "string",
-          "required": true,
+          "required": false,
           "const": "page"
         },
         "title": {
           "type": "string",
-          "required": true,
+          "required": false,
           "minLength": 1
         },
         "path": {
           "type": "internal-url-path",
-          "required": true
+          "required": false
         },
         "is_public": {
           "type": "boolean",
@@ -86,7 +86,8 @@
           "default": false
         }
       },
-      "public_path": "frontmatter.path"
+      "public_path": "frontmatter.path or path-derived default",
+      "frontmatter_policy": "optional; missing content type and identity are inferred from the source path; unknown properties are preserved and ignored by the template"
     },
     {
       "kind": "post",
@@ -96,23 +97,31 @@
       "fields": {
         "kind": {
           "type": "string",
-          "required": true,
+          "required": false,
           "const": "post"
         },
         "title": {
           "type": "string",
-          "required": true,
-          "minLength": 1
+          "required": false,
+          "minLength": 1,
+          "description": "Optional display title; templates fall back to the first Markdown H1 and then the path-derived slug."
         },
         "description": {
           "type": "string",
-          "required": true,
-          "minLength": 1
+          "required": false,
+          "minLength": 1,
+          "description": "Optional summary; omitted when absent."
         },
         "date": {
           "type": "date",
           "required": false,
           "format": "YYYY-MM-DD"
+        },
+        "published_at": {
+          "type": "string",
+          "required": false,
+          "format": "ISO 8601 date-time with explicit timezone",
+          "description": "Actual publication instant; BlogGenius writes this at the publication action."
         },
         "editorial_status": {
           "type": "string",
@@ -134,10 +143,27 @@
             "public"
           ],
           "description": "Deployment and listing intent: none stays local; private deploys an unlisted detail page; public deploys and lists the post."
+        },
+        "author": {
+          "type": "string",
+          "required": false,
+          "minLength": 1,
+          "description": "Optional creator name; templates expose it as author metadata when present."
+        },
+        "cover": {
+          "type": "entry-relative-image",
+          "required": false,
+          "description": "Optional representative image relative to the post entry, typically ./images/<file>. BlogGenius selects the first embedded image automatically."
+        },
+        "cover_alt": {
+          "type": "string",
+          "required": false,
+          "description": "Alternative text for the representative image, usually copied from the image block title."
         }
       },
       "listing_route": "/blog/",
-      "detail_route": "/blog/{slug}/"
+      "detail_route": "/blog/{slug}/",
+      "frontmatter_policy": "optional; missing content type and identity are inferred from the source path; unknown properties are preserved and ignored by the template"
     },
     {
       "kind": "work",
@@ -147,17 +173,17 @@
       "fields": {
         "kind": {
           "type": "string",
-          "required": true,
+          "required": false,
           "const": "work"
         },
         "title": {
           "type": "string",
-          "required": true,
+          "required": false,
           "minLength": 1
         },
         "description": {
           "type": "string",
-          "required": true,
+          "required": false,
           "minLength": 1
         },
         "order": {
@@ -172,8 +198,18 @@
         }
       },
       "listing_route": "/work/",
-      "detail_route": "/work/{slug}/"
+      "detail_route": "/work/{slug}/",
+      "frontmatter_policy": "optional; missing content type and identity are inferred from the source path; unknown properties are preserved and ignored by the template"
     }
   ],
-  "content_contract_version": "0.4.0"
+  "content_contract_version": "0.7.1",
+  "content_frontmatter_policy": {
+    "required_fields": [],
+    "path_is_identity_source": true,
+    "kind_may_be_omitted_and_is_inferred_from_path": true,
+    "unknown_properties": "preserve-and-ignore",
+    "post_publication_default": "none",
+    "post_author": "optional string; omitted unless explicitly supplied",
+    "post_representative_image": "optional cover entry-relative path; BlogGenius chooses the first embedded image; templates use it for thumbnails and social preview metadata"
+  }
 }
