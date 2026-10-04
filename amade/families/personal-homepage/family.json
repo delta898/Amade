@@ -93,7 +93,6 @@
       "source": "data/posts/{slug}/index.md",
       "identity": "stable lowercase ASCII kebab-case directory slug",
       "body_format": "markdown",
-      "publish_requires_editorial_status": "complete",
       "fields": {
         "kind": {
           "type": "string",
@@ -122,12 +121,19 @@
           "values": [
             "draft",
             "complete"
-          ]
+          ],
+          "description": "Authoring completeness only; independent of publication."
         },
-        "publish": {
-          "type": "boolean",
+        "publication": {
+          "type": "string",
           "required": false,
-          "default": false
+          "default": "none",
+          "values": [
+            "none",
+            "private",
+            "public"
+          ],
+          "description": "Deployment and listing intent: none stays local; private deploys an unlisted detail page; public deploys and lists the post."
         }
       },
       "listing_route": "/blog/",
@@ -169,5 +175,5 @@
       "detail_route": "/work/{slug}/"
     }
   ],
-  "content_contract_version": "0.3.0"
+  "content_contract_version": "0.4.0"
 }

@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import '../styles.css';
 import site from '../site-data';
-const all=await getCollection('content',({data})=>data.kind==='post'?(data.editorial_status==='complete'&&data.publish):data.is_public);
+const all=await getCollection('content',({data})=>data.kind==='post'?(data.publication==='public'):data.is_public);
 const posts=all.filter(x=>x.data.kind==='post');
 const items=all.filter(x=>x.data.kind==='service');
 const pages=all.filter(x=>x.data.kind==='page');

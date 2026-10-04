@@ -52,10 +52,14 @@ for tid,(family,item_route,site_name,item_title,post_title,nav_label) in CASES.i
  dist=ROOT/'builds'/tid; html_files=list(dist.rglob('*.html')); assert html_files, f'{tid}: build output is missing'
  html='\n'.join(f.read_text(errors='ignore') for f in html_files)
  assert site_name in html and item_title in html and post_title in html, f'{tid}: expected public data missing'
- assert '비공개 기록' not in html, f'{tid}: private entry leaked'
+ assert '로컬 전용 기록' not in html, f'{tid}: publication=none entry leaked'
+ assert (dist/'blog/private-note/index.html').is_file(), f'{tid}: private detail route missing'
+ assert '비공개 기록' in (dist/'blog/private-note/index.html').read_text(errors='ignore'), f'{tid}: private detail content missing'
+ assert '비공개 기록' not in (dist/'blog/index.html').read_text(errors='ignore'), f'{tid}: private post leaked into public listing'
  assert (dist/'about/team/index.html').is_file(), f'{tid}: multi-level internal page route missing'
  assert (dist/item_route/'index.html').is_file(), f'{tid}: family item route missing'
- assert (dist/'blog/first-steps/index.html').is_file(), f'{tid}: post detail missing'
+ assert (dist/'blog/first-steps/index.html').is_file(), f'{tid}: public post detail missing'
+ assert not (dist/'blog/local-only/index.html').exists(), f'{tid}: publication=none route was built'
  page=Markup(); page.feed((dist/'index.html').read_text(errors='ignore'))
  assert '/about/team/' in page.links and '/blog/first-steps/' in page.links, f'{tid}: navigation/post links missing'
  assert nav_label in (dist/'index.html').read_text(errors='ignore') and '/blog/' in page.links, f'{tid}: site-data navigation missing'
@@ -68,4 +72,4 @@ for tid,(family,item_route,site_name,item_title,post_title,nav_label) in CASES.i
  detail=Markup(); detail.feed((dist/'blog/first-steps/index.html').read_text(errors='ignore'))
  assert detail.images, f'{tid}: Markdown image missing'
  for image in detail.images: assert (dist/image.lstrip('/')).is_file(), f'{tid}: built image absent: {image}'
- print(f'PASS {tid}: profile, full navigation, pages, public/private entries, family routes, metadata, logo, Markdown image')
+ print(f'PASS {tid}: profile, full navigation, pages, public/unlisted/local-only publication states, family routes, metadata, logo, Markdown image')

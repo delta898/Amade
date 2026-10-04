@@ -176,9 +176,6 @@
           "detail_route": {
             "type": "string",
             "pattern": "^/"
-          },
-          "publish_requires_editorial_status": {
-            "type": "string"
           }
         },
         "additionalProperties": false
@@ -239,6 +236,9 @@
         },
         "unique": {
           "type": "boolean"
+        },
+        "description": {
+          "type": "string"
         }
       },
       "additionalProperties": false

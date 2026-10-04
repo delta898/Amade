@@ -24,32 +24,46 @@ Each **Template** package and **UI Style** package shares user-facing metadata: 
 
 The catalog exposes `families[]` with their `templates[]`, and `styles[]` as a separate resource type. Site Hosting Templates contain a complete Astro project and reference a family data contract. UI Styles contain only token data for the versioned BlogGenius semantic token contract; they do not distribute executable JavaScript or arbitrary CSS. Consumers list only packages whose status is `active`. `deprecated` and `withdrawn` remain in the catalog for history and existing references but are not offered for new selection.
 
-Both package kinds require `compatibility.min_bloggenius_version` and `compatibility.contract` (`id` plus `version`). The current experimental packages require BlogGenius `0.6.0`. Site Hosting Templates use `bloggenius-site-hosting-template` contract `0.3.0`; UI Styles use `bloggenius-ui-style-tokens` contract `1.0`. The Amade manifest shape remains `spec_version: 0.1.0`; current template packages are package version `0.3.0`. Amade's package `spec_version`, package release `version`, minimum BlogGenius app version, and type-specific BlogGenius contract version are separate axes. Consumers reject malformed declarations, do not offer resources requiring a newer app or unsupported contract, and preserve their fallback.
+Both package kinds require `compatibility.min_bloggenius_version` and `compatibility.contract` (`id` plus `version`). The current experimental packages require BlogGenius `0.6.0`. Site Hosting Templates use `bloggenius-site-hosting-template` contract `0.4.0`; UI Styles use `bloggenius-ui-style-tokens` contract `1.0`. The Amade manifest shape remains `spec_version: 0.1.0`; current template packages are package version `0.4.0`. Amade's package `spec_version`, package release `version`, minimum BlogGenius app version, and type-specific BlogGenius contract version are separate axes. Consumers reject malformed declarations, do not offer resources requiring a newer app or unsupported contract, and preserve their fallback.
 
 Validation and BlogGenius adoption status are tracked in the corresponding design record in the BlogGenius repository.
 
-## Current Site Hosting post contract (0.3.0)
+## Current Site Hosting post contract (0.4.0)
 
-The canonical content rules live in each `amade/families/<family-id>/family.json`, under `content_contract_version` and the `post` entry in `content_types`. The family manifest is the source of truth; all four Astro templates validate and render it. BlogGenius reads the selected Site's pinned Amade family manifest and writes content to this contract. It must not invent a parallel post schema.
+The canonical content rules live in each `amade/families/<family-id>/family.json`, under `content_contract_version` and the `post` entry in `content_types`. The family manifest is the source of truth; all four Astro templates validate and render the contract. BlogGenius consumes the selected Site's pinned family manifest rather than defining a competing schema.
 
-Both current families use `site-data/data/posts/<slug>/index.md`, with related images in the entry's `images/` directory. The Markdown body follows YAML frontmatter.
+Both current families store a post at `site-data/data/posts/<slug>/index.md`, with related images in the entry's `images/` directory. The Markdown body follows YAML frontmatter.
 
 | Field | Requirement | Meaning / behavior |
 |---|---|---|
 | `kind` | Required; exactly `post` | Identifies the entry as a post. |
 | `title` | Required non-empty string | Post title. |
-| `description` | Required non-empty string | Summary used in post listings. |
-| `date` | Optional valid `YYYY-MM-DD` date | Date associated with writing/content, not deployment time. BlogGenius may fill today's date when the user publishes if absent. |
-| `editorial_status` | Optional; defaults to `draft`; values: `draft`, `complete` | Authoring completeness only. It does not indicate publication. |
-| `publish` | Optional boolean; defaults to `false` | Persistent instruction to include the post in the public site, not evidence of a successful deployment. |
+| `description` | Required non-empty string | Summary used in public listings. |
+| `date` | Optional valid `YYYY-MM-DD` date | Date associated with writing/content, not deployment time. BlogGenius may fill today's date on posting if absent. |
+| `editorial_status` | Optional; defaults to `draft`; values: `draft`, `complete` | Writing completeness only. It does not affect build or publication eligibility. |
+| `publication` | Optional; defaults to `none`; values: `none`, `private`, `public` | Deployment and listing instruction, independent of editorial status. |
 
-The fields are independent. `draft` + `false` is an unpublished work in progress; `complete` + `false` is complete but intentionally withheld; `complete` + `true` is selected for publication. `draft` + `true` is contradictory and must fail validation with a useful error. Missing fields default to a private draft, preventing accidental publication. Templates include only `editorial_status: complete` and `publish: true` posts, using the same predicate for listing and detail routes.
+Every combination is valid. `draft` + `public` is allowed: the author's explicit publication selection wins, and BlogGenius should warn that the text is marked incomplete. The two fields never constrain each other.
 
-A successful build/deploy does not rewrite frontmatter. The selected post remains included in later clean builds because `publish: true` persists. To unpublish, set it to `false` and deploy again. Build/deploy outcomes, timestamps, and batch membership belong in BlogGenius's publishing record, not in a `published` frontmatter value. This keeps editorial intent separate from delivery facts; failed operations cannot leave an incorrect `published` marker in a Markdown file.
+| `publication` | Local Site data | Build / deployed output | Public listing | Direct URL |
+|---|---|---|---|---|
+| `none` | Retained in `site-data/data/posts/` | Excluded from generated output and Worker deployment | Hidden | No generated page |
+| `private` | Retained | Detail page is built and deployed | Hidden | Accessible if the URL is known |
+| `public` | Retained | Detail page is built and deployed | Shown | Accessible |
 
-BlogGenius's initial publish action writes `editorial_status: complete` and `publish: true`, fills `date` only if absent, then starts build/deploy. Editing and republishing already published posts are outside the initial BlogGenius consumer scope, though authors can manually edit Markdown. Tags/categories remain user-controlled and outside this shared contract. Page/work/service visibility fields remain `is_public`.
+`private` means unlisted, not access-controlled. Static output does not authenticate visitors; a direct link can expose the page. If access restriction is ever required, it needs an authentication/runtime design beyond this contract. `none` is the safe default so a locally saved post is not uploaded to the Worker by accident. A human may later edit the local Site data to `private` or `public` and rebuild/deploy.
 
-The previous experimental `status: draft | ready | published` proposal and the earlier `pubDate`/`is_public` shape are superseded for this 0.3.0 contract. This is not an automatic content migration. A consumer must support `bloggenius-site-hosting-template@0.3.0` before offering these packages; it must not reinterpret these fields using an older contract.
+BlogGenius's Site Hosting actions map as follows:
+
+- **Temporary save:** write `editorial_status: complete` and `publication: none` into local Site data only. It remains available under `workspace/site-hosting/sites/<site>/` and is not included in Worker output.
+- **Post now:** write `editorial_status: complete` and `publication: public`, fill `date` only if absent, then build and deploy the whole Site.
+- **Scheduled post:** unsupported for Site Hosting for now; the option is disabled.
+
+A successful deployment does not rewrite these fields. They express authoring state and desired publication behavior, not delivery outcome. BlogGenius records operation result, deployment time, and batch membership in its own publishing record; there is no `published` frontmatter value. Posts with `private` or `public` remain in future clean builds; changing to `none` and redeploying removes the page from Worker output. Editing/re-publishing an already posted item through BlogGenius remains outside its initial consumer scope.
+
+A leading `# Title` supplied by BlogGenius's existing editor is parsed into `title` and removed from the stored body; human-authored files should keep title in frontmatter without duplicating it as a leading H1. Tags and categories remain user-owned and outside this shared contract. Page/work/service visibility fields remain `is_public`.
+
+The prior experimental `status: draft | ready | published` proposal, the `editorial_status` + `publish` boolean model, and the earlier `pubDate`/`is_public` shape are superseded. This is not an automatic content migration. A consumer must support `bloggenius-site-hosting-template@0.4.0` before offering these packages.
 
 ## Legacy v1 reference
 

@@ -1,5 +1,5 @@
 ---
 import { getCollection } from 'astro:content'; import '../../styles.css';
-const posts=await getCollection('content',({data})=>data.kind==='post'&&(data.editorial_status==='complete'&&data.publish));
+const posts=await getCollection('content',({data})=>data.kind==='post'&&(data.publication==='public'));
 ---
 <html lang="ko"><head><meta charset="utf-8"/><title>글 목록</title></head><body><main class="shell"><h1>글 목록</h1>{posts.map(post=><article><h2>{post.data.title}</h2><p>{post.data.description}</p></article>)}</main></body></html>
