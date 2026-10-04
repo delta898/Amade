@@ -39,7 +39,7 @@ Both current families store a post at `site-data/data/posts/<slug>/index.md`, wi
 | `kind` | Required; exactly `post` | Identifies the entry as a post. |
 | `title` | Required non-empty string | Post title. |
 | `description` | Required non-empty string | Summary used in public listings. |
-| `date` | Optional valid `YYYY-MM-DD` date | Date associated with writing/content, not deployment time. BlogGenius may fill today's date on posting if absent. |
+| `date` | Optional valid `YYYY-MM-DD` date | Date associated with writing/content, not deployment time. BlogGenius may fill today's date when posting if absent and writes it unquoted. Astro templates normalize YAML-parsed date values to the date-only form; an invalid or non-date value is omitted and does not fail the build. |
 | `editorial_status` | Optional; defaults to `draft`; values: `draft`, `complete` | Writing completeness only. It does not affect build or publication eligibility. |
 | `publication` | Optional; defaults to `none`; values: `none`, `private`, `public` | Deployment and listing instruction, independent of editorial status. |
 
