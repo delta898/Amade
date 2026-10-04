@@ -6,10 +6,26 @@
   "description": "Initial experimental family contract for same-family template switching.",
   "site_profile": {
     "fields": {
-      "displayName": { "type": "string", "required": true, "minLength": 1 },
-      "headline": { "type": "string", "required": true, "minLength": 1 },
-      "biography": { "type": "string", "required": true, "minLength": 1 },
-      "logo": { "type": "public-url-path", "required": false, "root": "public/" }
+      "displayName": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "headline": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "biography": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "logo": {
+        "type": "public-url-path",
+        "required": false,
+        "root": "public/"
+      }
     }
   },
   "navigation": {
@@ -17,9 +33,21 @@
     "minimum_items": 1,
     "identity": "stable item id; labels and paths may be edited",
     "fields": {
-      "id": { "type": "string", "required": true, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "unique": true },
-      "label": { "type": "string", "required": true, "minLength": 1 },
-      "path": { "type": "internal-url-path", "required": true }
+      "id": {
+        "type": "string",
+        "required": true,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "unique": true
+      },
+      "label": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "path": {
+        "type": "internal-url-path",
+        "required": true
+      }
     },
     "path_values_survive_same_family_switch": true,
     "path_policy": "one leading slash; no external/protocol-relative URL, query, fragment, backslash, or dot segment"
@@ -38,10 +66,25 @@
       "identity": "stable lowercase ASCII kebab-case filename stem",
       "body_format": "markdown",
       "fields": {
-        "kind": { "type": "string", "required": true, "const": "page" },
-        "title": { "type": "string", "required": true, "minLength": 1 },
-        "path": { "type": "internal-url-path", "required": true },
-        "is_public": { "type": "boolean", "required": false, "default": false }
+        "kind": {
+          "type": "string",
+          "required": true,
+          "const": "page"
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": {
+          "type": "internal-url-path",
+          "required": true
+        },
+        "is_public": {
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
       },
       "public_path": "frontmatter.path"
     },
@@ -50,12 +93,42 @@
       "source": "data/posts/{slug}/index.md",
       "identity": "stable lowercase ASCII kebab-case directory slug",
       "body_format": "markdown",
+      "publish_requires_editorial_status": "complete",
       "fields": {
-        "kind": { "type": "string", "required": true, "const": "post" },
-        "title": { "type": "string", "required": true, "minLength": 1 },
-        "description": { "type": "string", "required": true, "minLength": 1 },
-        "pubDate": { "type": "date", "required": true },
-        "is_public": { "type": "boolean", "required": false, "default": false }
+        "kind": {
+          "type": "string",
+          "required": true,
+          "const": "post"
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "date": {
+          "type": "date",
+          "required": false,
+          "format": "YYYY-MM-DD"
+        },
+        "editorial_status": {
+          "type": "string",
+          "required": false,
+          "default": "draft",
+          "values": [
+            "draft",
+            "complete"
+          ]
+        },
+        "publish": {
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
       },
       "listing_route": "/blog/",
       "detail_route": "/blog/{slug}/"
@@ -66,14 +139,35 @@
       "identity": "stable lowercase ASCII kebab-case directory slug",
       "body_format": "markdown",
       "fields": {
-        "kind": { "type": "string", "required": true, "const": "work" },
-        "title": { "type": "string", "required": true, "minLength": 1 },
-        "description": { "type": "string", "required": true, "minLength": 1 },
-        "order": { "type": "integer", "required": false, "minimum": 0 },
-        "is_public": { "type": "boolean", "required": false, "default": false }
+        "kind": {
+          "type": "string",
+          "required": true,
+          "const": "work"
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "order": {
+          "type": "integer",
+          "required": false,
+          "minimum": 0
+        },
+        "is_public": {
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
       },
       "listing_route": "/work/",
       "detail_route": "/work/{slug}/"
     }
-  ]
+  ],
+  "content_contract_version": "0.3.0"
 }

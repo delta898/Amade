@@ -3,47 +3,126 @@
   "$id": "https://amade.dev/spec/site-hosting-family-v0.1.schema.json",
   "title": "Amade Site Hosting Template Family 0.1",
   "type": "object",
-  "required": ["spec_version", "family_id", "site_data_directory", "name", "description", "site_profile", "navigation", "media", "content_types"],
+  "required": [
+    "spec_version",
+    "content_contract_version",
+    "family_id",
+    "site_data_directory",
+    "name",
+    "description",
+    "site_profile",
+    "navigation",
+    "media",
+    "content_types"
+  ],
   "properties": {
-    "spec_version": { "const": "0.1.0" },
-    "family_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
-    "site_data_directory": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" },
-    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
-    "description": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "spec_version": {
+      "const": "0.1.0"
+    },
+    "content_contract_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "family_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "site_data_directory": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._/-]+$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
     "site_profile": {
       "type": "object",
-      "required": ["fields"],
+      "required": [
+        "fields"
+      ],
       "properties": {
         "fields": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": { "$ref": "#/$defs/fieldRule" }
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldRule"
+          }
         }
       },
       "additionalProperties": false
     },
     "navigation": {
       "type": "object",
-      "required": ["source", "minimum_items", "identity", "fields"],
+      "required": [
+        "source",
+        "minimum_items",
+        "identity",
+        "fields"
+      ],
       "properties": {
-        "source": { "type": "string", "minLength": 1 },
-        "minimum_items": { "type": "integer", "minimum": 1 },
-        "identity": { "type": "string", "minLength": 1 },
-        "fields": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/fieldRule" } },
-        "path_values_survive_same_family_switch": { "type": "boolean" },
-        "path_policy": { "type": "string", "minLength": 1 }
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum_items": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldRule"
+          }
+        },
+        "path_values_survive_same_family_switch": {
+          "type": "boolean"
+        },
+        "path_policy": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
     "media": {
       "type": "object",
-      "required": ["public_directory", "entry_directory", "markdown_reference", "relative_to_entry"],
+      "required": [
+        "public_directory",
+        "entry_directory",
+        "markdown_reference",
+        "relative_to_entry"
+      ],
       "properties": {
-        "public_directory": { "type": "string", "minLength": 1 },
-        "entry_directory": { "type": "string", "minLength": 1 },
-        "markdown_reference": { "type": "string", "minLength": 1 },
-        "relative_to_entry": { "type": "boolean" },
-        "validated_format": { "type": "string", "minLength": 1 }
+        "public_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entry_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "markdown_reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_to_entry": {
+          "type": "boolean"
+        },
+        "validated_format": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": false
     },
@@ -52,16 +131,55 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["kind", "source", "identity", "body_format", "fields"],
+        "required": [
+          "kind",
+          "source",
+          "identity",
+          "body_format",
+          "fields"
+        ],
         "properties": {
-          "kind": { "enum": ["page", "post", "work", "service"] },
-          "source": { "type": "string", "minLength": 1 },
-          "identity": { "type": "string", "minLength": 1 },
-          "body_format": { "const": "markdown" },
-          "fields": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/fieldRule" } },
-          "public_path": { "type": "string", "minLength": 1 },
-          "listing_route": { "type": "string", "pattern": "^/" },
-          "detail_route": { "type": "string", "pattern": "^/" }
+          "kind": {
+            "enum": [
+              "page",
+              "post",
+              "work",
+              "service"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body_format": {
+            "const": "markdown"
+          },
+          "fields": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "$ref": "#/$defs/fieldRule"
+            }
+          },
+          "public_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "listing_route": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "detail_route": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "publish_requires_editorial_status": {
+            "type": "string"
+          }
         },
         "additionalProperties": false
       }
@@ -70,17 +188,58 @@
   "$defs": {
     "fieldRule": {
       "type": "object",
-      "required": ["type", "required"],
+      "required": [
+        "type",
+        "required"
+      ],
       "properties": {
-        "type": { "enum": ["string", "boolean", "integer", "date", "internal-url-path", "public-url-path"] },
-        "required": { "type": "boolean" },
-        "minLength": { "type": "integer", "minimum": 0 },
-        "minimum": { "type": "integer" },
-        "pattern": { "type": "string" },
+        "type": {
+          "enum": [
+            "string",
+            "boolean",
+            "integer",
+            "date",
+            "internal-url-path",
+            "public-url-path"
+          ]
+        },
+        "format": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": [
+              "string",
+              "boolean",
+              "integer"
+            ]
+          }
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minimum": {
+          "type": "integer"
+        },
+        "pattern": {
+          "type": "string"
+        },
         "const": {},
         "default": {},
-        "root": { "type": "string", "minLength": 1 },
-        "unique": { "type": "boolean" }
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unique": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false
     }

@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content'; import '../../styles.css';
-export async function getStaticPaths(){const posts=await getCollection('content',({data})=>data.is_public&&data.kind==='post');return posts.map(post=>({params:{slug:post.id.split('/').at(-1)},props:{post}}));}
+export async function getStaticPaths(){const posts=await getCollection('content',({data})=>data.kind==='post'&&(data.editorial_status==='complete'&&data.publish));return posts.map(post=>({params:{slug:post.id.split('/').at(-1)},props:{post}}));}
 const {post}=Astro.props;const {Content}=await render(post);
 ---
 <html lang="ko"><head><meta charset="utf-8"/><title>{post.data.title}</title></head><body><main class="shell"><a href="/blog/">글 목록</a><h1>{post.data.title}</h1><Content/></main></body></html>

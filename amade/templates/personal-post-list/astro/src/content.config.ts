@@ -16,8 +16,12 @@ const content = defineCollection({
  }),
  schema: z.discriminatedUnion('kind', [
   z.object({ kind:z.literal('page'), title:z.string().min(1), path:z.string().regex(/^\/(?!\/)(?!.*(?:^|\/)\.{1,2}(?:\/|$))(?!.*[?#\\\\]).*$/), is_public:z.boolean().default(false) }).strict(),
-  z.object({ kind:z.literal('post'), title:z.string().min(1), description:z.string().min(1), pubDate:z.coerce.date(), is_public:z.boolean().default(false) }).strict(),
+  z.object({ kind:z.literal('post'), title:z.string().min(1), description:z.string().min(1), date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value=>{const date=new Date(`${value}T00:00:00.000Z`);return !Number.isNaN(date.valueOf())&&date.toISOString().slice(0,10)===value;},'Expected a valid YYYY-MM-DD date').transform(value=>new Date(`${value}T00:00:00.000Z`)).optional(), editorial_status:z.enum(['draft','complete']).default('draft'), publish:z.boolean().default(false) }).strict(),
   z.object({ kind:z.literal('work'), title:z.string().min(1), description:z.string().min(1), order:z.number().int().nonnegative().optional(), is_public:z.boolean().default(false) }).strict(),
- ]),
+ ]).superRefine((data, ctx) => {
+  if (data.kind === 'post' && data.editorial_status === 'draft' && data.publish) {
+   ctx.addIssue({ code: 'custom', path: ['publish'], message: 'A draft post cannot be marked for publication; set editorial_status to complete first.' });
+  }
+ }),
 });
 export const collections = { content };

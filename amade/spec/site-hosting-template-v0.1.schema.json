@@ -11,7 +11,7 @@
         "spec_version": { "const": "0.1.0" },
         "compatibility": {
           "properties": {
-            "contract": { "properties": { "id": { "const": "bloggenius-site-hosting-template" }, "version": { "const": "0.1.0" } } }
+            "contract": { "properties": { "id": { "const": "bloggenius-site-hosting-template" }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } } }
           }
         },
         "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
