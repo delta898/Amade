@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://amade.dev/spec/site-hosting-template-v0.1.schema.json",
-  "title": "Amade Site Hosting Template Contract 0.1.0-dev1",
+  "title": "Amade Site Hosting Template Contract 0.1.0-dev2",
   "allOf": [
     { "$ref": "./common-metadata-v0.1.schema.json" },
     {
       "type": "object",
       "required": ["spec_version", "template_id", "family_id", "astro_project", "site_data", "layout"],
       "properties": {
-        "spec_version": { "const": "0.1.0-dev1" },
+        "spec_version": { "const": "0.1.0-dev2" },
         "compatibility": {
           "properties": {
-            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "const": "0.1.0-dev1" } } }
+            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "const": "0.1.0-dev2" } } }
           }
         },
         "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
@@ -26,11 +26,21 @@
             "required": ["id", "type", "purpose", "label", "required"],
             "properties": {
               "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
-              "type": { "enum": ["directory"] },
-              "purpose": { "enum": ["knowledge_collection"] },
+              "type": { "enum": ["directory", "frontmatter_match"] },
+              "purpose": { "enum": ["knowledge_collection", "publication_filter"] },
               "label": { "type": "string", "minLength": 1, "maxLength": 80 },
               "required": { "type": "boolean" }
             },
+            "allOf": [
+              {
+                "if": { "properties": { "type": { "const": "directory" } }, "required": ["type"] },
+                "then": { "properties": { "purpose": { "const": "knowledge_collection" } } }
+              },
+              {
+                "if": { "properties": { "type": { "const": "frontmatter_match" } }, "required": ["type"] },
+                "then": { "properties": { "purpose": { "const": "publication_filter" } } }
+              }
+            ],
             "additionalProperties": false
           }
         }

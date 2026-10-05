@@ -1,5 +1,5 @@
 {
-  "spec_version": "0.1.0-dev1",
+  "spec_version": "0.1.0-dev2",
   "template_id": "company-service-cards",
   "family_id": "company-homepage",
   "name": "상단 메뉴 · 서비스 카드형",
@@ -24,7 +24,7 @@
     "min_bloggenius_version": "0.6.0",
     "contract": {
       "id": "bloggenius-site-hosting-template",
-      "version": "0.1.0-dev1"
+      "version": "0.1.0-dev2"
     }
   },
   "homepage": "https://www.bloggenius.kr",
