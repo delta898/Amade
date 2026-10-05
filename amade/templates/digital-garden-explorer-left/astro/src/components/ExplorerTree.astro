@@ -24,37 +24,49 @@ function noteCount(node) {
 function render(node) {
   const folders = [...node.folders].sort(([a], [b]) => a.localeCompare(b, 'ko')).map(([name, child]) => {
     const notes = noteCount(child);
-    return `<li class="tree-folder"><div class="folder-row"><span class="folder-mark" aria-hidden="true">▾</span><span class="folder-name">${escape(name)}</span><span class="folder-count">${notes}</span></div><ul>${render(child)}</ul></li>`;
+    return `<li class="tree-folder"><div class="folder-row"><svg class="folder-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M2.75 5.75a1.5 1.5 0 0 1 1.5-1.5h4l1.7 1.8h5.8a1.5 1.5 0 0 1 1.5 1.5v6.7a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z"/></svg><span class="folder-name">${escape(name)}</span><span class="folder-count">${notes}</span></div><ul>${render(child)}</ul></li>`;
   });
-  const files = [...node.files].sort((a, b) => a.filename.localeCompare(b.filename, 'ko')).map(({ entry, filename }) => `<li class="tree-file"><a${entry.id === activeId ? ' aria-current="page" class="active"' : ''} href="/notes/${escape(encoded(entry.id))}/"><span class="note-mark" aria-hidden="true">▤</span><span class="filename">${escape(filename)}</span></a></li>`);
+  const files = [...node.files].sort((a, b) => a.filename.localeCompare(b.filename, 'ko')).map(({ entry, filename }) => {
+    const label = filename.replace(/\.md$/i, '');
+    return `<li class="tree-file"><a${entry.id === activeId ? ' aria-current="page" class="active"' : ''} href="/notes/${escape(encoded(entry.id))}/" title="${escape(filename)}"><svg class="note-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.75h6l4 4v10.5H5z"/><path d="M11 2.75v4h4M7.5 10h5M7.5 12.75h5"/></svg><span class="filename">${escape(label)}</span></a></li>`;
+  });
   return [...folders, ...files].join('');
 }
 const treeHtml = render(root);
 const directoryCount = folderCount(root);
 ---
 <nav class="explorer" aria-label="Knowledge Collection 파일 목록">
-  <a class="collection-title" href="/">{site.displayName}</a>
-  {site.logo && <img class="site-logo" src={site.logo} alt="" />}
-  <p class="collection-count">{directoryCount}개 폴더 · {entries.length}개 노트</p>
+  <a class="collection-heading" href="/">
+    {site.logo && <img class="site-logo" src={site.logo} alt="" />}
+    <span class="collection-title">{site.displayName}</span>
+  </a>
+  <p class="collection-count"><span>{directoryCount}</span>개 폴더 <i aria-hidden="true">·</i> <span>{entries.length}</span>개 노트</p>
   {entries.length ? <ul class="tree-list" set:html={treeHtml} /> : <p class="empty">Vault를 연결하면 폴더와 파일이 여기에 표시됩니다.</p>}
 </nav>
 
 <style>
-  .explorer { min-width: 0; padding: 1.5rem 1.25rem; border-right: 1px solid #dce5df; background: #f7f8f7; }
-  .collection-title { display: block; margin: 0 0 .35rem; color: #21352c; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
-  .site-logo { display: block; max-width: 100%; max-height: 3rem; object-fit: contain; object-position: left; margin: 0 0 1rem; }
-  .collection-count { margin: 0 0 1.1rem; color: #77867d; font-size: .82rem; line-height: 1.4; }
+  .explorer { min-width: 0; padding: 1.5rem 1.1rem 2rem; border-right: 1px solid #dce5df; background: #f7f8f7; }
+  .collection-heading { display: flex; align-items: center; gap: .65rem; margin: 0 0 .35rem; color: #21352c; text-decoration: none; }
+  .collection-title { min-width: 0; overflow-wrap: anywhere; font-weight: 750; font-size: 1.05rem; line-height: 1.3; }
+  .site-logo { width: 1.8rem; height: 1.8rem; flex: 0 0 auto; object-fit: contain; border-radius: .35rem; }
+  .collection-count { display: flex; align-items: center; gap: .28rem; margin: 0 0 1.1rem; color: #77867d; font-size: .8rem; line-height: 1.4; }
+  .collection-count span { color: #4e6257; font-weight: 650; }
+  .collection-count i { font-style: normal; color: #b2bdb6; }
   .tree-list, .tree-list ul { margin: 0; padding: 0; list-style: none; }
-  .tree-list ul { margin: .15rem 0 .3rem .45rem; padding-left: .7rem; border-left: 1px solid #dce5df; }
-  .tree-folder { margin: .18rem 0; }
-  .folder-row { display: grid; grid-template-columns: .8rem minmax(0, 1fr) auto; align-items: baseline; gap: .25rem; padding: .15rem .25rem; color: #547164; font-size: .88rem; font-weight: 650; }
-  .folder-mark { color: #84968b; font-size: .72rem; }
+  .tree-list ul { margin: .12rem 0 .25rem .65rem; padding-left: .58rem; border-left: 1px solid #dce5df; }
+  .tree-folder { margin: .12rem 0; }
+  .folder-row, .tree-file a { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; align-items: center; gap: .42rem; min-height: 1.85rem; padding: .22rem .4rem; border-radius: .42rem; }
+  .folder-row { color: #455c50; font-size: .83rem; font-weight: 650; }
+  .folder-icon, .note-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+  .folder-icon { color: #7d9a89; fill: #e6eee8; }
   .folder-name, .filename { min-width: 0; overflow-wrap: anywhere; }
-  .folder-count { color: #98a59d; font-size: .72rem; font-weight: 500; }
-  .tree-file { margin: .08rem 0; }
-  .tree-file a { display: grid; grid-template-columns: .85rem minmax(0, 1fr); gap: .3rem; padding: .14rem .25rem; border-radius: .3rem; color: #455a4e; font-size: .82rem; line-height: 1.45; text-decoration: none; }
-  .note-mark { color: #91a196; font-size: .76rem; }
-  .tree-file a:hover, .tree-file a.active { color: #a74f31; background: #f0ece5; }
-  .tree-file a:focus-visible { outline: 2px solid #a74f31; outline-offset: 1px; }
-  .empty { color: #68776e; font-size: .9rem; line-height: 1.6; }
+  .folder-count { min-width: 1.2rem; padding: .03rem .32rem; border-radius: 999px; background: #edf1ee; color: #809087; font-size: .68rem; font-weight: 550; text-align: center; }
+  .tree-file { margin: .06rem 0; }
+  .tree-file a { grid-template-columns: 1rem minmax(0, 1fr); color: #56695e; font-size: .79rem; line-height: 1.35; text-decoration: none; transition: background-color .15s ease, color .15s ease; }
+  .note-icon { color: #96a59b; }
+  .tree-file a:hover { color: #a74f31; background: #f0ece5; }
+  .tree-file a.active { color: #8f432b; background: #eee8df; font-weight: 650; box-shadow: inset 2px 0 #a74f31; }
+  .tree-file a:focus-visible, .collection-heading:focus-visible { outline: 2px solid #a74f31; outline-offset: 2px; }
+  .empty { padding: .75rem; border: 1px dashed #d2ddd5; border-radius: .6rem; color: #68776e; font-size: .88rem; line-height: 1.6; }
+  @media (max-width: 760px) { .explorer { padding: 1rem .7rem; } .tree-list ul { margin-left: .38rem; padding-left: .38rem; } .folder-row, .tree-file a { gap: .28rem; padding-inline: .28rem; } }
 </style>

@@ -1,9 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
-  <rect width="1200" height="760" fill="#f5f7f5"/><rect x="28" y="28" width="1144" height="704" rx="24" fill="#fff" stroke="#dce5df" stroke-width="2"/>
-  <rect x="52" y="52" width="250" height="656" rx="16" fill="#f7f8f7"/><text x="78" y="98" fill="#21352c" font-family="sans-serif" font-size="28" font-weight="700">내 지식 정원</text>
-  <text x="78" y="153" fill="#547164" font-family="sans-serif" font-size="20">▾ 프로젝트</text><text x="104" y="197" fill="#31443a" font-family="sans-serif" font-size="18">▤ 시작하기.md</text><text x="104" y="237" fill="#31443a" font-family="sans-serif" font-size="18">▤ 정원 노트.md</text>
-  <text x="78" y="291" fill="#547164" font-family="sans-serif" font-size="20">▾ 자료</text><text x="104" y="335" fill="#31443a" font-family="sans-serif" font-size="18">▤ 아이디어.md</text><text x="104" y="375" fill="#68776e" font-family="sans-serif" font-size="18">· 참고.pdf</text>
-  <rect x="326" y="52" width="820" height="656" rx="16" fill="#fff" stroke="#dce5df" stroke-width="2"/><text x="374" y="110" fill="#6b7c72" font-family="sans-serif" font-size="18">프로젝트 / 시작하기.md</text>
-  <text x="374" y="178" fill="#21352c" font-family="sans-serif" font-size="42" font-weight="700">배우며 기록하기</text><rect x="374" y="214" width="690" height="2" fill="#e4ebe6"/>
-  <text x="374" y="278" fill="#31443a" font-family="sans-serif" font-size="24">노트를 선택하면 여기에 내용이 열립니다.</text><text x="374" y="332" fill="#68776e" font-family="sans-serif" font-size="20">폴더와 파일 구조를 유지한 채 노트를 찾아볼 수 있습니다.</text>
+  <rect width="1200" height="760" fill="#f5f7f5"/>
+  <rect x="28" y="28" width="1144" height="704" rx="22" fill="#fff" stroke="#dce5df" stroke-width="2"/>
+  <path d="M50 50h306v660H50a10 10 0 0 1-10-10V60a10 10 0 0 1 10-10" fill="#f7f8f7"/>
+  <path d="M356 50v660" stroke="#dce5df" stroke-width="2"/>
+  <text x="66" y="98" fill="#21352c" font-family="system-ui,sans-serif" font-size="25" font-weight="700">내 지식 정원</text>
+  <text x="66" y="132" fill="#77867d" font-family="system-ui,sans-serif" font-size="15"><tspan font-weight="700" fill="#4e6257">9</tspan>개 폴더 <tspan fill="#b2bdb6">·</tspan> <tspan font-weight="700" fill="#4e6257">40</tspan>개 노트</text>
+  <rect x="73" y="165" width="17" height="13" rx="2" fill="#e6eee8" stroke="#7d9a89" stroke-width="1.5"/><path d="M74 165v-2h6l2 2" fill="none" stroke="#7d9a89" stroke-width="1.5"/>
+  <text x="101" y="178" fill="#455c50" font-family="system-ui,sans-serif" font-size="17" font-weight="650">20_Projects</text><rect x="322" y="163" width="22" height="19" rx="9" fill="#edf1ee"/><text x="333" y="177" text-anchor="middle" fill="#809087" font-family="system-ui,sans-serif" font-size="11">40</text>
+  <path d="M81 190v152" stroke="#dce5df" stroke-width="1.5"/>
+  <rect x="89" y="198" width="17" height="13" rx="2" fill="#e6eee8" stroke="#7d9a89" stroke-width="1.5"/><path d="M90 198v-2h6l2 2" fill="none" stroke="#7d9a89" stroke-width="1.5"/>
+  <text x="117" y="211" fill="#455c50" font-family="system-ui,sans-serif" font-size="16" font-weight="650">전자책 발행</text><rect x="322" y="196" width="22" height="19" rx="9" fill="#edf1ee"/><text x="333" y="210" text-anchor="middle" fill="#809087" font-family="system-ui,sans-serif" font-size="11">12</text>
+  <path d="M97 222v111" stroke="#dce5df" stroke-width="1.5"/>
+  <rect x="105" y="230" width="17" height="13" rx="2" fill="#e6eee8" stroke="#7d9a89" stroke-width="1.5"/><path d="M106 230v-2h6l2 2" fill="none" stroke="#7d9a89" stroke-width="1.5"/>
+  <text x="133" y="243" fill="#455c50" font-family="system-ui,sans-serif" font-size="15" font-weight="650">Obsidian 정리</text><rect x="322" y="228" width="22" height="19" rx="9" fill="#edf1ee"/><text x="333" y="242" text-anchor="middle" fill="#809087" font-family="system-ui,sans-serif" font-size="11">8</text>
+  <path d="M113 254v74" stroke="#dce5df" stroke-width="1.5"/>
+  <rect x="121" y="262" width="17" height="13" rx="2" fill="#e6eee8" stroke="#7d9a89" stroke-width="1.5"/><path d="M122 262v-2h6l2 2" fill="none" stroke="#7d9a89" stroke-width="1.5"/>
+  <text x="149" y="275" fill="#455c50" font-family="system-ui,sans-serif" font-size="15" font-weight="650">원고</text><rect x="322" y="260" width="22" height="19" rx="9" fill="#edf1ee"/><text x="333" y="274" text-anchor="middle" fill="#809087" font-family="system-ui,sans-serif" font-size="11">4</text>
+  <rect x="131" y="286" width="204" height="31" rx="7" fill="#eee8df"/><path d="M141 294h10l6 6v10h-10v-16m10 0v6h6" fill="none" stroke="#a74f31" stroke-width="1.4" stroke-linejoin="round"/><text x="165" y="306" fill="#8f432b" font-family="system-ui,sans-serif" font-size="13" font-weight="650">들어가며</text>
+  <path d="M141 327h10l6 6v10h-10v-16m10 0v6h6" fill="none" stroke="#96a59b" stroke-width="1.4" stroke-linejoin="round"/><text x="165" y="347" fill="#56695e" font-family="system-ui,sans-serif" font-size="13">먼저 효과를 경험합니다</text>
+  <path d="M141 358h10l6 6v10h-10v-16m10 0v6h6" fill="none" stroke="#96a59b" stroke-width="1.4" stroke-linejoin="round"/><text x="165" y="378" fill="#56695e" font-family="system-ui,sans-serif" font-size="13">AI와 생각을 정리합니다</text>
+  <rect x="384" y="74" width="768" height="612" rx="18" fill="#fff"/>
+  <text x="430" y="127" fill="#6b7c72" font-family="system-ui,sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">KNOWLEDGE COLLECTION</text>
+  <text x="430" y="193" fill="#21352c" font-family="system-ui,sans-serif" font-size="42" font-weight="750">생각을 모으고 연결하기</text>
+  <text x="430" y="240" fill="#34483d" font-family="system-ui,sans-serif" font-size="20">폴더와 노트를 탐색하며 지식의 연결을 따라갑니다.</text>
+  <rect x="430" y="285" width="672" height="1" fill="#e4ebe6"/>
+  <text x="430" y="343" fill="#21352c" font-family="system-ui,sans-serif" font-size="30" font-weight="700">노트를 선택해 읽어보세요</text>
+  <text x="430" y="390" fill="#68776e" font-family="system-ui,sans-serif" font-size="18">왼쪽 탐색기에서 노트를 고르면 이 공간에 내용이 열립니다.</text>
+  <rect x="430" y="438" width="672" height="146" rx="12" fill="#f7f8f7"/>
+  <text x="460" y="482" fill="#455c50" font-family="system-ui,sans-serif" font-size="17" font-weight="650">폴더 구조 그대로</text>
+  <text x="460" y="516" fill="#68776e" font-family="system-ui,sans-serif" font-size="15">원래 파일 이름과 위치를 유지해 노트를 쉽게 찾습니다.</text>
 </svg>
