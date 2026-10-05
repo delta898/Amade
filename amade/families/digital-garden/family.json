@@ -1,13 +1,18 @@
 {
-  "spec_version": "0.1.0-dev2",
-  "content_contract_version": "0.1.0-dev2",
+  "spec_version": "0.1.0-dev3",
+  "content_contract_version": "0.1.0-dev3",
   "family_id": "digital-garden",
   "site_data_directory": "data",
   "name": "Digital Garden",
   "description": "A Knowledge Collection site with a persistent directory explorer and linked note reader.",
   "site_profile": {
     "fields": {
-      "displayName": { "type": "string", "required": true, "minLength": 1 }
+      "displayName": { "type": "string", "required": true, "minLength": 1 },
+      "logo": { "type": "public-url-path", "required": false, "root": "public/" },
+      "seoDescription": { "type": "string", "required": false, "maxLength": 300 },
+      "shareImage": { "type": "public-url-path", "required": false, "root": "public/" },
+      "favicon": { "type": "public-url-path", "required": false, "root": "public/" },
+      "searchEngineIndexing": { "type": "boolean", "required": false, "default": true }
     }
   },
   "navigation": {

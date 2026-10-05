@@ -1,0 +1,7 @@
+{
+  "version": "0.1.0-dev3",
+  "contract_ids": [
+    "bloggenius-site-hosting-template",
+    "bloggenius-knowledge-collection-template"
+  ]
+}

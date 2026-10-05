@@ -39,6 +39,10 @@ dev catalog groups templates by family: Personal Homepage (`personal-post-list`,
 
 Legacy v1 resource manifest는 파일별 SHA-256 checksum을 선언하며 BlogGenius는 내려받을 때 이를 검사합니다. 0.1 packages are pinned to one immutable Amade Git commit revision; do not overwrite a published template package version.
 
+### Site Hosting 계약 확인
+
+Site Hosting manifest와 schema 버전 동기화는 `node --test amade/scripts/sync-site-hosting-contract-version.test.js`로 확인합니다. 이 테스트는 현재 체크아웃의 선언값 일치도 검사합니다. 계약 버전을 명시적으로 변경한 뒤에는 `node amade/scripts/sync-site-hosting-contract-version.js`로 선언을 갱신하고 테스트를 다시 실행하세요.
+
 ## Legacy v1 리소스 형식
 
 기존 v1 파일의 위치와 동작은 아래 legacy 문서를 참고합니다. 신규 Site Hosting 템플릿은 0.1 family 규격을 사용하며 v1 schema로 검증하지 않습니다.

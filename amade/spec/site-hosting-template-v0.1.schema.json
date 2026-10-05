@@ -1,17 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://amade.dev/spec/site-hosting-template-v0.1.schema.json",
-  "title": "Amade Site Hosting Template Contract 0.1.0-dev2",
+  "title": "Amade Site Hosting Template Contract 0.1.0-dev3",
   "allOf": [
     { "$ref": "./common-metadata-v0.1.schema.json" },
     {
       "type": "object",
       "required": ["spec_version", "template_id", "family_id", "astro_project", "site_data", "layout"],
       "properties": {
-        "spec_version": { "const": "0.1.0-dev2" },
+        "spec_version": { "const": "0.1.0-dev3" },
         "compatibility": {
           "properties": {
-            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "const": "0.1.0-dev2" } } }
+            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "const": "0.1.0-dev3" } } }
           }
         },
         "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },

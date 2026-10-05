@@ -1,6 +1,6 @@
 # Amade Site Hosting Template Family Specification (Draft)
 
-Status: experimental Site Hosting Contract `0.1.0-dev2`, integrated into the Amade `dev` catalog and BlogGenius development consumer for validation. Existing Amade `1.x` resources are legacy and are not compatible by version number or implication. This is not yet a stable production schema and is not published through the production `main` catalog.
+Status: experimental Site Hosting Contract `0.1.0-dev3`, integrated into the Amade `dev` catalog and BlogGenius development consumer for validation. Existing Amade `1.x` resources are legacy and are not compatible by version number or implication. This is not yet a stable production schema and is not published through the production `main` catalog.
 
 ## Terms
 
@@ -40,7 +40,7 @@ A consumer first reads the catalog index, then resolves the referenced package m
 
 Selectable Site Hosting Templates and BlogGenius UI Styles use shared common metadata defined in `common-metadata-v0.1.schema.json`: `name`, `description`, `author`, package `version`, `license`, `created_at`, `categories`, `tags`, representative `preview`, optional `screenshots`, `homepage`, `support`, `status`, and required `compatibility`. Families remain grouping/data contracts, not selectable packages, and do not use this envelope.
 
-Every selectable package must declare `compatibility.min_bloggenius_version` and `compatibility.contract.id` plus `compatibility.contract.version`. Current Site Hosting Templates require BlogGenius `0.6.0`. Their unified Site Hosting Contract Version is `0.1.0-dev2` and must be identical in Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version`; advance all three together whenever any of these contract areas changes. A template package's own `version` independently tracks that package's release. UI Styles remain on their separate `bloggenius-ui-style-tokens@1.0` contract. The minimum app version gates packages by BlogGenius release; malformed or inconsistent declarations are manifest errors.
+Every selectable package must declare `compatibility.min_bloggenius_version` and `compatibility.contract.id` plus `compatibility.contract.version`. Current Site Hosting Templates require BlogGenius `0.6.0`. Their unified Site Hosting Contract Version is `0.1.0-dev3` and must be identical in Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version`; advance all three together whenever any of these contract areas changes. A template package's own `version` independently tracks that package's release. UI Styles remain on their separate `bloggenius-ui-style-tokens@1.0` contract. The minimum app version gates packages by BlogGenius release; malformed or inconsistent declarations are manifest errors.
 
 UI Style packages live in `amade/styles/<style-id>/style.json` and are validated by `bloggenius-ui-style-v0.1.schema.json`. They carry a `style_id`, the UI Style contract declaration, and token values only. They do not carry CSS selectors, scripts, or arbitrary executable code. The catalog index and UI Style formats have their own versions; they are not part of the unified Site Hosting Contract Version.
 
@@ -82,7 +82,7 @@ Each `template.json` contains the following common metadata in addition to its t
 - `support`: optional support contact URL or `mailto:` URL.
 - `status`: required lifecycle state: `active`, `deprecated`, or `withdrawn`.
 - `compatibility.min_bloggenius_version`: required stable SemVer minimum BlogGenius app version (`0.6.0` for current packages; prerelease versions are not allowed).
-- `compatibility.contract`: required `{ id, version }` identifying the BlogGenius integration contract. For Site Hosting Templates, `version` must equal the shared Site Hosting Contract Version `0.1.0-dev2`; UI Styles use their separate `bloggenius-ui-style-tokens@1.0` contract.
+- `compatibility.contract`: required `{ id, version }` identifying the BlogGenius integration contract. For Site Hosting Templates, `version` must equal the shared Site Hosting Contract Version `0.1.0-dev3`; UI Styles use their separate `bloggenius-ui-style-tokens@1.0` contract.
 
 **Version approval rule:** Do not choose a future Site Hosting Contract Version autonomously. When a change requires a bump, explain why and ask the user for the exact version first. After the user chooses it, apply the same value to Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version`, then verify they match. The template package's own `version` is independent and must not be inferred from this shared contract version.
 
@@ -100,7 +100,7 @@ The catalog status (`experimental`) describes the maturity of the catalog/specif
 
 ```json
 {
-  "spec_version": "0.1.0-dev2",
+  "spec_version": "0.1.0-dev3",
   "template_id": "personal-post-list",
   "family_id": "personal-homepage",
   "name": "상단 메뉴 · 글 목록형",
@@ -117,7 +117,7 @@ The catalog status (`experimental`) describes the maturity of the catalog/specif
   "status": "active",
   "compatibility": {
     "min_bloggenius_version": "0.6.0",
-    "contract": { "id": "bloggenius-site-hosting-template", "version": "0.1.0-dev2" }
+    "contract": { "id": "bloggenius-site-hosting-template", "version": "0.1.0-dev3" }
   },
   "astro_project": "template/astro",
   "site_data": "../../site-data",
@@ -125,7 +125,7 @@ The catalog status (`experimental`) describes the maturity of the catalog/specif
 }
 ```
 
-## Site Hosting Contract 0.1.0-dev2 data contract (refined from the four-template proof)
+## Site Hosting Contract 0.1.0-dev3 data contract (refined from the four-template proof)
 
 This section records the currently tested contract shape, not a final compatibility guarantee. The family JSON files describe it for tools; the Astro collection schemas in every template enforce the content frontmatter rules during builds.
 
@@ -143,7 +143,7 @@ The family-specific profile fields are required strings in this proof: Personal 
 
 ### Manifest-declared setup inputs
 
-`setup_inputs` declares extra user-supplied Site creation settings; consumers render supported input types from these declarations rather than inferring behavior from template names. Contract `0.1.0-dev2` supports:
+`setup_inputs` declares extra user-supplied Site creation settings; consumers render supported input types from these declarations rather than inferring behavior from template names. Contract `0.1.0-dev2` supports the publication filter, and `0.1.0-dev3` carries the optional shared SEO fields on Digital Garden families:
 
 | Type | Purpose | Site value | Behavior in this increment |
 |---|---|---|---|
@@ -152,7 +152,7 @@ The family-specific profile fields are required strings in this proof: Personal 
 
 The frontmatter match UI uses exact-match intent with a text value. Source YAML type coercion and actual note filtering are not implemented or claimed here; define and validate those rules with future conversion-engine work before applying the saved setting to content.
 
-### Markdown content and identity (Site Hosting Contract 0.1.0-dev2)
+### Markdown content and identity (Site Hosting Contract 0.1.0-dev3)
 
 Markdown files are identified by safe source paths under `site-data/data/`; frontmatter is optional and extensible. No frontmatter field is universally required. If the frontmatter block is absent, the entry is still valid. The path supplies content kind and stable content ID; an optional `kind` must match that path. Unknown properties are preserved by Astro's content schema and ignored unless a future contract gives them meaning.
 
@@ -172,7 +172,7 @@ For posts, `publication: none` stays in local Site data and emits no route; `pri
 - **Personal Homepage:** `site-data/data/work/<slug>/index.md` is a public or private work item with title, description, optional order, Markdown body, and entry images. Both family templates must render work items and posts, even when one presentation emphasizes posts.
 - **Company Homepage:** `site-data/data/services/<slug>/index.md` is a public or private service with title, description, optional order, Markdown body, and entry images. Both family templates must render services and posts/news.
 
-Earlier independent content-contract revisions established the following behavior, now carried by the unified Site Hosting Contract `0.1.0-dev2`: path shape determines family content kind and stable ID; fields are optional; unknown frontmatter properties pass through without interpretation; site SEO fields are shared. Invalid explicit `kind` mismatches and invalid deployment enums remain errors. Positive fixtures pass across the four Homepage templates. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
+Earlier independent content-contract revisions established the following behavior, now carried by the unified Site Hosting Contract `0.1.0-dev3`: path shape determines family content kind and stable ID; fields are optional; unknown frontmatter properties pass through without interpretation; site SEO fields are shared. Invalid explicit `kind` mismatches and invalid deployment enums remain errors. Positive fixtures pass across the four Homepage templates. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
 
 Verified route patterns are `/`, page paths from frontmatter (including `/about/team/`), `/blog/` and `/blog/{slug}/`, plus `/work/` and `/work/{slug}/` for Personal Homepage or `/services/` and `/services/{slug}/` for Company Homepage. The route patterns for posts and family-specific collections are shared by all templates in a family. Route collisions and canonical slash/Unicode normalization still need tests.
 
@@ -254,16 +254,16 @@ Keep the spec experimental until these checks and remaining design decisions are
 
 - The general content-kind vocabulary includes `page`, `post`, and `note`. Existing Homepage families retain their current `work`/`service` data for now; those remain family-specific examples and are not added to the general taxonomy.
 - Added the `digital-garden` family and two active templates: left explorer/right reader and left reader/right explorer. Both mount the Knowledge Collection at `/` and begin with a small sample collection so their note routes and explorer layout are visible.
-- Initial Garden modeling preceded the unified version decision. The current Digital Garden Family and all Homepage families use the shared Site Hosting Contract Version `0.1.0-dev2`; content is no longer versioned on an independent `0.7.x` line.
+- Initial Garden modeling preceded the unified version decision. The current Digital Garden Family and all Homepage families use the shared Site Hosting Contract Version `0.1.0-dev3`; content is no longer versioned on an independent `0.7.x` line.
 - Both Digital Garden template manifests declare a required `directory` input for the Knowledge Collection root and a required `frontmatter_match` input for publication selection. BlogGenius renders both declarations without branching on the template display name.
 - BlogGenius saves the selected Vault root and the configured frontmatter property/value in the local Site manifest. This records setup only; import, conversion, publication filtering, build integration, and deployment remain follow-up work.
-- Contract `0.1.0-dev2` keeps Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version` synchronized. These advance together; the template package's own release `version` remains separate.
+- Contract `0.1.0-dev3` keeps Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version` synchronized. These advance together; the template package's own release `version` remains separate. It also declares the shared optional site SEO profile on Digital Garden.
 - BlogGenius's current Site creation picker groups templates by Family metadata, so no new picker layout is needed. Vault-root selection is included in the current stage; conversion and publishing remain subsequent work, so this does not claim the whole-Vault publishing flow is ready.
 
 
 ### Historical version progression: independent content-contract 0.7.x (superseded)
 
-These entries record the earlier development sequence. Their behavior is now included in the unified Site Hosting Contract `0.1.0-dev2`; do not use these historical numbers for current compatibility decisions.
+These entries record the earlier development sequence. Their behavior is now included in the unified Site Hosting Contract `0.1.0-dev3`; do not use these historical numbers for current compatibility decisions.
 
 ## 2026-10-05 — Content contract 0.7.0: optional and extensible frontmatter
 
