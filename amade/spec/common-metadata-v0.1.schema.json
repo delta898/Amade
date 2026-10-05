@@ -29,7 +29,7 @@
           "required": ["id", "version"],
           "properties": {
             "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
-            "version": { "type": "string", "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?$" }
+            "version": { "type": "string", "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?(?:-[A-Za-z0-9.-]+)?$" }
           },
           "additionalProperties": false
         }

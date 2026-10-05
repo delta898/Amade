@@ -1,6 +1,6 @@
 {
-  "spec_version": "0.1.0",
-  "content_contract_version": "0.1.0",
+  "spec_version": "0.1.0-dev1",
+  "content_contract_version": "0.1.0-dev1",
   "family_id": "digital-garden",
   "site_data_directory": "data",
   "name": "Digital Garden",

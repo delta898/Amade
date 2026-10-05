@@ -1,24 +1,39 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://amade.dev/spec/site-hosting-template-v0.1.schema.json",
-  "title": "Amade Site Hosting Template 0.1",
+  "title": "Amade Site Hosting Template Contract 0.1.0-dev1",
   "allOf": [
     { "$ref": "./common-metadata-v0.1.schema.json" },
     {
       "type": "object",
       "required": ["spec_version", "template_id", "family_id", "astro_project", "site_data", "layout"],
       "properties": {
-        "spec_version": { "const": "0.1.0" },
+        "spec_version": { "const": "0.1.0-dev1" },
         "compatibility": {
           "properties": {
-            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" } } }
+            "contract": { "properties": { "id": { "enum": ["bloggenius-site-hosting-template", "bloggenius-knowledge-collection-template"] }, "version": { "const": "0.1.0-dev1" } } }
           }
         },
         "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "family_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "astro_project": { "$ref": "./common-metadata-v0.1.schema.json#/$defs/packagePath" },
         "site_data": { "type": "string", "pattern": "^(?:\\.\\./){1,3}[A-Za-z0-9._/-]+$" },
-        "layout": { "type": "string", "minLength": 1, "maxLength": 80 }
+        "layout": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "setup_inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "purpose", "label", "required"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "type": { "enum": ["directory"] },
+              "purpose": { "enum": ["knowledge_collection"] },
+              "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+              "required": { "type": "boolean" }
+            },
+            "additionalProperties": false
+          }
+        }
       }
     }
   ],
