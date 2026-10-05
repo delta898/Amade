@@ -5,6 +5,20 @@
   "name": "Amade Official Catalog",
   "families": [
     {
+      "family_id": "digital-garden",
+      "manifest": "amade/families/digital-garden/family.json",
+      "templates": [
+        {
+          "template_id": "digital-garden-explorer-left",
+          "manifest": "amade/templates/digital-garden-explorer-left/template.json"
+        },
+        {
+          "template_id": "digital-garden-explorer-right",
+          "manifest": "amade/templates/digital-garden-explorer-right/template.json"
+        }
+      ]
+    },
+    {
       "family_id": "company-homepage",
       "manifest": "amade/families/company-homepage/family.json",
       "templates": [

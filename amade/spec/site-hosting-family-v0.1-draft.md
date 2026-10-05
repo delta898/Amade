@@ -176,11 +176,11 @@ Names describe presentation so the difference is easy to understand. These are t
 
 Within each row, A and B must both preserve and render the entire shared data set. For example, the Personal Homepage list template must still make work items available even when its home page emphasizes posts; the Company Homepage card template must still display news/posts even when it emphasizes services.
 
-Digital Garden is a separate future family candidate because persistent note relationships/backlinks may require a different data contract from a personal homepage.
+Digital Garden is now an initial catalog family. Its first two templates use the same Knowledge Collection seed and place the directory explorer on opposite sides of the note reader. The Knowledge Collection is mounted at `/`. Vault selection, import policy, Obsidian conversion, and broader relationship rendering are later integration work; the current package does not claim those product flows are complete.
 
 ## Family contract overview
 
-The detailed paths, required and optional fields, visibility defaults, and current limits are specified above and represented in `families/<family-id>/family.json`. A formal JSON Schema for `family.json` is not implemented yet.
+The detailed paths, required and optional fields, visibility defaults, and current limits are specified above and represented in `families/<family-id>/family.json`. The draft JSON Schema validates the current family manifest shape; it remains an experimental 0.1 contract and may change as the Digital Garden integration develops.
 
 ## Candidate public routes for the proof
 
@@ -229,13 +229,20 @@ Keep the spec experimental until these checks and remaining design decisions are
 
 ## Open decisions
 
-- Full JSON Schema validation for family and template manifests; current manifests and lifecycle/asset checks are repeatable proof validation, not a finalized schema.
+- Full conformance validation of every family and template package against the JSON Schemas; the schemas are still experimental.
 - Markdown/media edge cases and content-entry IDs beyond the tested fixtures.
 - Slug syntax, nested paths, built-in collection routes and reserved-path/collision handling; page paths are stored as authored internal paths.
 - Negative schema tests and failed-build recovery behavior during an actual template conversion.
 - How BlogGenius detects user edits that a same-family conversion would replace.
 - Existing 1.x resources remain legacy and are excluded from the isolated 0.1 experimental catalog; 0.1 lifecycle states govern only resources conforming to this new manifest format.
 - Astro runtime compatibility declarations remain follow-up. BlogGenius app compatibility is required on both resource types: current packages target minimum BlogGenius `0.6.0` and declare their type-specific BlogGenius contract ID/version.
+
+## 2026-10-05 — Initial Digital Garden catalog family
+
+- The general content-kind vocabulary includes `page`, `post`, and `note`. Existing Homepage families retain their current `work`/`service` data for now; those remain family-specific examples and are not added to the general taxonomy.
+- Added the `digital-garden` family and two active templates: left explorer/right reader and left reader/right explorer. Both mount the Knowledge Collection at `/` and begin with a small sample collection so their note routes and explorer layout are visible.
+- The family has its own initial content contract `0.1.0` and the templates declare `bloggenius-knowledge-collection-template@0.1.0`. This is separate from the existing Homepage post contract `0.7.2`.
+- BlogGenius's current Site creation picker groups templates by Family metadata, so no new picker layout is needed. Vault-root selection and conversion remain subsequent development stages; this addition does not claim the whole-Vault publishing flow is ready.
 
 
 ## 2026-10-05 — Content contract 0.7.0: optional and extensible frontmatter

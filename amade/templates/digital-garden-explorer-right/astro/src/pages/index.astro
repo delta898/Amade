@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import ExplorerTree from '../components/ExplorerTree.astro';
+import '../styles.css';
+const entries = await getCollection('knowledge');
+---
+<html lang="ko">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><title>Knowledge Collection</title></head>
+  <body><main class="layout explorer-right"><ExplorerTree entries={entries} /><article class="reader"><p class="eyebrow">KNOWLEDGE COLLECTION</p><h1>지식 정원</h1><p>폴더와 파일 구조를 따라 노트를 찾아보고, 연결된 내용을 읽을 수 있습니다.</p><p class="empty">Vault를 연결하면 첫 노트가 여기에 표시됩니다.</p></article></main></body>
+</html>

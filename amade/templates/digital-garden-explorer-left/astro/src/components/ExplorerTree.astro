@@ -1,0 +1,38 @@
+---
+const { entries, activeId = '' } = Astro.props;
+const root = { folders: new Map(), files: [] };
+for (const entry of entries) {
+  const sourcePath = String(entry.data.source_path || `${entry.id}.md`).replaceAll('\\', '/');
+  const parts = sourcePath.split('/').filter(Boolean);
+  const filename = parts.pop() || `${entry.id}.md`;
+  let node = root;
+  for (const folder of parts) {
+    if (!node.folders.has(folder)) node.folders.set(folder, { folders: new Map(), files: [] });
+    node = node.folders.get(folder);
+  }
+  node.files.push({ entry, filename });
+}
+function escape(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;'); }
+function encoded(value) { return value.split('/').map(encodeURIComponent).join('/'); }
+function render(node) {
+  const folders = [...node.folders].sort(([a], [b]) => a.localeCompare(b, 'ko')).map(([name, child]) => `<li class="folder"><span>▾ ${escape(name)}</span><ul>${render(child)}</ul></li>`);
+  const files = [...node.files].sort((a, b) => a.filename.localeCompare(b.filename, 'ko')).map(({ entry, filename }) => `<li><a${entry.id === activeId ? ' aria-current="page" class="active"' : ''} href="/notes/${escape(encoded(entry.id))}/">▤ ${escape(filename)}</a></li>`);
+  return [...folders, ...files].join('');
+}
+const treeHtml = render(root);
+---
+<nav class="explorer" aria-label="Knowledge Collection 파일 목록">
+  <a class="collection-title" href="/">Knowledge Collection</a>
+  {entries.length ? <ul set:html={treeHtml} /> : <p class="empty">Vault를 연결하면 폴더와 파일이 여기에 표시됩니다.</p>}
+</nav>
+
+<style>
+  .explorer { min-width: 0; padding: 1.25rem; border-right: 1px solid #dce5df; background: #f7f8f7; }
+  .collection-title { display: block; margin: 0 0 1.25rem; color: #21352c; font-weight: 700; text-decoration: none; }
+  ul { margin: 0; padding-left: 1rem; list-style: none; }
+  li { margin: .45rem 0; }
+  .folder > span { color: #547164; font-size: .92rem; }
+  li a { color: #31443a; text-decoration: none; }
+  li a:hover, li a.active { color: #a74f31; text-decoration: underline; }
+  .empty { color: #68776e; font-size: .9rem; line-height: 1.6; }
+</style>

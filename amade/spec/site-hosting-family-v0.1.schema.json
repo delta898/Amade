@@ -144,6 +144,7 @@
             "enum": [
               "page",
               "post",
+              "note",
               "work",
               "service"
             ]
@@ -192,10 +193,7 @@
         "required_fields",
         "path_is_identity_source",
         "kind_may_be_omitted_and_is_inferred_from_path",
-        "unknown_properties",
-        "post_publication_default",
-        "post_author",
-        "post_representative_image"
+        "unknown_properties"
       ],
       "properties": {
         "required_fields": {

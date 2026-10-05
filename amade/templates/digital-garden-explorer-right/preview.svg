@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#f5f7f5"/><rect x="28" y="28" width="1144" height="704" rx="24" fill="#fff" stroke="#dce5df" stroke-width="2"/>
+  <rect x="52" y="52" width="820" height="656" rx="16" fill="#fff" stroke="#dce5df" stroke-width="2"/><text x="100" y="110" fill="#6b7c72" font-family="sans-serif" font-size="18">프로젝트 / 시작하기.md</text>
+  <text x="100" y="178" fill="#21352c" font-family="sans-serif" font-size="42" font-weight="700">배우며 기록하기</text><rect x="100" y="214" width="690" height="2" fill="#e4ebe6"/>
+  <text x="100" y="278" fill="#31443a" font-family="sans-serif" font-size="24">노트를 선택하면 여기에 내용이 열립니다.</text><text x="100" y="332" fill="#68776e" font-family="sans-serif" font-size="20">폴더와 파일 구조를 유지한 채 노트를 찾아볼 수 있습니다.</text>
+  <rect x="896" y="52" width="250" height="656" rx="16" fill="#f7f8f7"/><text x="922" y="98" fill="#21352c" font-family="sans-serif" font-size="28" font-weight="700">내 지식 정원</text>
+  <text x="922" y="153" fill="#547164" font-family="sans-serif" font-size="20">▾ 프로젝트</text><text x="948" y="197" fill="#31443a" font-family="sans-serif" font-size="18">▤ 시작하기.md</text><text x="948" y="237" fill="#31443a" font-family="sans-serif" font-size="18">▤ 정원 노트.md</text>
+  <text x="922" y="291" fill="#547164" font-family="sans-serif" font-size="20">▾ 자료</text><text x="948" y="335" fill="#31443a" font-family="sans-serif" font-size="18">▤ 아이디어.md</text><text x="948" y="375" fill="#68776e" font-family="sans-serif" font-size="18">· 참고.pdf</text>
+</svg>
