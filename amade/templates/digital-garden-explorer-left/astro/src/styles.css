@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 body { margin: 0; color: #21352c; background: #f5f7f5; font: 16px/1.75 system-ui, sans-serif; }
-.layout { min-height: 100vh; display: grid; grid-template-columns: 17rem minmax(0, 1fr); }
+.layout { min-height: 100vh; display: grid; grid-template-columns: minmax(20rem, 27vw) minmax(0, 1fr); }
 .reader { width: min(56rem, 100%); padding: 4rem clamp(1.5rem, 6vw, 6rem); }
 .reader h1 { margin: .3rem 0 1.5rem; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; }
 .reader p, .reader li { color: #34483d; }
