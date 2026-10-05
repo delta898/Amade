@@ -137,9 +137,9 @@ This section records the currently tested contract shape, not a final compatibil
 - Navigation `path` is a root-relative internal path. It must start with one `/`; external URLs, protocol-relative paths, query/fragment suffixes, backslashes, and `.`/`..` path segments are outside this contract. Nested paths are allowed and a multi-level path is built successfully. Unicode paths are syntactically accepted but emitted URL encoding is not verified. Exact URL normalization and collision behavior still need dedicated verification.
 - Menu IDs are stable across label/path edits and template conversion. The prototype enforces unique lowercase kebab-case IDs; duplicate destination paths remain allowed pending a product decision.
 
-The family-specific profile fields are required strings in this proof: Personal Homepage has `headline` and `biography`; Company Homepage has `tagline` and `about`. Both have the shared `displayName` and optional `logo`.
+The family-specific profile fields are required strings in this proof: Personal Homepage has `headline` and `biography`; Company Homepage has `tagline` and `about`. Both have the shared `displayName` and optional `logo`. Contract 0.7.2 also defines optional `seoDescription` (up to 300 characters), `shareImage`, `favicon`, and `searchEngineIndexing` (default `true`). `seoDescription` and `shareImage` apply to the homepage and template-provided listing pages only; neither is a fallback for individual post metadata. `favicon` is separate from the site logo. When indexing is disabled, templates add `noindex, nofollow` to all pages; this does not make static URLs private.
 
-### Markdown content and identity (content contract 0.7.1)
+### Markdown content and identity (content contract 0.7.2)
 
 Markdown files are identified by safe source paths under `site-data/data/`; frontmatter is optional and extensible. No frontmatter field is universally required. If the frontmatter block is absent, the entry is still valid. The path supplies content kind and stable content ID; an optional `kind` must match that path. Unknown properties are preserved by Astro's content schema and ignored unless a future contract gives them meaning.
 
@@ -159,7 +159,7 @@ For posts, `publication: none` stays in local Site data and emits no route; `pri
 - **Personal Homepage:** `site-data/data/work/<slug>/index.md` is a public or private work item with title, description, optional order, Markdown body, and entry images. Both family templates must render work items and posts, even when one presentation emphasizes posts.
 - **Company Homepage:** `site-data/data/services/<slug>/index.md` is a public or private service with title, description, optional order, Markdown body, and entry images. Both family templates must render services and posts/news.
 
-The initial four-template proof used family-specific discriminated frontmatter schemas. Contract 0.7.1 supersedes that strictness: path shape determines family content kind and stable ID, fields are optional, and unknown frontmatter properties pass through without interpretation. Invalid explicit `kind` mismatches and invalid deployment enums remain errors. This prevents a template from silently accepting the other family's content type. Positive fixtures pass across the four templates; the 0.7.1 contract permits absent and unknown metadata while retaining path safety and explicit kind matching. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
+The initial four-template proof used family-specific discriminated frontmatter schemas. Contract 0.7.1 supersedes that strictness: path shape determines family content kind and stable ID, fields are optional, and unknown frontmatter properties pass through without interpretation. Contract 0.7.2 adds the shared Site SEO profile fields above without changing post frontmatter. Invalid explicit `kind` mismatches and invalid deployment enums remain errors. This prevents a template from silently accepting the other family's content type. Positive fixtures pass across the four templates; the 0.7.1 contract permits absent and unknown metadata while retaining path safety and explicit kind matching. Repeatable negative fixtures for malformed `site.json`, missing required values, and route collisions remain before the contract can be considered stable.
 
 Verified route patterns are `/`, page paths from frontmatter (including `/about/team/`), `/blog/` and `/blog/{slug}/`, plus `/work/` and `/work/{slug}/` for Personal Homepage or `/services/` and `/services/{slug}/` for Company Homepage. The route patterns for posts and family-specific collections are shared by all templates in a family. Route collisions and canonical slash/Unicode normalization still need tests.
 
@@ -253,3 +253,12 @@ Keep the spec experimental until these checks and remaining design decisions are
 - All four templates use `cover` for blog-list thumbnails and `og:image` / optional `og:image:alt`; they do not modify source frontmatter. Raster images are optimized, while SVG covers pass through as SVG.
 - Both family manifests now declare content contract `0.7.1`; four packages advance to `0.4.4`. BlogGenius requires exact contract `0.7.1`.
 - Build and verification use canonical Amade package and family sources, not stale duplicate experiment copies. Existing materialized Sites keep their copied template version and must be recreated or upgraded to consume it.
+
+
+## 2026-10-05 — Content contract 0.7.2: shared Site SEO profile
+
+- Added optional family profile fields `seoDescription` (maximum 300 characters), `shareImage`, `favicon`, and `searchEngineIndexing` (default `true`) to both families.
+- All four template schemas accept the fields. Shared metadata output uses the site name in page titles and `og:site_name`, site description and representative image on the homepage/template-provided listing pages, favicon on all pages, and site-wide `noindex, nofollow` when indexing is disabled.
+- Post-level description and cover remain independent: posts do not inherit the site description or representative image.
+- Both families advance to content contract `0.7.2`; all four package manifests advance to `0.4.5` and require `bloggenius-site-hosting-template@0.7.2`.
+- Site profile metadata is part of shared site data; same-family template changes retain it. Already materialized Sites retain their copied template and need explicit upgrade/recreation to get the metadata-rendering changes.

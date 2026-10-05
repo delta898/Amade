@@ -24,11 +24,11 @@ Each **Template** package and **UI Style** package shares user-facing metadata: 
 
 The catalog exposes `families[]` with their `templates[]`, and `styles[]` as a separate resource type. Site Hosting Templates contain a complete Astro project and reference a family data contract. UI Styles contain only token data for the versioned BlogGenius semantic token contract; they do not distribute executable JavaScript or arbitrary CSS. Consumers list only packages whose status is `active`. `deprecated` and `withdrawn` remain in the catalog for history and existing references but are not offered for new selection.
 
-Both package kinds require `compatibility.min_bloggenius_version` and `compatibility.contract` (`id` plus `version`). The current experimental packages require BlogGenius `0.6.0`. Site Hosting Templates use `bloggenius-site-hosting-template` contract `0.7.1`; UI Styles use `bloggenius-ui-style-tokens` contract `1.0`. The Amade manifest shape remains `spec_version: 0.1.0`; current template packages are package version `0.4.4`. Amade's package `spec_version`, package release `version`, minimum BlogGenius app version, and type-specific BlogGenius contract version are separate axes. Consumers reject malformed declarations, do not offer resources requiring a newer app or unsupported contract, and preserve their fallback.
+Both package kinds require `compatibility.min_bloggenius_version` and `compatibility.contract` (`id` plus `version`). The current experimental packages require BlogGenius `0.6.0`. Site Hosting Templates use `bloggenius-site-hosting-template` contract `0.7.2`; UI Styles use `bloggenius-ui-style-tokens` contract `1.0`. The Amade manifest shape remains `spec_version: 0.1.0`; current template packages are package version `0.4.5`. Amade's package `spec_version`, package release `version`, minimum BlogGenius app version, and type-specific BlogGenius contract version are separate axes. Consumers reject malformed declarations, do not offer resources requiring a newer app or unsupported contract, and preserve their fallback.
 
 Validation and BlogGenius adoption status are tracked in the corresponding design record in the BlogGenius repository.
 
-## Current Site Hosting content contract (0.7.1)
+## Current Site Hosting content contract (0.7.2)
 
 The canonical rules live in each `family.json`. Markdown file paths establish content kind and stable ID; frontmatter supplies optional metadata and behavior. All four Astro templates accept files with no frontmatter, preserve unknown properties without interpreting them, and use known fields when present. An explicitly supplied `kind` must match the path. Invalid optional `date` or `published_at` values are omitted rather than blocking a build. Invalid visibility enums remain errors because they control deployed output.
 
@@ -51,9 +51,22 @@ The canonical rules live in each `family.json`. Markdown file paths establish co
 
 No frontmatter field is universally required. IDs are stable from the validated source path: `pages/<id>.md`, `posts/<slug>/index.md`, and the family's work/service equivalent. IDs do not require a frontmatter field. `publication` missing or `none` keeps posts local-only from the deployment perspective. Temporary save is `draft + none`; immediate publish is `complete + public` plus `published_at`.
 
-The `publication` values are independent from editorial completeness. `private` is unlisted, not access-controlled: a visitor who knows the URL can access the statically deployed page. Tags/categories remain user-owned. Both family manifests declare `content_contract_version: 0.7.1`; all four selectable template packages are `0.4.4` and require `bloggenius-site-hosting-template@0.7.1`. The Amade manifest shape remains `spec_version: 0.1.0`.
+The `publication` values are independent from editorial completeness. `private` is unlisted, not access-controlled: a visitor who knows the URL can access the statically deployed page. Tags/categories remain user-owned. Both family manifests declare `content_contract_version: 0.7.2`; all four selectable template packages are `0.4.5` and require `bloggenius-site-hosting-template@0.7.2`. The Amade manifest shape remains `spec_version: 0.1.0`.
 
-Public posts sort newest-first by `published_at`, then `date`, then stable path-derived content ID. Each detail title uses `<post title> | <site name>`. The `cover` frontmatter value is the single representative-image source: BlogGenius writes the first image block to `cover` and its title to `cover_alt`; Astro uses the processed cover for list thumbnails and `og:image` when the site origin is known. Templates render but never rewrite Markdown frontmatter. Existing Sites retain their copied template snapshot and must be recreated or otherwise upgraded explicitly to consume updated source.
+Public posts sort newest-first by `published_at`, then `date`, then stable path-derived content ID. Each detail title uses `<post title> | <site name>`. The `cover` frontmatter value is the single representative-image source: BlogGenius writes the first image block to `cover` and its title to `cover_alt`; Astro uses the processed cover for list thumbnails and `og:image` when the site origin is known. Templates render but never rewrite Markdown frontmatter.
+
+### Site profile and page metadata (0.7.2)
+
+The shared `site_profile.fields` contract supports these optional properties alongside the family's required profile data:
+
+| Property | Rule | Behavior |
+|---|---|---|
+| `seoDescription` | Optional string, at most 300 characters | Supplies description metadata for the homepage and template-provided listing pages. It is not a fallback for post or authored page descriptions. |
+| `shareImage` | Optional public URL path under `site-data/public/` | Supplies `og:image` for the homepage and template-provided listing pages only. Individual posts use only their own `cover`; no site-image fallback is applied. |
+| `favicon` | Optional public URL path under `site-data/public/` | Supplies the browser tab icon independently from the logo and share image. |
+| `searchEngineIndexing` | Optional boolean; defaults to `true` | `false` emits `noindex, nofollow` metadata on every generated page. This controls indexing signals, not access; deployed URLs remain public. |
+
+`displayName` remains the source for the site brand, `og:site_name`, and page-title suffix. Page titles use `<page title> | <site name>`. A post's own description and `cover` are used only when supplied; a missing post description or cover remains omitted. These fields are stored with the shared site data so same-family template variants can consume them consistently. Existing Sites retain their copied template snapshot and need an explicit template upgrade or recreation to receive new template rendering behavior.
 
 ## Legacy v1 reference
 

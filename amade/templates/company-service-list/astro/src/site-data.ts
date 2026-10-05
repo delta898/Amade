@@ -7,6 +7,10 @@ const schema = z.object({
   tagline: z.string().min(1),
   about: z.string().min(1),
   logo: z.string().regex(/^\/(?!\/)(?!.*\.\.).+$/).optional(),
+  seoDescription: z.string().max(300).optional(),
+  shareImage: z.string().regex(/^\/(?!\/)(?!.*\.\.).+$/).optional(),
+  favicon: z.string().regex(/^\/(?!\/)(?!.*\.\.).+$/).optional(),
+  searchEngineIndexing: z.boolean().default(true),
   navigation: z.array(z.object({
     id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     label: z.string().min(1),

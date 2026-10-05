@@ -1,6 +1,8 @@
 ---
+import SiteHead from '../../components/SiteHead.astro';
+import site from '../../site-data';
 import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../../content-utils';
 import { getCollection } from 'astro:content'; import '../../styles.css';
 const items=await getCollection('content',(entry)=>contentKind(entry)==='work'&&isContentPublic(entry));
 ---
-<html lang="ko"><head><meta charset="utf-8"/><title>작업</title></head><body><main class="shell"><h1>작업</h1>{items.map(item=><article><a href={`/work/${item.id.split('/').at(-1)}/`}><h2>{contentTitle(item)}</h2></a>{contentDescription(item) && <p>{contentDescription(item)}</p>}</article>)}</main></body></html>
+<html lang="ko"><SiteHead title="작업" description={site.seoDescription} image={site.shareImage} /><body><main class="shell"><h1>작업</h1>{items.map(item=><article><a href={`/work/${item.id.split('/').at(-1)}/`}><h2>{contentTitle(item)}</h2></a>{contentDescription(item) && <p>{contentDescription(item)}</p>}</article>)}</main></body></html>

@@ -15,7 +15,7 @@
   "layout": "cards",
   "description": "회사 소개와 서비스를 카드 중심으로 보여주는 상단 메뉴형 Astro 템플릿.",
   "author": "amadejjs",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "created_at": "2026-10-03",
   "license": "MIT",
   "preview": "preview.png",
@@ -24,7 +24,7 @@
     "min_bloggenius_version": "0.6.0",
     "contract": {
       "id": "bloggenius-site-hosting-template",
-      "version": "0.7.1"
+      "version": "0.7.2"
     }
   },
   "homepage": "https://www.bloggenius.kr",

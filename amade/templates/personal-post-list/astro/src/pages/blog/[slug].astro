@@ -1,9 +1,9 @@
 ---
+import SiteHead from '../../components/SiteHead.astro';
 import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../../content-utils';
 import { getCollection, render } from 'astro:content';
 import { getImage } from 'astro:assets';
 import '../../styles.css';
-import site from '../../site-data';
 
 export async function getStaticPaths() {
   const posts = await getCollection('content', (entry) => contentKind(entry) === 'post' && isContentDeployed(entry));
@@ -15,30 +15,14 @@ const { Content } = await render(post);
 const slug = post.id.split('/').at(-1);
 const route = `/blog/${slug}/`;
 const canonicalUrl = Astro.site ? new URL(route, Astro.site).href : undefined;
-const title = `${contentTitle(post)} | ${site.displayName}`;
 const cover = post.data.cover ? await getImage({ src: post.data.cover, format: post.data.cover.format === 'svg' ? 'svg' : 'webp' }) : undefined;
-const imageUrl = cover && Astro.site ? new URL(cover.src, Astro.site).href : undefined;
 const publishedAt = post.data.published_at;
 const publishedAtDate = publishedAt ? new Date(publishedAt) : undefined;
 const publishedAtIso = publishedAtDate?.toISOString();
 const displayPublishedAt = publishedAtDate?.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
 ---
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-    {contentDescription(post) && <meta name="description" content={contentDescription(post)} />}
-    <meta property="og:title" content={title} />
-    {contentDescription(post) && <meta property="og:description" content={contentDescription(post)} />}
-    <meta property="og:type" content="article" />
-    {contentAuthor(post) && <meta name="author" content={contentAuthor(post)} />}
-    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    {post.data.publication === 'private' && <meta name="robots" content="noindex, nofollow" />}
-    {publishedAt && <meta property="article:published_time" content={publishedAtIso} />}
-    {imageUrl && <meta property="og:image" content={imageUrl} />}
-    {imageUrl && <meta property="og:image:alt" content={post.data.cover_alt || ''} />}
-  </head>
+  <SiteHead title={contentTitle(post)} description={contentDescription(post)} image={cover?.src} imageAlt={post.data.cover_alt} type="article" author={contentAuthor(post)} publishedAt={publishedAtIso} canonicalUrl={canonicalUrl} noIndex={post.data.publication === 'private'} />
   <body>
     <main class="shell">
       <a href="/blog/">글 목록</a>
