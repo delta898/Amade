@@ -1,5 +1,5 @@
 {
-  "spec_version": "0.1.0-dev3",
+  "spec_version": "0.1.0-dev4",
   "template_id": "digital-garden-explorer-left",
   "family_id": "digital-garden",
   "name": "왼쪽 탐색기 · 노트 읽기",
@@ -8,16 +8,40 @@
   "version": "0.1.0",
   "license": "MIT",
   "created_at": "2026-10-05",
-  "categories": ["Digital Garden", "Knowledge Collection"],
-  "tags": ["Explorer Left", "Static Navigation"],
+  "categories": [
+    "Digital Garden",
+    "Knowledge Collection"
+  ],
+  "tags": [
+    "Explorer Left",
+    "Static Navigation"
+  ],
   "preview": "preview.svg",
   "status": "active",
-  "compatibility": { "min_bloggenius_version": "0.6.0", "contract": { "id": "bloggenius-knowledge-collection-template", "version": "0.1.0-dev3" } },
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": {
+      "id": "bloggenius-knowledge-collection-template",
+      "version": "0.1.0-dev4"
+    }
+  },
   "astro_project": "astro",
   "site_data": "../../site-data",
   "layout": "explorer-left",
   "setup_inputs": [
-    { "id": "knowledge_collection_root", "type": "directory", "purpose": "knowledge_collection", "label": "Obsidian Vault root", "required": true },
-    { "id": "publication_filter", "type": "frontmatter_match", "purpose": "publication_filter", "label": "공개 노트 기준", "required": true }
+    {
+      "id": "knowledge_collection_root",
+      "type": "directory",
+      "purpose": "knowledge_collection",
+      "label": "Obsidian Vault root",
+      "required": true
+    },
+    {
+      "id": "publication_filter",
+      "type": "frontmatter_match",
+      "purpose": "publication_filter",
+      "label": "공개 노트 기준",
+      "required": true
+    }
   ]
 }
