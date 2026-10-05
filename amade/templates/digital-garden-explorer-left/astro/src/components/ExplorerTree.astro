@@ -52,21 +52,21 @@ const directoryCount = folderCount(root);
   .collection-count { display: flex; align-items: center; gap: .28rem; margin: 0 0 1.1rem; color: #77867d; font-size: .8rem; line-height: 1.4; }
   .collection-count span { color: #4e6257; font-weight: 650; }
   .collection-count i { font-style: normal; color: #b2bdb6; }
-  .tree-list, .tree-list ul { margin: 0; padding: 0; list-style: none; }
-  .tree-list ul { margin: .1rem 0 .22rem .5rem; padding-left: .56rem; border-left: 1px solid #dce5df; }
-  .tree-folder { margin: .12rem 0; }
-  .folder-row, .tree-file a { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; align-items: center; gap: .42rem; min-height: 1.85rem; padding: .22rem .4rem; border-radius: .42rem; }
-  .folder-row { color: #455c50; font-size: .83rem; font-weight: 650; }
-  .folder-icon, .note-icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
-  .folder-icon { color: #7d9a89; fill: #e6eee8; }
-  .folder-name, .filename { min-width: 0; overflow-wrap: anywhere; }
-  .folder-count { min-width: 1.2rem; padding: .03rem .32rem; border-radius: 999px; background: #edf1ee; color: #809087; font-size: .68rem; font-weight: 550; text-align: center; }
-  .tree-file { margin: .06rem 0; }
-  .tree-file a { grid-template-columns: 1rem minmax(0, 1fr); color: #56695e; font-size: .79rem; line-height: 1.35; text-decoration: none; transition: background-color .15s ease, color .15s ease; }
-  .note-icon { color: #96a59b; }
-  .tree-file a:hover { color: #a74f31; background: #f0ece5; }
-  .tree-file a.active { color: #8f432b; background: #eee8df; font-weight: 650; box-shadow: inset 2px 0 #a74f31; }
-  .tree-file a:focus-visible, .collection-heading:focus-visible { outline: 2px solid #a74f31; outline-offset: 2px; }
+  .tree-list { margin: 0; padding: 0; list-style: none; }
+  .tree-list :global(ul) { margin: .1rem 0 .22rem .5rem; padding: 0 0 0 .56rem; list-style: none; border-left: 1px solid #dce5df; }
+  .tree-list :global(.tree-folder) { margin: .12rem 0; }
+  .tree-list :global(.folder-row), .tree-list :global(.tree-file a) { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; align-items: center; gap: .42rem; min-height: 1.85rem; padding: .22rem .4rem; border-radius: .42rem; }
+  .tree-list :global(.folder-row) { color: #455c50; font-size: .83rem; font-weight: 650; }
+  .tree-list :global(.folder-icon), .tree-list :global(.note-icon) { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+  .tree-list :global(.folder-icon) { color: #7d9a89; fill: #e6eee8; }
+  .tree-list :global(.folder-name), .tree-list :global(.filename) { min-width: 0; overflow-wrap: anywhere; }
+  .tree-list :global(.folder-count) { min-width: 1.2rem; padding: .03rem .32rem; border-radius: 999px; background: #edf1ee; color: #809087; font-size: .68rem; font-weight: 550; text-align: center; }
+  .tree-list :global(.tree-file) { margin: .06rem 0; }
+  .tree-list :global(.tree-file a) { grid-template-columns: 1rem minmax(0, 1fr); color: #56695e; font-size: .79rem; line-height: 1.35; text-decoration: none; transition: background-color .15s ease, color .15s ease; }
+  .tree-list :global(.note-icon) { color: #96a59b; }
+  .tree-list :global(.tree-file a:hover) { color: #a74f31; background: #f0ece5; }
+  .tree-list :global(.tree-file a.active) { color: #8f432b; background: #eee8df; font-weight: 650; box-shadow: inset 2px 0 #a74f31; }
+  .tree-list :global(.tree-file a:focus-visible), .collection-heading:focus-visible { outline: 2px solid #a74f31; outline-offset: 2px; }
   .empty { padding: .75rem; border: 1px dashed #d2ddd5; border-radius: .6rem; color: #68776e; font-size: .88rem; line-height: 1.6; }
-  @media (max-width: 760px) { .explorer { padding: 1rem .7rem; } .tree-list ul { margin-left: .34rem; padding-left: .42rem; } .folder-row, .tree-file a { gap: .28rem; padding-inline: .28rem; } }
+  @media (max-width: 760px) { .explorer { padding: 1rem .7rem; } .tree-list :global(ul) { margin-left: .34rem; padding-left: .42rem; } .tree-list :global(.folder-row), .tree-list :global(.tree-file a) { gap: .28rem; padding-inline: .28rem; } }
 </style>
