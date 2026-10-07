@@ -20,7 +20,10 @@
   "status": "active",
   "compatibility": {
     "min_bloggenius_version": "0.6.0",
-    "contract": { "id": "bloggenius-ui-style-tokens", "version": "1.0" }
+    "contract": {
+      "id": "bloggenius-ui-style-tokens",
+      "version": "1.1"
+    }
   },
   "tokens": {
     "--ui-canvas": "linear-gradient(135deg, #dbe5e1 0%, #eee5d4 52%, #dbe1e8 100%)",
@@ -120,6 +123,7 @@
     "--ui-segmented-badge-shadow": "inset 0 0 0 1px color-mix(in srgb, var(--ui-action-primary) 16%, transparent)",
     "--ui-row-running-shadow": "0 0 0 1px color-mix(in srgb, var(--ui-action-primary) 12%, transparent)",
     "--ui-table-header-divider-shadow": "0 2px 0 var(--ui-border-default)",
-    "--ui-sticky-footer-shadow": "0 -6px 16px rgba(24, 56, 73, 0.06)"
+    "--ui-sticky-footer-shadow": "0 -6px 16px rgba(24, 56, 73, 0.06)",
+    "--ui-form-control-disabled-opacity": "0.56"
   }
 }
