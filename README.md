@@ -18,7 +18,7 @@ dev catalog groups seven experimental templates by family: Digital Garden (`digi
 
 ## Production template selection
 
-`amade/catalog/index.json`은 개발용 전체 목록이고, `amade/catalog/production-index.json`은 BlogGenius 운영 앱에 노출할 Site Hosting 템플릿의 명시적 허용 목록입니다. 두 목록은 분리되어 있으므로 개발·테스트 템플릿 파일이 저장소의 `main`에 있어도 production catalog에 넣지 않으면 운영 앱에 나타나지 않습니다. 현재 운영 목록에는 `company-atelier` 하나만 포함되어 있습니다. 검증 방식과 관리 규칙은 [Site Hosting production catalog](amade/spec/site-hosting-production-catalog.md)를 따릅니다.
+`amade/catalog/index.json`은 개발용 전체 목록이고, `amade/catalog/production-index.json`은 BlogGenius 운영 앱에 노출할 Site Hosting 템플릿과 UI Style의 명시적 허용 목록입니다. 두 목록은 분리되어 있으므로 개발·테스트 리소스 파일이 저장소의 `main`에 있어도 production catalog에 넣지 않으면 운영 앱에 나타나지 않습니다. 현재 운영 템플릿은 `company-atelier` 하나이며, Style은 `remote-test-style`을 제외한 10종입니다. 검증 방식과 관리 규칙은 [Site Hosting production catalog](amade/spec/site-hosting-production-catalog.md)를 따릅니다.
 
 GitHub Actions의 `validate-production-catalog` workflow는 PR 및 `main` 변경 때 운영 목록이 개발 목록의 유효한 부분집합인지 검사하고 선택된 Astro 템플릿을 빌드합니다. 이 workflow는 배포나 승격을 수행하지 않습니다.
 
