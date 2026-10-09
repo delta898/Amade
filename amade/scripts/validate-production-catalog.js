@@ -20,7 +20,7 @@ function validateProductionCatalog(root = path.resolve(__dirname, '../..'), { bu
     requireValue(development?.spec_version === '0.1.0' && development.status === 'experimental' && Array.isArray(development.families), 'Development catalog format is invalid.');
     requireValue(production?.spec_version === '0.1.0' && production.status === 'experimental'
         && production.catalog_id === 'amade-production' && Array.isArray(production.families) && Array.isArray(production.styles), 'Production catalog format is invalid.');
-    requireValue(Array.isArray(development.styles) && production.styles.length === 0, 'Production catalog currently supports Site Hosting Templates only; its styles list must remain empty.');
+    requireValue(Array.isArray(development.styles), 'Development catalog styles are invalid.');
 
     const resolveRepoPath = (value, expectedPrefix) => {
         const normalized = String(value || '').replaceAll('\\', '/');
@@ -106,7 +106,22 @@ function validateProductionCatalog(root = path.resolve(__dirname, '../..'), { bu
         }
     }
 
-    return { contractVersion: version, familyCount: selectedFamilies.size, templateCount: selectedTemplates.size, styleCount: 0 };
+    const developmentStyles = new Map(development.styles.map((entry) => [entry?.style_id, entry?.manifest]));
+    const selectedStyles = new Set();
+    for (const styleEntry of production.styles) {
+        const styleId = String(styleEntry?.style_id || '');
+        const expectedManifest = `amade/styles/${styleId}/style.json`;
+        requireValue(ID_PATTERN.test(styleId) && !selectedStyles.has(styleId), `Duplicate or invalid production Style ID: ${styleId}`);
+        selectedStyles.add(styleId);
+        requireValue(developmentStyles.get(styleId) === styleEntry.manifest && styleEntry.manifest === expectedManifest,
+            `Production Style is not present in the development catalog: ${styleId}`);
+        const manifestPath = resolveRepoPath(styleEntry.manifest, 'amade/styles/').normalized;
+        const style = readJson(manifestPath);
+        requireValue(style.spec_version === '0.1.0' && style.style_id === styleId && style.status === 'active',
+            `Production Style is not active or its manifest identity is mismatched: ${styleId}`);
+    }
+
+    return { contractVersion: version, familyCount: selectedFamilies.size, templateCount: selectedTemplates.size, styleCount: selectedStyles.size };
 }
 
 if (require.main === module) {

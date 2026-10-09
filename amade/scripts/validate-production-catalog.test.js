@@ -52,7 +52,15 @@ function createFixture() {
         writeJson('amade/catalog/index.json', catalog);
         writeJson('amade/catalog/production-index.json', productionCatalog);
     };
-    return { root, addTemplate, close: () => fs.rmSync(root, { recursive: true, force: true }) };
+    const addStyle = (styleId, { includeInDevelopment = true, includeInProduction = true, status = 'active' } = {}) => {
+        const manifest = `amade/styles/${styleId}/style.json`;
+        writeJson(manifest, { spec_version: '0.1.0', style_id: styleId, status });
+        if (includeInDevelopment) catalog.styles.push({ style_id: styleId, manifest });
+        if (includeInProduction) productionCatalog.styles.push({ style_id: styleId, manifest });
+        writeJson('amade/catalog/index.json', catalog);
+        writeJson('amade/catalog/production-index.json', productionCatalog);
+    };
+    return { root, addTemplate, addStyle, close: () => fs.rmSync(root, { recursive: true, force: true }) };
 }
 
 test('empty production catalog is valid before any Template is promoted', () => {
@@ -91,4 +99,26 @@ test('production catalog rejects inactive Templates', () => {
         fs.writeFileSync(file, JSON.stringify(value));
         assert.throws(() => validateProductionCatalog(fixture.root), /Template is not active/);
     } finally { fixture.close(); }
+});
+
+test('production catalog accepts only active Styles referenced by development catalog', () => {
+    const fixture = createFixture();
+    try {
+        fixture.addStyle('warm-editorial');
+        assert.equal(validateProductionCatalog(fixture.root).styleCount, 1);
+    } finally { fixture.close(); }
+});
+
+test('production catalog rejects Styles missing from development catalog or inactive', () => {
+    const missing = createFixture();
+    try {
+        missing.addStyle('remote-test-style', { includeInDevelopment: false });
+        assert.throws(() => validateProductionCatalog(missing.root), /Production Style is not present in the development catalog/);
+    } finally { missing.close(); }
+
+    const inactive = createFixture();
+    try {
+        inactive.addStyle('retired-style', { status: 'deprecated' });
+        assert.throws(() => validateProductionCatalog(inactive.root), /Production Style is not active/);
+    } finally { inactive.close(); }
 });
