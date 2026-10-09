@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
@@ -83,12 +84,24 @@ function validateProductionCatalog(root = path.resolve(__dirname, '../..'), { bu
             requireValue(String(seed.displayName || '').trim() && Array.isArray(seed.navigation), `Production Template seed site.json is invalid: ${templateId}`);
 
             if (build) {
-                const install = spawnSync(npm, ['ci'], { cwd: astroRoot, stdio: 'inherit' });
-                if (install.error) throw install.error;
-                requireValue(install.status === 0, `npm ci failed for production Template ${templateId}.`);
-                const result = spawnSync(npm, ['run', 'build'], { cwd: astroRoot, stdio: 'inherit' });
-                if (result.error) throw result.error;
-                requireValue(result.status === 0, `Astro build failed for production Template ${templateId}.`);
+                const stagingRoot = fs.mkdtempSync(path.join(os.tmpdir(), `amade-production-${templateId}-`));
+                try {
+                    const stagedAstroRoot = path.join(stagingRoot, 'template', 'astro');
+                    fs.mkdirSync(path.dirname(stagedAstroRoot), { recursive: true });
+                    fs.cpSync(astroRoot, stagedAstroRoot, {
+                        recursive: true,
+                        filter: (source) => !['node_modules', 'dist'].includes(path.basename(source))
+                    });
+                    fs.cpSync(seedRoot, path.join(stagingRoot, 'site-data'), { recursive: true });
+                    const install = spawnSync(npm, ['ci'], { cwd: stagedAstroRoot, stdio: 'inherit' });
+                    if (install.error) throw install.error;
+                    requireValue(install.status === 0, `npm ci failed for production Template ${templateId}.`);
+                    const result = spawnSync(npm, ['run', 'build'], { cwd: stagedAstroRoot, stdio: 'inherit' });
+                    if (result.error) throw result.error;
+                    requireValue(result.status === 0, `Astro build failed for production Template ${templateId}.`);
+                } finally {
+                    fs.rmSync(stagingRoot, { recursive: true, force: true });
+                }
             }
         }
     }
