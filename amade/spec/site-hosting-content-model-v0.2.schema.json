@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/site-hosting-content-model-v0.2.schema.json",
+  "title": "Amade Site Hosting Content Model 0.2.0-dev1",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "model_id",
+    "model_version",
+    "name",
+    "description",
+    "site_profile",
+    "navigation",
+    "media",
+    "content_types",
+    "content_frontmatter_policy"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "0.2.0-dev1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "site_profile": {
+      "type": "object",
+      "required": [
+        "fields"
+      ],
+      "properties": {
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldRule"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "navigation": {
+      "type": "object",
+      "required": [
+        "source",
+        "minimum_items",
+        "identity",
+        "fields"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum_items": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fields": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldRule"
+          }
+        },
+        "path_policy": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "media": {
+      "type": "object",
+      "required": [
+        "public_directory",
+        "entry_directory",
+        "markdown_reference",
+        "relative_to_entry"
+      ],
+      "properties": {
+        "public_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entry_directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "markdown_reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_to_entry": {
+          "type": "boolean"
+        },
+        "validated_format": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "content_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "source",
+          "identity",
+          "body_format",
+          "fields"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "page",
+              "post",
+              "note",
+              "work",
+              "service"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body_format": {
+            "const": "markdown"
+          },
+          "fields": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "$ref": "#/$defs/fieldRule"
+            }
+          },
+          "public_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "listing_route": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "detail_route": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "frontmatter_policy": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "content_frontmatter_policy": {
+      "type": "object",
+      "required": [
+        "required_fields",
+        "path_is_identity_source",
+        "kind_may_be_omitted_and_is_inferred_from_path",
+        "unknown_properties"
+      ],
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "path_is_identity_source": {
+          "type": "boolean"
+        },
+        "kind_may_be_omitted_and_is_inferred_from_path": {
+          "type": "boolean"
+        },
+        "unknown_properties": {
+          "const": "preserve-and-ignore"
+        },
+        "post_publication_default": {
+          "const": "none"
+        },
+        "post_author": {
+          "const": "optional string; omitted unless explicitly supplied"
+        },
+        "post_representative_image": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "model_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "model_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[a-zA-Z0-9.-]+)?$"
+    }
+  },
+  "$defs": {
+    "fieldRule": {
+      "type": "object",
+      "required": [
+        "type",
+        "required"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "string",
+            "boolean",
+            "integer",
+            "date",
+            "internal-url-path",
+            "public-url-path",
+            "entry-relative-image"
+          ]
+        },
+        "format": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": [
+              "string",
+              "boolean",
+              "integer"
+            ]
+          }
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "minLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minimum": {
+          "type": "integer"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "const": {},
+        "default": {},
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unique": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

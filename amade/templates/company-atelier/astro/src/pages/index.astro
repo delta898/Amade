@@ -1,0 +1,76 @@
+---
+import SiteLayout from '../components/SiteLayout.astro';
+import site from '../site-data';
+import { contentKind, contentTitle, contentDescription, contentSlug, isContentPublic } from '../content-utils';
+import { getCollection } from 'astro:content';
+import { sortPostsNewestFirst } from '../post-order';
+import '../styles.css';
+
+const visible = await getCollection('content', (entry) => isContentPublic(entry));
+const services = visible.filter((entry) => contentKind(entry) === 'service')
+  .sort((a, b) => (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER));
+const posts = sortPostsNewestFirst(visible.filter((entry) => contentKind(entry) === 'post')).slice(0, 3);
+const serviceLabels = ['발견하고', '함께 설계하고', '현실로 만듭니다'];
+const serviceWords = ['DISCOVER', 'DESIGN', 'DELIVER'];
+---
+<SiteLayout>
+  <section class="hero">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">A thoughtful company for what comes next</p>
+        <h1>{site.tagline}</h1>
+        <p class="hero-description">{site.about}</p>
+        <div class="hero-actions">
+          <a class="button-primary" href="/services/">서비스 둘러보기 <span aria-hidden="true">↗</span></a>
+          {site.navigation.find((item) => item.id === 'about') && <a class="text-link" href={site.navigation.find((item) => item.id === 'about')?.path}>우리가 일하는 방식 <span aria-hidden="true">→</span></a>}
+        </div>
+      </div>
+      <div class="hero-art" aria-label="관찰과 아이디어가 하나의 경험으로 연결되는 추상 그래픽">
+        <div class="art-orbit" aria-hidden="true"></div>
+        <div class="art-tag art-tag-one">GOOD QUESTIONS, BETTER WORK</div>
+        <div class="art-panel">
+          <div class="art-panel-top"><span class="art-panel-label">{site.displayName.toUpperCase()} · FIELD NOTES</span><span class="art-index">01 / 03</span></div>
+          <div class="art-composition" aria-hidden="true"><div class="art-block art-block-large"></div><div class="art-block art-block-small"></div><div class="art-block art-block-small"></div></div>
+          <div class="art-caption"><span>생각을 모아, 다음을 만듭니다.</span><span>FORM / FUNCTION</span></div>
+        </div>
+        <div class="art-tag art-tag-two">매일의 문제를 새로운 가능성으로</div>
+        <span class="hero-note">Independent thinking · Shared progress</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="intro-section">
+    <div class="container intro-grid">
+      <aside class="intro-aside"><p class="section-kicker">Our point of view</p><p>좋은 결과는 더 나은 질문에서 시작됩니다. 서두르기보다 제대로 관찰하고, 함께 답을 찾아갑니다.</p></aside>
+      <div class="intro-main">
+        <h2>복잡한 것을 덜어내고,<br /><span>중요한 일에 집중합니다.</span></h2>
+        <p>{site.about}</p>
+        <div class="principles">
+          {serviceLabels.map((label, index) => <div class="principle"><span>0{index + 1} / {serviceWords[index]}</span><strong>{label}</strong></div>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services-section">
+    <div class="container">
+      <div class="section-heading"><div><p class="section-kicker">What we do</p><h2>생각을 실제 변화로</h2></div><p>상황을 이해하는 순간부터 완성된 경험이 자리 잡을 때까지, 필요한 일을 정확하게 연결합니다.</p></div>
+      <div class="service-grid">
+        {services.length ? services.slice(0, 3).map((service, index) => <a class="service-card" href={`/services/${contentSlug(service)}/`}><span class="service-number"><span>0{index + 1} / OUR WORK</span><i aria-hidden="true">↗</i></span><h3>{contentTitle(service)}</h3>{contentDescription(service) && <p>{contentDescription(service)}</p>}</a>) : <div class="service-empty">서비스를 준비하고 있습니다.</div>}
+      </div>
+      <div class="services-more"><a class="quiet-link" href="/services/">모든 서비스 보기 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <section class="journal-section">
+    <div class="container journal-grid">
+      <div class="journal-intro"><p class="section-kicker">Journal</p><h2>생각을 나누고<br />배움을 기록합니다.</h2><p>일하는 과정에서 발견한 관점과 이야기를 소식으로 전합니다.</p><a class="quiet-link" href="/blog/">소식 더 보기 <span aria-hidden="true">→</span></a></div>
+      <div class="journal-list">
+        {posts.length ? posts.map((post) => <a class="journal-item" href={`/blog/${contentSlug(post)}/`}><time>{post.data.date instanceof Date ? post.data.date.toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:'Asia/Seoul'}) : 'FIELD NOTE'}</time><div><h3>{contentTitle(post)}</h3>{contentDescription(post) && <p>{contentDescription(post)}</p>}</div><span class="journal-arrow" aria-hidden="true">↗</span></a>) : <p class="journal-empty">새로운 소식을 준비하고 있습니다.</p>}
+      </div>
+    </div>
+  </section>
+
+  <section class="closing-section"><div class="container"><div class="closing-card"><div class="closing-copy"><p class="section-kicker">Let’s make it meaningful</p><h2>다음에 만들 경험,<br />함께 이야기해 볼까요?</h2></div><a class="button-primary" href="/services/">우리가 할 수 있는 일 <span aria-hidden="true">↗</span></a></div></div></section>
+</SiteLayout>

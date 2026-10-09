@@ -1,0 +1,17 @@
+---
+import { getCollection, render } from 'astro:content';
+import ExplorerTree from '../../components/ExplorerTree.astro';
+import SiteHead from '../../components/SiteHead.astro';
+import '../../styles.css';
+export async function getStaticPaths() {
+  const entries = await getCollection('knowledge');
+  return entries.map((entry) => ({ params: { path: entry.id }, props: { entry, entries } }));
+}
+const { entry, entries } = Astro.props;
+const { Content } = await render(entry);
+const title = entry.data.title || entry.data.source_path?.split('/').at(-1)?.replace(/\.md$/i, '') || entry.id;
+---
+<html lang="ko">
+  <SiteHead title={title} />
+  <body><main class="layout explorer-left"><ExplorerTree entries={entries} activeId={entry.id} /><article class="reader"><p class="eyebrow">{entry.data.source_path || entry.id}</p><h1>{title}</h1><Content /></article></main></body>
+</html>

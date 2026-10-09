@@ -1,0 +1,26 @@
+---
+import SiteLayout from '../../components/SiteLayout.astro';
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentSlug, hasContentHeading, isContentDeployed } from '../../content-utils';
+import { getCollection, render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import '../../styles.css';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('content', (entry) => contentKind(entry) === 'post' && isContentDeployed(entry));
+  return posts.map((post) => ({ params: { slug: contentSlug(post) }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+const cover = post.data.cover ? await getImage({src:post.data.cover,format:post.data.cover.format === 'svg' ? 'svg' : 'webp'}) : undefined;
+const publishedAt = post.data.published_at;
+const publishedAtDate = publishedAt ? new Date(publishedAt) : undefined;
+const publishedAtIso = publishedAtDate && !Number.isNaN(publishedAtDate.valueOf()) ? publishedAtDate.toISOString() : undefined;
+const displayPublishedAt = publishedAtDate?.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Seoul'});
+const canonicalUrl = Astro.site ? new URL(`/blog/${contentSlug(post)}/`, Astro.site).href : undefined;
+---
+<SiteLayout title={contentTitle(post)} description={contentDescription(post)} image={cover?.src} imageAlt={post.data.cover_alt} type="article" author={contentAuthor(post)} publishedAt={publishedAtIso} canonicalUrl={canonicalUrl} noIndex={post.data.publication === 'private'}>
+  <article>
+    <header class="journal-article-hero"><div class="article-shell"><a class="article-back" href="/blog/">← 소식 목록</a><p class="section-kicker">Journal · {contentAuthor(post) || '다음연구소'}</p>{(!hasContentHeading(post) || post.data.title) && <h1>{contentTitle(post)}</h1>}<div class="article-meta">{displayPublishedAt && <time datetime={publishedAtIso}>{displayPublishedAt}</time>}{contentAuthor(post) && <span>{contentAuthor(post)}</span>}</div>{contentDescription(post) && <p class="article-lead">{contentDescription(post)}</p>}</div></header>
+    <div class="article-shell journal-article-body">{cover && <img class="article-cover" src={cover.src} alt={post.data.cover_alt || ''} /> }<div class="prose"><Content /></div><a class="article-back article-back-bottom" href="/blog/">← 다른 이야기 보기</a></div>
+  </article>
+</SiteLayout>

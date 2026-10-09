@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/site-hosting-v1.schema.json",
+  "title": "Amade Site Hosting Template v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "astro",
+    "customization",
+    "publishing"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "astro": {
+      "type": "object",
+      "required": [
+        "source",
+        "build_command",
+        "output_directory"
+      ],
+      "properties": {
+        "source": {
+          "const": "astro"
+        },
+        "build_command": {
+          "type": "string"
+        },
+        "output_directory": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "customization": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "fields"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "type",
+              "default",
+              "target"
+            ],
+            "properties": {
+              "key": {
+                "enum": [
+                  "site_name",
+                  "logo",
+                  "navigation"
+                ]
+              },
+              "type": {
+                "enum": [
+                  "string",
+                  "image",
+                  "navigation"
+                ]
+              },
+              "label": {
+                "type": "string"
+              },
+              "default": {},
+              "required": {
+                "type": "boolean"
+              },
+              "target": {
+                "type": "object",
+                "required": [
+                  "file",
+                  "path"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "pattern": "^src/[A-Za-z0-9._/-]+\\.json$"
+                  },
+                  "path": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "navigation"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "default": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "label",
+                          "href"
+                        ],
+                        "properties": {
+                          "label": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "href": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "^/(?!/)"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "pages": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "mode",
+        "max_items",
+        "route_pattern",
+        "target"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "mode": {
+          "const": "static_placeholders"
+        },
+        "max_items": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "route_pattern": {
+          "const": "/{slug}/"
+        },
+        "reserved_slugs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 48
+          },
+          "uniqueItems": true
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "file",
+            "path"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "pattern": "^src/[A-Za-z0-9._/-]+\\.json$"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "publishing": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "content_directory",
+            "route_pattern",
+            "frontmatter"
+          ],
+          "properties": {
+            "content_directory": {
+              "type": "string"
+            },
+            "route_pattern": {
+              "type": "string"
+            },
+            "frontmatter": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "format",
+            "content_directory",
+            "post_layout",
+            "frontmatter",
+            "visibility",
+            "routes"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": 2
+            },
+            "format": {
+              "const": "markdown"
+            },
+            "content_directory": {
+              "type": "string",
+              "minLength": 1
+            },
+            "post_layout": {
+              "type": "object",
+              "required": [
+                "type",
+                "entry_file",
+                "assets_directory",
+                "image_reference"
+              ],
+              "properties": {
+                "type": {
+                  "const": "per_post_directory"
+                },
+                "entry_file": {
+                  "const": "index.md"
+                },
+                "assets_directory": {
+                  "const": "images"
+                },
+                "image_reference": {
+                  "const": "entry_relative"
+                }
+              },
+              "additionalProperties": false
+            },
+            "frontmatter": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "type",
+                  "required"
+                ],
+                "properties": {
+                  "name": {
+                    "enum": [
+                      "title",
+                      "description",
+                      "pubDate",
+                      "is_public"
+                    ]
+                  },
+                  "type": {
+                    "enum": [
+                      "string",
+                      "date",
+                      "boolean"
+                    ]
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "default": {}
+                },
+                "additionalProperties": false
+              }
+            },
+            "visibility": {
+              "type": "object",
+              "required": [
+                "field",
+                "published_value",
+                "default"
+              ],
+              "properties": {
+                "field": {
+                  "const": "is_public"
+                },
+                "published_value": {
+                  "const": true
+                },
+                "default": {
+                  "const": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "routes": {
+              "type": "object",
+              "required": [
+                "listing",
+                "detail"
+              ],
+              "properties": {
+                "listing": {
+                  "type": "string",
+                  "pattern": "^/"
+                },
+                "detail": {
+                  "type": "string",
+                  "pattern": "^/.+\\{slug\\}.+$"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

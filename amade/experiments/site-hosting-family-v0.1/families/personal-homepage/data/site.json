@@ -1,0 +1,28 @@
+{
+  "displayName": "민서의 기록",
+  "headline": "배우고 만들며 기록합니다",
+  "biography": "작은 시도와 배움을 나누는 개인 홈페이지입니다.",
+  "logo": "/logo.svg",
+  "navigation": [
+    {
+      "id": "home",
+      "label": "홈",
+      "path": "/"
+    },
+    {
+      "id": "about",
+      "label": "소개",
+      "path": "/about/team/"
+    },
+    {
+      "id": "posts",
+      "label": "이야기",
+      "path": "/blog/"
+    },
+    {
+      "id": "work",
+      "label": "작업",
+      "path": "/work/"
+    }
+  ]
+}

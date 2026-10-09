@@ -1,0 +1,13 @@
+---
+import SiteHead from '../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../content-utils';
+import { getCollection } from 'astro:content';
+import '../styles.css';
+import { sortPostsNewestFirst } from '../post-order';
+import site from '../site-data';
+const all=await getCollection('content',(entry)=>isContentPublic(entry));
+const posts=sortPostsNewestFirst(all.filter(x=>contentKind(x)==='post'));
+const items=all.filter(x=>contentKind(x)==='work');
+const pages=all.filter(x=>contentKind(x)==='page');
+---
+<html lang="ko"><SiteHead title={site.displayName} description={site.seoDescription} image={site.shareImage} /><body><main class:list={['shell','']}><header><strong><img src={site.logo} alt=""/>{site.displayName}</strong><nav>{site.navigation.map(link=><a href={link.path}>{link.label}</a>)}</nav></header><section><p>personal-homepage · grid</p><h1>{site.headline}</h1><p>{site.biography}</p></section><section><h2>작업</h2><div class="items">{items.map(item=><article><a href={`/work/${item.id.split('/').at(-1)}/`}><h3>{contentTitle(item)}</h3></a>{contentDescription(item) && <p>{contentDescription(item)}</p>}</article>)}</div></section><section><h2>글</h2><div class="items">{posts.map(post=><article><a href={`/blog/${post.id.split('/').at(-1)}/`}><h3>{contentTitle(post)}</h3></a>{contentDescription(post) && <p>{contentDescription(post)}</p>}</article>)}</div></section><footer>Family data proof · personal-card-grid</footer></main></body></html>

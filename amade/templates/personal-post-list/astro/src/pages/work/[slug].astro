@@ -1,0 +1,8 @@
+---
+import SiteHead from '../../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../../content-utils';
+import { getCollection, render } from 'astro:content'; import '../../styles.css';
+export async function getStaticPaths(){const items=await getCollection('content',(entry)=>contentKind(entry)==='work'&&isContentPublic(entry));return items.map(item=>({params:{slug:item.id.split('/').at(-1)},props:{item}}));}
+const {item}=Astro.props;const {Content}=await render(item);
+---
+<html lang="ko"><SiteHead title={contentTitle(item)} description={contentDescription(item)} /><body><main class="shell"><a href="/work/">목록</a>{(!hasContentHeading(item) || item.data.title) && <h1>{contentTitle(item)}</h1>}<Content/></main></body></html>

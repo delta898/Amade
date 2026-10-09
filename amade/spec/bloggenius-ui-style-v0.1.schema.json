@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/bloggenius-ui-style-v0.1.schema.json",
+  "title": "Amade BlogGenius UI Style 0.1",
+  "description": "A data-only BlogGenius appearance package using UI Style token contract 1.1.",
+  "allOf": [
+    { "$ref": "./common-metadata-v0.1.schema.json" },
+    {
+      "type": "object",
+      "required": ["spec_version", "style_id", "tokens"],
+      "properties": {
+        "spec_version": { "const": "0.1.0" },
+        "style_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "compatibility": {
+          "properties": {
+            "contract": { "properties": { "id": { "const": "bloggenius-ui-style-tokens" }, "version": { "const": "1.1" } } }
+          }
+        },
+        "tokens": {
+          "$ref": "./bloggenius-ui-style-tokens-v1.1.schema.json",
+          "propertyNames": { "pattern": "^--ui-[a-z0-9-]+$" },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "not": { "pattern": "[;{}<>]|(?:url|expression|image-set|cross-fade|element|paint)\\s*\\(|@import|javascript:|data:|https?://" }
+          }
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

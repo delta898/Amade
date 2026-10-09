@@ -1,0 +1,28 @@
+{
+  "displayName": "다음연구소",
+  "tagline": "복잡한 문제를 명료한 경험으로",
+  "about": "사람과 맥락을 먼저 살피고, 더 나은 제품과 서비스의 방향을 함께 설계합니다.",
+  "logo": "/logo.svg",
+  "navigation": [
+    {
+      "id": "home",
+      "label": "홈",
+      "path": "/"
+    },
+    {
+      "id": "about",
+      "label": "회사 소개",
+      "path": "/about/team/"
+    },
+    {
+      "id": "posts",
+      "label": "소식",
+      "path": "/blog/"
+    },
+    {
+      "id": "services",
+      "label": "서비스",
+      "path": "/services/"
+    }
+  ]
+}

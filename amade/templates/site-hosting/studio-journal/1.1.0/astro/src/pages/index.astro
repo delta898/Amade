@@ -1,0 +1,146 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import siteConfig from '../site-config.json';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+const year = new Date().getFullYear();
+---
+<BaseLayout>
+  <div class="site-shell">
+    <SiteHeader />
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> INDEPENDENT STUDIO</p>
+          <h1 id="hero-title">좋은 생각을<br /><em>쓸모 있는 경험</em>으로.</h1>
+          <p class="hero-description">브랜드의 방향을 찾고, 사람들에게 닿는 웹사이트와 콘텐츠를 만듭니다.</p>
+          <a class="hero-link" href="#about">스튜디오 알아보기 <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero-art" role="img" aria-label="겹쳐진 색면과 원으로 구성한 추상 그래픽">
+          <span class="art-ring ring-one"></span><span class="art-ring ring-two"></span>
+          <span class="art-disc"></span><span class="art-line"></span>
+          <span class="art-caption">IDEAS INTO EXPERIENCE <b>01 / 03</b></span>
+        </div>
+      </section>
+
+      <section class="intro section-grid" id="about">
+        <p class="section-label"><span>01</span> ABOUT</p>
+        <div>
+          <h2>작은 질문에서 시작해<br />오래 쓰일 <em>답을 만듭니다.</em></h2>
+          <p class="body-copy">복잡한 문제를 살피고 핵심을 정리합니다. 전략과 디자인, 기술을 연결해 실제 생활에서 자연스럽게 쓰이는 결과물을 만드는 것이 우리의 일입니다.</p>
+          <p class="note">함께 고민하고, 함께 만들고, 함께 나아갑니다.</p>
+        </div>
+      </section>
+
+      <section class="services section-grid" id="services">
+        <div class="section-heading"><p class="section-label"><span>02</span> WHAT WE DO</p><p class="section-aside">필요한 곳에<br />필요한 만큼.</p></div>
+        <div class="service-list">
+          <article><span>01</span><div><h3>브랜드 전략</h3><p>브랜드의 관점과 메시지를 정리하고 일관된 방향을 세웁니다.</p></div><b aria-hidden="true">↗</b></article>
+          <article><span>02</span><div><h3>웹사이트</h3><p>정보를 쉽게 찾고 편하게 이용할 수 있는 웹 경험을 설계합니다.</p></div><b aria-hidden="true">↗</b></article>
+          <article><span>03</span><div><h3>콘텐츠</h3><p>브랜드의 이야기를 읽고 공유하기 좋은 콘텐츠로 발전시킵니다.</p></div><b aria-hidden="true">↗</b></article>
+        </div>
+      </section>
+
+      <section class="journal section-grid" id="journal">
+        <div class="section-heading"><p class="section-label"><span>03</span> JOURNAL</p><p class="section-aside">생각과 작업을<br />차곡차곡 기록합니다.</p><a class="all-posts" href="/blog/">모든 이야기 보기 ↗</a></div>
+        <div class="post-list">
+          {posts.length ? posts.map((post) => (
+            <a class="post-row" href={`/blog/${post.id}/`}>
+              <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+              <div><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span aria-hidden="true">↗</span>
+            </a>
+          )) : <p class="empty-note">첫 번째 이야기를 준비하고 있습니다.</p>}
+        </div>
+      </section>
+
+      <section class="contact section-grid" id="contact">
+        <p class="section-label"><span>04</span> CONTACT</p>
+        <div><p class="eyebrow">LET'S MAKE SOMETHING USEFUL</p><h2>다음 이야기를<br /><em>함께 시작해요.</em></h2><p class="body-copy">새로운 프로젝트와 협업 제안을 기다립니다.</p><a href="/blog/" class="contact-link">스튜디오 소식 보기 <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+    <footer class="site-footer"><a class="footer-brand" href="/">{siteConfig.name}</a><span>브랜드와 사람을 잇는 경험을 만듭니다.</span><small>© {year} {siteConfig.name}</small></footer>
+  </div>
+</BaseLayout>
+<style>
+  .site-shell { max-width: 1440px; margin: 0 auto; padding: 0 7%; }
+  h1, h2, h3, p { margin-top: 0; }
+  .hero { min-height: 580px; display: grid; grid-template-columns: 1fr .78fr; align-items: center; gap: 6%; padding: 64px 0 76px; }
+  .hero-copy { position: relative; z-index: 1; }
+  .eyebrow, .section-label { color: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: .14em; }
+  .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0 0 25px; }
+  .eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -.065em; }
+  h1 { font-size: clamp(52px, 6vw, 82px); line-height: 1.3; margin: 0 0 20px; }
+  h1 em, h2 em { color: var(--accent); font-weight: 400; }
+  .hero-description { max-width: 440px; color: var(--muted); font-size: 13px; line-height: 1.9; margin-bottom: 27px; }
+  .hero-link, .contact-link { display: inline-flex; gap: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--ink); font-size: 11px; font-weight: 600; text-decoration: none; }
+  .hero-link span, .contact-link span { color: var(--accent); }
+  .hero-art { width: min(100%, 430px); aspect-ratio: 1 / 1; justify-self: end; position: relative; overflow: hidden; border-radius: 48% 52% 43% 57%; background: radial-gradient(ellipse at 42% 36%, #e5c6a9 0, #d9a27f 23%, #bc7257 46%, #80504b 70%, #3d4240 100%); box-shadow: inset -20px -24px 55px rgba(31, 30, 29, .22), inset 16px 13px 40px rgba(255, 239, 211, .2); }
+  .hero-art::before { content: ''; position: absolute; inset: 13%; border: 1px solid rgba(255,255,255,.4); border-radius: 50%; transform: rotate(-35deg) scaleX(.55); }
+  .ring-one, .ring-two { position: absolute; border: 1px solid rgba(255,247,226,.58); border-radius: 50%; }
+  .ring-one { width: 125%; height: 37%; left: -12%; top: 34%; transform: rotate(-31deg); }
+  .ring-two { width: 38%; height: 122%; left: 32%; top: -10%; transform: rotate(34deg); }
+  .art-disc { position: absolute; width: 31%; aspect-ratio: 1; top: 27%; left: 34%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff0cb, #e8b07d 59%, #bd7056); box-shadow: 0 0 65px rgba(255,224,179,.35); }
+  .art-line { position: absolute; width: 120%; height: 27%; left: -10%; top: 42%; border-top: 1px solid rgba(255,247,226,.5); border-radius: 50%; transform: rotate(31deg); }
+  .art-caption { position: absolute; left: 9%; right: 9%; bottom: 8%; display: flex; justify-content: space-between; color: rgba(255,249,236,.84); font-size: 8px; letter-spacing: .13em; }
+  .art-caption b { font-weight: 500; }
+  .section-grid { display: grid; grid-template-columns: .42fr 1fr; gap: 8%; border-top: 1px solid var(--line); }
+  .section-label { display: flex; gap: 12px; margin: 0; padding-top: 5px; }
+  .section-label span { color: var(--accent); }
+  .intro { padding: 92px 0 105px; }
+  h2 { font-size: clamp(35px, 4vw, 54px); line-height: 1.4; margin: -18px 0 20px; }
+  .body-copy { max-width: 600px; color: #62665e; font-size: 12px; line-height: 2; }
+  .note { margin: 25px 0 0; color: var(--accent); font-family: var(--serif); font-size: 15px; font-style: italic; }
+  .services, .journal { padding: 78px 0 91px; }
+  .section-heading { display: flex; flex-direction: column; align-items: flex-start; }
+  .section-aside { margin: auto 0 0; color: #85877e; font-family: var(--serif); font-size: 19px; line-height: 1.6; }
+  .service-list { border-top: 1px solid var(--line); }
+  .service-list article { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .service-list article > span { color: var(--accent); font-size: 9px; }
+  .service-list h3 { margin: 0 0 7px; font-family: var(--serif); font-size: 20px; font-weight: 400; }
+  .service-list p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+  .service-list b { color: var(--accent); font-size: 14px; font-weight: 400; }
+  .all-posts { margin-top: auto; padding-top: 26px; color: var(--ink); font-size: 10px; text-decoration: none; }
+  .post-list { border-top: 1px solid var(--line); }
+  .post-row { display: grid; grid-template-columns: 135px 1fr auto; gap: 20px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
+  .post-row time { color: var(--muted); font-size: 9px; }
+  .post-row h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 18px; font-weight: 400; }
+  .post-row p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+  .post-row > span { color: var(--accent); }
+  .empty-note { margin: 0; padding: 24px 0; color: var(--muted); font-size: 12px; }
+  .contact { padding: 88px 0 101px; }
+  .contact .eyebrow { margin: -18px 0 20px; }
+  .contact h2 { margin-bottom: 18px; }
+  .contact-link { margin-top: 12px; }
+  .site-footer { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 1px solid var(--line); color: var(--muted); }
+  .footer-brand { color: var(--ink); font-size: 12px; font-weight: 700; text-decoration: none; }
+  .site-footer > span { font-family: var(--serif); font-size: 11px; font-style: italic; }
+  .site-footer small { font-size: 9px; }
+  @media (max-width: 850px) { .site-shell { padding: 0 5%; }.hero { min-height: 500px; grid-template-columns: 1fr .78fr; gap: 3%; }.section-grid { grid-template-columns: .32fr 1fr; gap: 5%; } }
+  @media (max-width: 640px) {
+    .site-shell { padding: 0 22px; }
+    .hero { min-height: 0; grid-template-columns: 1fr; gap: 36px; padding: 65px 0 70px; }
+    h1 { font-size: clamp(48px, 13vw, 68px); }
+    .hero-art { width: min(86%, 350px); justify-self: center; }
+    .section-grid { grid-template-columns: 1fr; gap: 31px; }
+    .intro, .contact { padding: 63px 0 72px; }
+    h2 { margin: 0 0 17px; font-size: 36px; }
+    .services, .journal { padding: 62px 0 72px; }
+    .section-heading { gap: 15px; }
+    .section-aside { margin: 0; font-size: 17px; }
+    .all-posts { margin: 0; padding: 0; }
+    .service-list article { gap: 13px; padding: 19px 0; }
+    .service-list h3 { font-size: 18px; }
+    .post-row { grid-template-columns: 1fr auto; gap: 8px 12px; }
+    .post-row time, .post-row > div { grid-column: 1; }
+    .post-row > span { grid-column: 2; grid-row: 1 / span 2; }
+    .contact .eyebrow { margin: 0 0 16px; }
+    .site-footer { flex-wrap: wrap; padding: 19px 0; }
+    .site-footer > span { order: 3; width: 100%; }
+    .site-footer small { margin-left: auto; }
+  }
+</style>

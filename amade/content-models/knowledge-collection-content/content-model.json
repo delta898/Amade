@@ -1,0 +1,94 @@
+{
+  "spec_version": "0.2.0-dev1",
+  "model_id": "knowledge-collection-content",
+  "model_version": "0.1.0",
+  "name": "Digital Garden 콘텐츠 모델",
+  "description": "profile, navigation, content, media, routes와 발행 동작을 정의하는 재사용 데이터 계약입니다.",
+  "site_profile": {
+    "fields": {
+      "displayName": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "logo": {
+        "type": "public-url-path",
+        "required": false,
+        "root": "public/"
+      },
+      "seoDescription": {
+        "type": "string",
+        "required": false,
+        "maxLength": 300
+      },
+      "shareImage": {
+        "type": "public-url-path",
+        "required": false,
+        "root": "public/"
+      },
+      "favicon": {
+        "type": "public-url-path",
+        "required": false,
+        "root": "public/"
+      },
+      "searchEngineIndexing": {
+        "type": "boolean",
+        "required": false,
+        "default": true
+      }
+    }
+  },
+  "navigation": {
+    "source": "site.json",
+    "minimum_items": 1,
+    "identity": "stable item id; labels and paths may be edited",
+    "fields": {
+      "id": {
+        "type": "string",
+        "required": true,
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        "unique": true
+      },
+      "label": {
+        "type": "string",
+        "required": true,
+        "minLength": 1
+      },
+      "path": {
+        "type": "internal-url-path",
+        "required": true
+      }
+    },
+    "path_policy": "one leading slash; no external/protocol-relative URL, query, fragment, backslash, or dot segment"
+  },
+  "media": {
+    "public_directory": "data/public/",
+    "entry_directory": "resources/",
+    "markdown_reference": "relative to source note",
+    "relative_to_entry": true,
+    "validated_format": "Image and PDF fixture assets are supported by the Knowledge Collection POC; additional resource behavior remains under development."
+  },
+  "content_types": [
+    {
+      "kind": "note",
+      "source": "data/knowledge/notes/{id}.md",
+      "identity": "stable note ID supplied by the Knowledge Collection input",
+      "body_format": "markdown",
+      "fields": {
+        "title": {
+          "type": "string",
+          "required": false,
+          "minLength": 1
+        }
+      },
+      "public_path": "template-generated from the collection mount path and note identity",
+      "frontmatter_policy": "Frontmatter is optional and extensible; templates use recognized values and ignore other properties."
+    }
+  ],
+  "content_frontmatter_policy": {
+    "required_fields": [],
+    "path_is_identity_source": true,
+    "kind_may_be_omitted_and_is_inferred_from_path": true,
+    "unknown_properties": "preserve-and-ignore"
+  }
+}

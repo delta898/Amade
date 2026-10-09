@@ -1,0 +1,19 @@
+---
+import SiteLayout from '../../components/SiteLayout.astro';
+import site from '../../site-data';
+import { contentKind, contentTitle, contentDescription, contentSlug, isContentPublic } from '../../content-utils';
+import { getCollection, render } from 'astro:content';
+import '../../styles.css';
+
+export async function getStaticPaths() {
+  const services = await getCollection('content', (entry) => contentKind(entry) === 'service' && isContentPublic(entry));
+  return services.map((service) => ({ params: { slug: contentSlug(service) }, props: { service } }));
+}
+const { service } = Astro.props;
+const { Content } = await render(service);
+---
+<SiteLayout title={contentTitle(service)} description={contentDescription(service)}>
+  <section class="service-detail-hero"><div class="container service-detail-grid"><div><a class="article-back" href="/services/">← 모든 서비스</a><p class="eyebrow">Our work · {contentSlug(service)}</p><h1>{contentTitle(service)}</h1>{contentDescription(service) && <p class="service-detail-lead">{contentDescription(service)}</p>}</div><div class="service-detail-art" aria-hidden="true"><span>UNDERSTAND</span><i></i><b>사람에서<br />시작하는<br />좋은 변화</b><small>DISCOVER → DESIGN → DELIVER</small></div></div></section>
+  <section class="service-detail-content"><div class="container service-detail-body"><aside><p class="section-kicker">How we help</p><p>필요한 맥락을 함께 살피고, 지금 시작할 수 있는 다음 단계로 연결합니다.</p><a class="quiet-link" href="/about/team/">일하는 방식 보기 <span aria-hidden="true">→</span></a></aside><div class="prose"><Content /></div></div></section>
+  <section class="closing-section"><div class="container"><div class="closing-card"><div class="closing-copy"><p class="section-kicker">Let’s work together</p><h2>지금 풀고 싶은 문제를 들려주세요.</h2></div><a class="button-primary" href="/about/team/">이야기 나누기 <span aria-hidden="true">↗</span></a></div></div></section>
+</SiteLayout>

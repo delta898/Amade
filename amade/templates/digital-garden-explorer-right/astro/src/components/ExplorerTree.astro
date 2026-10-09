@@ -1,0 +1,60 @@
+---
+import site from '../site-data';
+const { entries, activeId = '' } = Astro.props;
+const root = { folders: new Map(), files: [] };
+for (const entry of entries) {
+  const sourcePath = String(entry.data.source_path || `${entry.id}.md`).replaceAll('\\', '/');
+  const parts = sourcePath.split('/').filter(Boolean);
+  const filename = parts.pop() || `${entry.id}.md`;
+  let node = root;
+  for (const folder of parts) {
+    if (!node.folders.has(folder)) node.folders.set(folder, { folders: new Map(), files: [] });
+    node = node.folders.get(folder);
+  }
+  node.files.push({ entry, filename });
+}
+function escape(value) { return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;'); }
+function encoded(value) { return value.split('/').map(encodeURIComponent).join('/'); }
+function folderCount(node) {
+  return [...node.folders.values()].reduce((count, child) => count + 1 + folderCount(child), 0);
+}
+function noteCount(node) {
+  return node.files.length + [...node.folders.values()].reduce((count, child) => count + noteCount(child), 0);
+}
+function render(node) {
+  const folders = [...node.folders].sort(([a], [b]) => a.localeCompare(b, 'ko')).map(([name, child]) => {
+    const notes = noteCount(child);
+    return `<li class="tree-folder"><div class="folder-row"><span class="folder-mark" aria-hidden="true">▾</span><span class="folder-name">${escape(name)}</span><span class="folder-count">${notes}</span></div><ul>${render(child)}</ul></li>`;
+  });
+  const files = [...node.files].sort((a, b) => a.filename.localeCompare(b.filename, 'ko')).map(({ entry, filename }) => `<li class="tree-file"><a${entry.id === activeId ? ' aria-current="page" class="active"' : ''} href="/notes/${escape(encoded(entry.id))}/"><span class="note-mark" aria-hidden="true">▤</span><span class="filename">${escape(filename)}</span></a></li>`);
+  return [...folders, ...files].join('');
+}
+const treeHtml = render(root);
+const directoryCount = folderCount(root);
+---
+<nav class="explorer" aria-label="Knowledge Collection 파일 목록">
+  <a class="collection-title" href="/">{site.displayName}</a>
+  {site.logo && <img class="site-logo" src={site.logo} alt="" />}
+  <p class="collection-count">{directoryCount}개 폴더 · {entries.length}개 노트</p>
+  {entries.length ? <ul class="tree-list" set:html={treeHtml} /> : <p class="empty">Vault를 연결하면 폴더와 파일이 여기에 표시됩니다.</p>}
+</nav>
+
+<style>
+  .explorer { min-width: 0; padding: 1.5rem 1.25rem; border-right: 1px solid #dce5df; background: #f7f8f7; }
+  .collection-title { display: block; margin: 0 0 .35rem; color: #21352c; font-weight: 700; font-size: 1.05rem; text-decoration: none; }
+  .site-logo { display: block; max-width: 100%; max-height: 3rem; object-fit: contain; object-position: left; margin: 0 0 1rem; }
+  .collection-count { margin: 0 0 1.1rem; color: #77867d; font-size: .82rem; line-height: 1.4; }
+  .tree-list, .tree-list ul { margin: 0; padding: 0; list-style: none; }
+  .tree-list ul { margin: .15rem 0 .3rem .45rem; padding-left: .7rem; border-left: 1px solid #dce5df; }
+  .tree-folder { margin: .18rem 0; }
+  .folder-row { display: grid; grid-template-columns: .8rem minmax(0, 1fr) auto; align-items: baseline; gap: .25rem; padding: .15rem .25rem; color: #547164; font-size: .88rem; font-weight: 650; }
+  .folder-mark { color: #84968b; font-size: .72rem; }
+  .folder-name, .filename { min-width: 0; overflow-wrap: anywhere; }
+  .folder-count { color: #98a59d; font-size: .72rem; font-weight: 500; }
+  .tree-file { margin: .08rem 0; }
+  .tree-file a { display: grid; grid-template-columns: .85rem minmax(0, 1fr); gap: .3rem; padding: .14rem .25rem; border-radius: .3rem; color: #455a4e; font-size: .82rem; line-height: 1.45; text-decoration: none; }
+  .note-mark { color: #91a196; font-size: .76rem; }
+  .tree-file a:hover, .tree-file a.active { color: #a74f31; background: #f0ece5; }
+  .tree-file a:focus-visible { outline: 2px solid #a74f31; outline-offset: 1px; }
+  .empty { color: #68776e; font-size: .9rem; line-height: 1.6; }
+</style>

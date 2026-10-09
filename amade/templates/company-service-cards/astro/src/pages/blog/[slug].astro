@@ -1,0 +1,34 @@
+---
+import SiteHead from '../../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentAuthor, contentPath, hasContentHeading, isContentPublic, isContentDeployed } from '../../content-utils';
+import { getCollection, render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import '../../styles.css';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('content', (entry) => contentKind(entry) === 'post' && isContentDeployed(entry));
+  return posts.map((post) => ({ params: { slug: post.id.split('/').at(-1) }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const slug = post.id.split('/').at(-1);
+const route = `/blog/${slug}/`;
+const canonicalUrl = Astro.site ? new URL(route, Astro.site).href : undefined;
+const cover = post.data.cover ? await getImage({ src: post.data.cover, format: post.data.cover.format === 'svg' ? 'svg' : 'webp' }) : undefined;
+const publishedAt = post.data.published_at;
+const publishedAtDate = publishedAt ? new Date(publishedAt) : undefined;
+const publishedAtIso = publishedAtDate?.toISOString();
+const displayPublishedAt = publishedAtDate?.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' });
+---
+<html lang="ko">
+  <SiteHead title={contentTitle(post)} description={contentDescription(post)} image={cover?.src} imageAlt={post.data.cover_alt} type="article" author={contentAuthor(post)} publishedAt={publishedAtIso} canonicalUrl={canonicalUrl} noIndex={post.data.publication === 'private'} />
+  <body>
+    <main class="shell">
+      <a href="/blog/">글 목록</a>
+      {(!hasContentHeading(post) || post.data.title) && <h1>{contentTitle(post)}</h1>}
+      {publishedAt && <time datetime={publishedAtIso}>{displayPublishedAt}</time>}
+      <Content />
+    </main>
+  </body>
+</html>

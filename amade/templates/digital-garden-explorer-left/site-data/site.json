@@ -1,0 +1,6 @@
+{
+  "displayName": "Knowledge Collection",
+  "navigation": [
+    { "id": "home", "label": "노트", "path": "/" }
+  ]
+}

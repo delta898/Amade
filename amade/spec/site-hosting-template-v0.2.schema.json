@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/site-hosting-template-v0.2.schema.json",
+  "title": "Amade Site Hosting Template Contract 0.2.0-dev1",
+  "allOf": [
+    {
+      "$ref": "./common-metadata-v0.1.schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "template_id",
+        "family_id",
+        "astro_project",
+        "content_model",
+        "site_data_seed"
+      ],
+      "properties": {
+        "spec_version": {
+          "const": "0.2.0-dev1"
+        },
+        "compatibility": {
+          "properties": {
+            "contract": {
+              "properties": {
+                "id": {
+                  "enum": [
+                    "bloggenius-site-hosting-template",
+                    "bloggenius-knowledge-collection-template"
+                  ]
+                },
+                "version": {
+                  "const": "0.2.0-dev1"
+                }
+              }
+            }
+          }
+        },
+        "template_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "family_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "astro_project": {
+          "$ref": "./common-metadata-v0.1.schema.json#/$defs/packagePath"
+        },
+        "setup_inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "type",
+              "purpose",
+              "label",
+              "required"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "type": {
+                "enum": [
+                  "directory",
+                  "frontmatter_match"
+                ]
+              },
+              "purpose": {
+                "enum": [
+                  "knowledge_collection",
+                  "publication_filter"
+                ]
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "required": {
+                "type": "boolean"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "directory"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "purpose": {
+                      "const": "knowledge_collection"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "frontmatter_match"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "purpose": {
+                      "const": "publication_filter"
+                    }
+                  }
+                }
+              }
+            ],
+            "additionalProperties": false
+          }
+        },
+        "content_model": {
+          "type": "object",
+          "required": [
+            "model_id",
+            "model_version",
+            "manifest"
+          ],
+          "properties": {
+            "model_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "model_version": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[a-zA-Z0-9.-]+)?$"
+            },
+            "manifest": {
+              "type": "string",
+              "pattern": "^amade/content-models/[a-z0-9-]+/content-model\\.json$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "site_data_seed": {
+          "$ref": "./common-metadata-v0.1.schema.json#/$defs/packagePath"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}
