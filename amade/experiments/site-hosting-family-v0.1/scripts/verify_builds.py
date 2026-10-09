@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import sys, json
 ROOT=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().parents[1]
-SOURCE=Path(__file__).resolve().parents[4]
+SOURCE=Path(sys.argv[2]).resolve() if len(sys.argv)>2 else Path(__file__).resolve().parents[4]
 def read_manifest(reference, area):
  ref=Path(reference)
  expected_prefix='amade/families' if area=='families' else 'amade/templates'
@@ -14,7 +14,7 @@ def read_manifest(reference, area):
  expected='family.json' if area=='families' else 'template.json'
  assert path.name==expected, f'unexpected manifest type at reference: {reference}'
  return json.loads(path.read_text())
-CASES={'personal-post-list':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'personal-card-grid':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'company-service-cards':('company-homepage','services/research','다음연구소','사용자 조사','첫 기록','소식'),'company-service-list':('company-homepage','services/research','다음연구소','사용자 조사','첫 기록','소식')}
+CASES={'personal-post-list':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'personal-card-grid':('personal-homepage','work/field-notes','민서의 기록','필드 노트','첫 기록','이야기'),'company-service-cards':('company-homepage','services/research','다음연구소','사용자와 맥락을 이해하는 리서치','좋은 경험은 작은 질문에서 시작됩니다','소식'),'company-service-list':('company-homepage','services/research','다음연구소','사용자와 맥락을 이해하는 리서치','좋은 경험은 작은 질문에서 시작됩니다','소식'),'company-atelier':('company-homepage','services/research','다음연구소','사용자와 맥락을 이해하는 리서치','좋은 경험은 작은 질문에서 시작됩니다','소식')}
 catalog=json.loads((SOURCE/'amade/catalog/index.json').read_text())
 assert catalog.get('spec_version')=='0.1.0' and catalog.get('status')=='experimental', 'catalog version/status missing'
 listed_templates=set();listed_families=set()
@@ -54,21 +54,30 @@ for tid,(family,item_route,site_name,item_title,post_title,nav_label) in CASES.i
  html='\n'.join(f.read_text(errors='ignore') for f in html_files)
  assert site_name in html and item_title in html and post_title in html, f'{tid}: expected public data missing'
  assert '로컬 전용 기록' not in html, f'{tid}: publication=none entry leaked'
+ if tid=='company-atelier': assert 'proof' not in html.casefold() and 'fixture' not in html.casefold(), 'company-atelier: placeholder content leaked into public pages'
  assert (dist/'blog/private-note/index.html').is_file(), f'{tid}: private detail route missing'
  assert '비공개 기록' in (dist/'blog/private-note/index.html').read_text(errors='ignore'), f'{tid}: private detail content missing'
  assert '비공개 기록' not in (dist/'blog/index.html').read_text(errors='ignore'), f'{tid}: private post leaked into public listing'
  assert (dist/'about/team/index.html').is_file(), f'{tid}: multi-level internal page route missing'
+ if tid=='company-atelier':
+  about_html=(dist/'about/team/index.html').read_text(errors='ignore')
+  assert '← 홈으로' not in about_html and '사람을 이해하는 데서' in about_html and 'How we work' in about_html, 'company-atelier: designed company introduction missing'
  assert (dist/item_route/'index.html').is_file(), f'{tid}: family item route missing'
  assert (dist/'blog/first-steps/index.html').is_file(), f'{tid}: public post detail missing'
  detail_html=(dist/'blog/first-steps/index.html').read_text(errors='ignore')
  listing_html=(dist/'blog/index.html').read_text(errors='ignore')
- assert 'post-thumbnail' in listing_html and '<img' in listing_html, f'{tid}: representative image thumbnail missing from blog list'
+ if tid=='company-atelier': assert 'journal-feature-art' in listing_html, f'{tid}: designed feature artwork missing from blog list'
+ else: assert 'post-thumbnail' in listing_html and '<img' in listing_html, f'{tid}: representative image thumbnail missing from blog list'
  assert 'cover_alt' not in listing_html, f'{tid}: cover metadata leaked into visible listing text'
- assert 'proof.' in listing_html, f'{tid}: optimized representative thumbnail asset missing from blog list'
- assert '<title>첫 기록 |' in detail_html and '<h1 id="첫-기록">첫 기록</h1>' in detail_html, f'{tid}: path/content title fallback missing'
+ if tid!='company-atelier':
+  asset_name='field-notes.' if family=='company-homepage' else 'proof.'
+  assert f'/_astro/{asset_name}' in listing_html, f'{tid}: optimized representative thumbnail asset missing from blog list'
+ assert f'<title>{post_title} |' in detail_html and f'<h1>{post_title}</h1>' in detail_html, f'{tid}: path/content title fallback missing'
  assert '<meta property="og:image" content="https://example.test/' in detail_html, f'{tid}: absolute representative image metadata missing'
- assert '<meta property="og:image:alt" content="증명 이미지"' in detail_html, f'{tid}: representative image alt metadata missing'
- assert 'name="author"' in detail_html and '민서' in detail_html, f'{tid}: optional author metadata missing'
+ expected_alt='관찰 노트와 아이디어를 정리한 그래픽' if family=='company-homepage' else '증명 이미지'
+ assert f'<meta property="og:image:alt" content="{expected_alt}"' in detail_html, f'{tid}: representative image alt metadata missing'
+ expected_author='다음연구소' if family=='company-homepage' else '민서'
+ assert 'name="author"' in detail_html and expected_author in detail_html, f'{tid}: optional author metadata missing'
  assert 'address' not in detail_html and '서울특별시 종로구' not in detail_html, f'{tid}: unknown metadata was unexpectedly rendered'
  assert not (dist/'blog/local-only/index.html').exists(), f'{tid}: frontmatter-free post did not default to publication none'
  page=Markup(); page.feed((dist/'index.html').read_text(errors='ignore'))

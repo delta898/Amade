@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amade.dev/spec/site-hosting-family-v0.2.schema.json",
+  "title": "Amade Site Hosting Template Family Contract 0.2.0-dev1",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "family_id",
+    "name",
+    "description"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "0.2.0-dev1"
+    },
+    "family_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    }
+  },
+  "additionalProperties": false
+}

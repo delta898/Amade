@@ -1,0 +1,13 @@
+---
+import SiteLayout from '../../components/SiteLayout.astro';
+import site from '../../site-data';
+import { contentKind, contentTitle, contentDescription, contentSlug, isContentPublic } from '../../content-utils';
+import { getCollection } from 'astro:content';
+import '../../styles.css';
+const services = (await getCollection('content', (entry) => contentKind(entry) === 'service' && isContentPublic(entry)))
+  .sort((a,b) => (a.data.order ?? Number.MAX_SAFE_INTEGER) - (b.data.order ?? Number.MAX_SAFE_INTEGER));
+---
+<SiteLayout title="서비스" description={site.seoDescription}>
+  <section class="page-hero"><div class="container"><p class="eyebrow">What we do</p><h1>필요한 일을, 제대로 연결합니다.</h1><p>{site.about}</p></div></section>
+  <section class="content-section"><div class="container"><div class="service-index-list">{services.length ? services.map((service,index)=><a class="service-index-item" href={`/services/${contentSlug(service)}/`}><span>0{index+1}</span><h2>{contentTitle(service)}</h2><p>{contentDescription(service)}</p><b aria-hidden="true">↗</b></a>) : <p class="not-found-copy">서비스를 준비하고 있습니다.</p>}</div></div></section>
+</SiteLayout>

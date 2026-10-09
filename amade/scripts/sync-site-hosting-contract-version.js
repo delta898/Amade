@@ -25,7 +25,6 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
     for (const familyRef of index.families || []) {
         const family = read(familyRef.manifest);
         family.spec_version = version;
-        family.content_contract_version = version;
         changed.push([familyRef.manifest, family]);
         for (const templateRef of familyRef.templates || []) {
             const template = read(templateRef.manifest);
@@ -34,17 +33,26 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
                 throw new Error(`${templateRef.manifest} uses a contract ID absent from the version source.`);
             }
             template.compatibility.contract.version = version;
-            changed.push([templateRef.manifest, template]);
+            const model = read(template.content_model.manifest);
+            if (model.model_id !== template.content_model.model_id || model.model_version !== template.content_model.model_version) {
+                throw new Error(`${templateRef.manifest} references a mismatched Content Model.`);
+            }
+            model.spec_version = version;
+            changed.push([templateRef.manifest, template], [template.content_model.manifest, model]);
         }
     }
 
-    const familySchemaPath = 'amade/spec/site-hosting-family-v0.1.schema.json';
-    const templateSchemaPath = 'amade/spec/site-hosting-template-v0.1.schema.json';
+    const familySchemaPath = 'amade/spec/site-hosting-family-v0.2.schema.json';
+    const modelSchemaPath = 'amade/spec/site-hosting-content-model-v0.2.schema.json';
+    const templateSchemaPath = 'amade/spec/site-hosting-template-v0.2.schema.json';
     const familySchema = read(familySchemaPath);
     familySchema.title = `Amade Site Hosting Template Family Contract ${version}`;
     familySchema.properties.spec_version.const = version;
-    familySchema.properties.content_contract_version.const = version;
     changed.push([familySchemaPath, familySchema]);
+    const modelSchema = read(modelSchemaPath);
+    modelSchema.title = `Amade Site Hosting Content Model ${version}`;
+    modelSchema.properties.spec_version.const = version;
+    changed.push([modelSchemaPath, modelSchema]);
     const templateSchema = read(templateSchemaPath);
     templateSchema.title = `Amade Site Hosting Template Contract ${version}`;
     templateSchema.allOf[1].properties.spec_version.const = version;
@@ -72,22 +80,10 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
         [/Site Hosting Contract Version\*\*, currently `[^`]+`/, `Site Hosting Contract Version**, currently \`${version}\``],
         [/with contract version `[^`]+`/, `with contract version \`${version}\``],
         [/## Current Site Hosting content contract \([^)]*\)/, `## Current Site Hosting content contract (${version})`],
-        [/All three Site Hosting contract version fields are `[^`]+`/, `All three Site Hosting contract version fields are \`${version}\``],
+        [/Template and Family manifest `spec_version` plus Template `compatibility.contract.version`/, `Family, Content Model, and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\``],
+        [/Family, Content Model, and Template manifest `spec_version` plus Template `compatibility.contract.version` must all have this same value\./, `Family, Content Model, and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\` must all have this same value.`],
         [/### Site profile and page metadata \([^)]*\)/, `### Site profile and page metadata (${version})`],
         [/\| Site Hosting Contract [^|]+\|/, `| Site Hosting Contract ${version} |`]
-    ]);
-    updateDoc('amade/spec/site-hosting-family-v0.1-draft.md', [
-        [/Status: experimental Site Hosting Contract `[^`]+`/, `Status: experimental Site Hosting Contract \`${version}\``],
-        [/unified Site Hosting Contract Version is `[^`]+`/, `unified Site Hosting Contract Version is \`${version}\``],
-        [/shared Site Hosting Contract Version `[^`]+`/, `shared Site Hosting Contract Version \`${version}\``],
-        [/("spec_version": ")[^"\n]+(?=",\n  "template_id": "personal-post-list")/, `$1${version}`],
-        [/("contract": \{ "id": "bloggenius-site-hosting-template", "version": ")[^"\n]+/, `$1${version}`],
-        [/## Site Hosting Contract [^ ]+ data contract/, `## Site Hosting Contract ${version} data contract`],
-        [/### Markdown content and identity \(Site Hosting Contract [^)]+\)/, `### Markdown content and identity (Site Hosting Contract ${version})`],
-        [/now carried by the unified Site Hosting Contract `[^`]+`/, `now carried by the unified Site Hosting Contract \`${version}\``],
-        [/use the shared Site Hosting Contract Version `[^`]+`/, `use the shared Site Hosting Contract Version \`${version}\``],
-        [/Contract `[^`]+` keeps Template `spec_version`/, `Contract \`${version}\` keeps Template \`spec_version\``],
-        [/included in the unified Site Hosting Contract `[^`]+`/, `included in the unified Site Hosting Contract \`${version}\``]
     ]);
     return { version, files: changed.length };
 }

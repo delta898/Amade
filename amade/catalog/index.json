@@ -29,6 +29,10 @@
         {
           "template_id": "company-service-list",
           "manifest": "amade/templates/company-service-list/template.json"
+        },
+        {
+          "template_id": "company-atelier",
+          "manifest": "amade/templates/company-atelier/template.json"
         }
       ]
     },

@@ -2,47 +2,50 @@
 
 > This document and the `*-v1.schema.json` files describe the original Amade package format. They remain the reference for existing 1.x resources and the current legacy catalog integration, but they are **not** the contract for new Site Hosting templates.
 >
-> **Current experimental format:** Site Hosting Templates and BlogGenius UI Styles share the grouped catalog at `amade/catalog/index.json`, whose index shape is `0.1.0`, but use separate package schemas. The unified Site Hosting Contract is currently `0.1.0-dev4` and remains experimental until the packages and BlogGenius consumers have been validated together. The v1 material below is retained as a historical reference for legacy packages.
+> **Current experimental format:** Site Hosting Templates and BlogGenius UI Styles share the grouped catalog at `amade/catalog/index.json`, whose index shape is `0.1.0`, but use separate package schemas. The unified Site Hosting Contract is currently `0.2.0-dev1` and remains experimental until the packages and BlogGenius consumers have been validated together. The v1 material below is retained as a historical reference for legacy packages.
 
 ## Current experimental package layout
 
 ```text
 amade/
   catalog/index.json                   # groups families/templates and UI styles
-  families/<family-id>/family.json     # shared site data and content contract
+  families/<family-id>/family.json     # catalog grouping only
+  content-models/<model-id>/content-model.json # reusable data and publishing rules
   templates/<template-id>/template.json
   styles/<style-id>/style.json         # BlogGenius appearance tokens
   spec/
     common-metadata-v0.1.schema.json
     catalog-index-v0.1.schema.json
-    site-hosting-family-v0.1.schema.json
-    site-hosting-template-v0.1.schema.json
+    site-hosting-family-v0.2.schema.json
+    site-hosting-content-model-v0.2.schema.json
+    site-hosting-template-v0.2.schema.json  # current Site Hosting schemas
+    site-hosting-family-v0.1.schema.json     # preserved legacy schema
     bloggenius-ui-style-v0.1.schema.json
 ```
 
-Each **Template** package and **UI Style** package shares user-facing metadata: name, description, author, package version, license, creation date, categories, tags, preview, optional screenshots, homepage, support, lifecycle status, and required BlogGenius compatibility. Families are grouping and content-contract definitions, not selectable packages, so their manifests do not use this common package metadata.
+Each **Template** package and **UI Style** package shares user-facing metadata: name, description, author, package version, license, creation date, categories, tags, preview, optional screenshots, homepage, support, lifecycle status, and required BlogGenius compatibility. Families are grouping metadata, not selectable packages, so their manifests do not use this common package metadata.
 
-The catalog exposes `families[]` with their `templates[]`, and `styles[]` as a separate resource type. Site Hosting Templates contain a complete Astro project and reference a family data contract. UI Styles contain only token data for the versioned BlogGenius semantic token contract; they do not distribute executable JavaScript or arbitrary CSS. Consumers list only packages whose status is `active`. `deprecated` and `withdrawn` remain in the catalog for history and existing references but are not offered for new selection.
+The catalog exposes `families[]` with their `templates[]`, and `styles[]` as a separate resource type. Site Hosting Templates contain a complete Astro project, their own initial site-data seed, and an exact Content Model reference. UI Styles contain only token data for the versioned BlogGenius semantic token contract; they do not distribute executable JavaScript or arbitrary CSS. Consumers list only packages whose status is `active`. `deprecated` and `withdrawn` remain in the catalog for history and existing references but are not offered for new selection.
 
-Site Hosting uses one shared **Site Hosting Contract Version**, currently `0.1.0-dev4`. The Template manifest `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version` must all have this same value. Any change to any of these three contract areas advances them together. A template package's own `version` remains independent and identifies that package release; `compatibility.min_bloggenius_version` remains the minimum app release. The Amade catalog-index format (`spec_version: 0.1.0`) and BlogGenius UI Style contract (`1.1`) are outside this Site Hosting contract.
+Site Hosting uses one shared **Site Hosting Contract Version**, currently `0.2.0-dev1`. Family, Content Model, and Template manifest `spec_version` plus Template `compatibility.contract.version` must all have this same value. Any contract change advances these four fields together. A template package's own `version` remains independent and identifies that package release; `compatibility.min_bloggenius_version` remains the minimum app release. The Amade catalog-index format (`spec_version: 0.1.0`) and BlogGenius UI Style contract (`1.1`) are outside this Site Hosting contract.
 
-The current version source is [`site-hosting-contract-version.json`](site-hosting-contract-version.json). After an explicitly approved version change, run `node amade/scripts/sync-site-hosting-contract-version.js` from the Amade repository root to update all catalog Family/Template declarations and both JSON Schemas. Run the same command with `--check` to verify synchronization without writing files.
+The current version source is [`site-hosting-contract-version.json`](site-hosting-contract-version.json). After an explicitly approved version change, run `node amade/scripts/sync-site-hosting-contract-version.js` from the Amade repository root to update Family, Content Model, and Template declarations and all three current JSON Schemas. Run the same command with `--check` to verify synchronization without writing files.
 
-**Version approval rule:** Maintainers and coding agents must not select a future version number on their own. When a contract change requires a bump, explain the reason and ask the user to choose the exact shared version before changing any version field. Apply that approved value to all three Site Hosting contract fields together and verify consistency. The template package's independent release `version` is not implied by this decision and requires a separate user choice when it needs to change.
+**Version approval rule:** Maintainers and coding agents must not select a future version number on their own. When a contract change requires a bump, explain the reason and ask the user to choose the exact shared version before changing any version field. Apply that approved value to Family, Content Model, and Template `spec_version` plus Template `compatibility.contract.version` together and verify consistency. The template package's independent release `version` and Content Model's `model_version` are not implied by this decision and require separate choices when they need to change.
 
-Current Site Hosting Templates require BlogGenius `0.6.0` and declare either `bloggenius-site-hosting-template` or `bloggenius-knowledge-collection-template` with contract version `0.1.0-dev4`. UI Styles use `bloggenius-ui-style-tokens` contract `1.1`. Consumers reject inconsistent contracts and preserve their fallback.
+Current Site Hosting Templates require BlogGenius `0.6.0` and declare either `bloggenius-site-hosting-template` or `bloggenius-knowledge-collection-template` with contract version `0.2.0-dev1`. UI Styles use `bloggenius-ui-style-tokens` contract `1.1`. Consumers reject inconsistent contracts and preserve their fallback.
 
 ### BlogGenius UI Style tokens 1.1
 
 The active 0.1 UI Style package schema is `bloggenius-ui-style-v0.1.schema.json`, and its complete token map is defined by `bloggenius-ui-style-tokens-v1.1.schema.json`. Contract 1.1 adds the required `--ui-form-control-disabled-opacity` token. BlogGenius uses it for disabled form fields; disabled buttons continue to use `--ui-button-disabled-opacity`. The bundled compatibility/theme files provide local fallback values, while selected Amade packages provide the active style values. Keep all active packages and the BlogGenius consumer in sync with the token contract. `remote-test-style` is an isolated test fixture and is not part of the active 1.1 style set.
 
-Contract `0.1.0-dev1` introduced manifest-declared `setup_inputs` and a local directory input for a Knowledge Collection root. Contract `0.1.0-dev2` adds a `frontmatter_match` input with purpose `publication_filter`; BlogGenius renders property and match-value fields and stores them with the selected root in the local Site manifest. Contract `0.1.0-dev3` makes the optional shared site SEO profile available to Digital Garden families, matching Homepage behavior. Contract `0.1.0-dev4` defines template updates: replace the materialized Astro project while preserving family `site-data/` and BlogGenius-owned site metadata. Thus site name, menu, uploaded media, Vault configuration, and content survive; edits inside the replaceable Astro project do not. Applying an update does not deploy the site.
+Contract `0.1.0-dev1` introduced manifest-declared `setup_inputs` and a local directory input for a Knowledge Collection root. Contract `0.1.0-dev2` adds a `frontmatter_match` input with purpose `publication_filter`; BlogGenius renders property and match-value fields and stores them with the selected root in the local Site manifest. Contract `0.1.0-dev3` made the optional shared site SEO profile available to Digital Garden families, matching Homepage behavior. Contract `0.1.0-dev4` defined template updates: replace the materialized Astro project while preserving Site `site-data/` and BlogGenius-owned site metadata. Thus site name, menu, uploaded media, Vault configuration, and content survive; edits inside the replaceable Astro project do not. Applying an update does not deploy the site.
 
-Validation and BlogGenius adoption status are tracked in the corresponding design record in the BlogGenius repository.
+Implementation and verification status are tracked in the [BlogGenius development record](../../../NaverAutoBlog/docs/plans/active/2026-10-01-static-site-builder-main-development.md). This contract remains experimental until package validation and BlogGenius consumer checks are complete.
 
-## Current Site Hosting content contract (0.1.0-dev4)
+## Current Site Hosting content contract (0.2.0-dev1)
 
-The canonical rules live in each `family.json`. Markdown file paths establish content kind and stable ID; frontmatter supplies optional metadata and behavior. All four Astro templates accept files with no frontmatter, preserve unknown properties without interpreting them, and use known fields when present. An explicitly supplied `kind` must match the path. Invalid optional `date` or `published_at` values are omitted rather than blocking a build. Invalid visibility enums remain errors because they control deployed output.
+The canonical data and publishing rules live in each Template's referenced `content-model.json`; Family manifests only group templates. See [the 0.2 role and boundary design](site-hosting-content-model-v0.2-design.md). Markdown file paths establish content kind and stable ID; frontmatter supplies optional metadata and behavior. The current models define the supported content kinds and fields for their templates. An explicitly supplied `kind` must match the path. Invalid optional `date` or `published_at` values are omitted rather than blocking a build. Invalid visibility enums remain errors because they control deployed output.
 
 | Field | Requirement | Meaning / behavior |
 |---|---|---|
@@ -63,11 +66,11 @@ The canonical rules live in each `family.json`. Markdown file paths establish co
 
 No frontmatter field is universally required. IDs are stable from the validated source path: `pages/<id>.md`, `posts/<slug>/index.md`, and the family's work/service equivalent. IDs do not require a frontmatter field. `publication` missing or `none` keeps posts local-only from the deployment perspective. Temporary save is `draft + none`; immediate publish is `complete + public` plus `published_at`.
 
-The `publication` values are independent from editorial completeness. `private` is unlisted, not access-controlled: a visitor who knows the URL can access the statically deployed page. Tags/categories remain user-owned. All three Site Hosting contract version fields are `0.1.0-dev4`. Template package release versions remain independent.
+The `publication` values are independent from editorial completeness. `private` is unlisted, not access-controlled: a visitor who knows the URL can access the statically deployed page. Tags/categories remain user-owned. Family, Content Model, and Template `spec_version` plus Template `compatibility.contract.version` are `0.2.0-dev1`. Template package release versions remain independent.
 
 Public posts sort newest-first by `published_at`, then `date`, then stable path-derived content ID. Each detail title uses `<post title> | <site name>`. The `cover` frontmatter value is the single representative-image source: BlogGenius writes the first image block to `cover` and its title to `cover_alt`; Astro uses the processed cover for list thumbnails and `og:image` when the site origin is known. Templates render but never rewrite Markdown frontmatter.
 
-### Site profile and page metadata (0.1.0-dev4)
+### Site profile and page metadata (0.2.0-dev1)
 
 The shared `site_profile.fields` contract supports these optional properties alongside the family's required profile data:
 
@@ -78,13 +81,13 @@ The shared `site_profile.fields` contract supports these optional properties alo
 | `favicon` | Optional public URL path under `site-data/public/` | Supplies the browser tab icon independently from the logo and share image. |
 | `searchEngineIndexing` | Optional boolean; defaults to `true` | `false` emits `noindex, nofollow` metadata on every generated page. This controls indexing signals, not access; deployed URLs remain public. |
 
-`displayName` remains the source for the site brand, `og:site_name`, and page-title suffix. Page titles use `<page title> | <site name>`. A post's own description and `cover` are used only when supplied; a missing post description or cover remains omitted. These fields are stored with the shared site data so same-family template variants can consume them consistently. Existing Sites retain their copied template snapshot and need an explicit template upgrade or recreation to receive new template rendering behavior.
+`displayName` remains the source for the site brand, `og:site_name`, and page-title suffix. Page titles use `<page title> | <site name>`. A post's own description and `cover` are used only when supplied; a missing post description or cover remains omitted. These fields are stored with site data. Content Model declarations define them; Family membership does not guarantee that every Template in that Family supports the same data. Existing Sites retain their copied template snapshot and need an explicit template upgrade or recreation to receive new template rendering behavior.
 
 ## Legacy v1 reference
 
 The sections below document the original package format and schemas. They do not define the 0.1 package or catalog contract.
 
-This document preserves the v1 package layout, schema meanings, and authoring workflow. The JSON Schemas below are authoritative only for v1 manifests. Update this guide alongside a v1 schema or supported-behavior change. For new Site Hosting work on `dev`, follow the 0.1 family spec instead.
+This document preserves the v1 package layout, schema meanings, and authoring workflow. The JSON Schemas below are authoritative only for v1 manifests. Update this guide alongside a v1 schema or supported-behavior change. For current Site Hosting work, use the 0.2 Family, Content Model, and Template schemas and the linked role design; the v0.1 Family draft is retained as history.
 
 ## 1. Resource model
 
@@ -292,9 +295,9 @@ The v1 schemas define the original versioned interchange format. BlogGenius curr
 | Generation | Documents and resources | Status and use |
 | --- | --- | --- |
 | Legacy Amade resource format v1 | `resource.schema.json`, `catalog-index-v1.schema.json`, `site-hosting-v1.schema.json`, `bloggenius-style-v1.schema.json`; historical packages under `amade/templates/site-hosting/` | Historical package contract retained for reference. The dev catalog and BlogGenius development consumer now use 0.1. Its schemas must not be applied to 0.1 manifests. |
-| Site Hosting Contract 0.1.0-dev4 | [`site-hosting-family-v0.1-draft.md`](site-hosting-family-v0.1-draft.md), `amade/catalog/index.json`, `amade/families/`, `amade/templates/` | Experimental grouped catalog integrated on Amade `dev` and consumed by BlogGenius development. Template `spec_version`, Family `content_contract_version`, and Template `compatibility.contract.version` are one shared version. The catalog index format stays at `0.1.0`. |
+| Site Hosting Contract 0.2.0-dev1 | [`site-hosting-content-model-v0.2-design.md`](site-hosting-content-model-v0.2-design.md), `amade/catalog/index.json`, `amade/families/`, `amade/content-models/`, `amade/templates/` | Experimental role-separated contract being integrated on Amade `dev` and consumed by BlogGenius development. Family, Content Model, and Template `spec_version` plus Template `compatibility.contract.version` are one shared version. The catalog index format stays at `0.1.0`. |
 | BlogGenius Style next generation | Not yet designed against the 0.1 family model | Deferred. The v1 Style schema remains a legacy format reference only. |
 
-The 0.1 proof has two families with two Astro presentation templates each. It verifies A→B→A builds, lowercase ASCII content IDs, path/kind matching, nested internal page routes, and same-family data preservation. The four manifests include required name/description/author/package version/license/categories/tags/representative preview/status; screenshots, homepage, and support are optional. The lifecycle values are `active`, `deprecated`, and `withdrawn`; current proof templates use `active`. Its catalog status `experimental` is distinct from each template's lifecycle status.
+The original 0.1 proof had two families with two Astro templates each. Its historical A→B→A experiment verified the exact proof packages and unchanged data hashes; it does not establish a product guarantee that templates in one Family are interchangeable. Family is catalog/use-case grouping only. The current v0.2 role separation is documented in the linked design. Template manifests include required name/description/author/package version/license/categories/tags/representative preview/status; screenshots, homepage, and support are optional. The lifecycle values are `active`, `deprecated`, and `withdrawn`; current templates use `active`. Catalog status `experimental` is distinct from each template's lifecycle status.
 
 Do not combine v1 and 0.1 manifests in one catalog or claim automatic compatibility. Keep the 0.1 spec experimental until the remaining negative/route-edge cases, formal JSON Schema, and BlogGenius materialization/filtering behavior are validated. Promote it to `1.0.0` only after that validation and an explicit spec decision.

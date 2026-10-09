@@ -1,0 +1,39 @@
+{
+  "spec_version": "0.2.0-dev1",
+  "template_id": "company-atelier",
+  "family_id": "company-homepage",
+  "name": "Atelier · 브랜드 스튜디오",
+  "astro_project": "astro",
+  "categories": [
+    "Business Website",
+    "Creative Studio"
+  ],
+  "tags": [
+    "Editorial",
+    "Strategy",
+    "Services"
+  ],
+  "layout": "atelier-editorial",
+  "description": "분명한 메시지와 편집형 레이아웃으로 회사의 관점과 서비스를 세련되게 전하는 홈페이지.",
+  "author": "amadejjs",
+  "version": "0.1.0",
+  "created_at": "2026-10-09",
+  "license": "MIT",
+  "preview": "preview.svg",
+  "status": "active",
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": {
+      "id": "bloggenius-site-hosting-template",
+      "version": "0.2.0-dev1"
+    }
+  },
+  "homepage": "https://www.bloggenius.kr",
+  "support": "mailto:amadejjs@naver.com",
+  "content_model": {
+    "model_id": "company-homepage-content",
+    "model_version": "0.1.0",
+    "manifest": "amade/content-models/company-homepage-content/content-model.json"
+  },
+  "site_data_seed": "site-data"
+}

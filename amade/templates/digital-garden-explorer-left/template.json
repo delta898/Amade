@@ -1,5 +1,5 @@
 {
-  "spec_version": "0.1.0-dev4",
+  "spec_version": "0.2.0-dev1",
   "template_id": "digital-garden-explorer-left",
   "family_id": "digital-garden",
   "name": "왼쪽 탐색기 · 노트 읽기",
@@ -22,11 +22,10 @@
     "min_bloggenius_version": "0.6.0",
     "contract": {
       "id": "bloggenius-knowledge-collection-template",
-      "version": "0.1.0-dev4"
+      "version": "0.2.0-dev1"
     }
   },
   "astro_project": "astro",
-  "site_data": "../../site-data",
   "layout": "explorer-left",
   "setup_inputs": [
     {
@@ -43,5 +42,11 @@
       "label": "공개 노트 기준",
       "required": true
     }
-  ]
+  ],
+  "content_model": {
+    "model_id": "knowledge-collection-content",
+    "model_version": "0.1.0",
+    "manifest": "amade/content-models/knowledge-collection-content/content-model.json"
+  },
+  "site_data_seed": "site-data"
 }

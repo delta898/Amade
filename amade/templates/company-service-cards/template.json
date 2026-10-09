@@ -1,10 +1,9 @@
 {
-  "spec_version": "0.1.0-dev4",
+  "spec_version": "0.2.0-dev1",
   "template_id": "company-service-cards",
   "family_id": "company-homepage",
   "name": "상단 메뉴 · 서비스 카드형",
   "astro_project": "astro",
-  "site_data": "../../site-data",
   "categories": [
     "Business Website"
   ],
@@ -24,9 +23,15 @@
     "min_bloggenius_version": "0.6.0",
     "contract": {
       "id": "bloggenius-site-hosting-template",
-      "version": "0.1.0-dev4"
+      "version": "0.2.0-dev1"
     }
   },
   "homepage": "https://www.bloggenius.kr",
-  "support": "mailto:amadejjs@naver.com"
+  "support": "mailto:amadejjs@naver.com",
+  "content_model": {
+    "model_id": "company-homepage-content",
+    "model_version": "0.1.0",
+    "manifest": "amade/content-models/company-homepage-content/content-model.json"
+  },
+  "site_data_seed": "site-data"
 }

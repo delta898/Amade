@@ -1,0 +1,41 @@
+---
+import SiteLayout from '../components/SiteLayout.astro';
+import site from '../site-data';
+import { contentKind, contentTitle, contentPath, isContentPublic } from '../content-utils';
+import { getCollection, render } from 'astro:content';
+import '../styles.css';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('content', (entry) => contentKind(entry) === 'page' && isContentPublic(entry));
+  return pages.map((page) => ({ params: { path: contentPath(page) }, props: { page } }));
+}
+const { page } = Astro.props;
+const { Content } = await render(page);
+const isCompanyAbout = contentPath(page) === 'about/team';
+---
+<SiteLayout title={contentTitle(page)} description={site.about}>
+  {isCompanyAbout ? (
+    <>
+      <section class="about-hero">
+        <div class="container about-hero-grid">
+          <div class="about-hero-copy">
+            <p class="eyebrow">A little about us</p>
+            <h1>사람을 이해하는 데서<br /><span>더 나은 경험이 시작됩니다.</span></h1>
+            <p>{site.about}</p>
+          </div>
+          <div class="about-art" aria-hidden="true">
+            <div class="about-art-ring"></div>
+            <div class="about-art-note"><span>LISTEN / LEARN / MAKE</span><b>좋은 질문이<br />좋은 변화를 만듭니다.</b><i>다음연구소 · 2026</i></div>
+            <div class="about-art-stamp">함께<br />만듭니다</div>
+          </div>
+        </div>
+      </section>
+      <section class="about-belief"><div class="container about-belief-grid"><p class="section-kicker">Why we are here</p><div><h2>복잡한 일을 단순하게,<br /><span>중요한 일을 더 분명하게.</span></h2><p>우리는 제품과 서비스를 만드는 팀이 더 좋은 결정을 내릴 수 있도록 돕습니다. 사용자와 사업의 맥락을 살피고, 함께 방향을 정하고, 실제로 쓰이는 경험으로 완성합니다.</p></div></div></section>
+      <section class="about-values"><div class="container"><div class="section-heading"><div><p class="section-kicker">How we work</p><h2>우리의 일하는 방식</h2></div><p>작은 발견을 신뢰할 수 있는 변화로 이어가는 세 가지 원칙입니다.</p></div><div class="about-value-grid"><article><span>01 · OBSERVE</span><h3>먼저, 제대로 듣습니다.</h3><p>사람과 현장을 살펴 문제를 만든 맥락을 이해합니다. 익숙한 답보다 실제 경험에서 출발합니다.</p></article><article><span>02 · ALIGN</span><h3>함께, 방향을 정합니다.</h3><p>흩어진 관점과 가능성을 연결해 모두가 움직일 수 있는 우선순위를 찾습니다.</p></article><article><span>03 · MAKE</span><h3>끝까지, 경험을 만듭니다.</h3><p>좋은 아이디어를 실제 제품과 서비스로 옮기고, 쓰이는 순간까지 함께 다듬습니다.</p></article></div></div></section>
+      <section class="about-story"><div class="container about-story-grid"><p class="section-kicker">Our story</p><div class="prose"><Content /></div></div></section>
+      <section class="closing-section"><div class="container"><div class="closing-card"><div class="closing-copy"><p class="section-kicker">Start a conversation</p><h2>함께 풀고 싶은 문제가 있나요?</h2></div><a class="button-primary" href="/services/">함께 이야기하기 <span aria-hidden="true">↗</span></a></div></div></section>
+    </>
+  ) : (
+    <section class="generic-page"><div class="container"><p class="section-kicker">{site.displayName} · {contentTitle(page)}</p><h1>{contentTitle(page)}</h1><div class="prose"><Content /></div></div></section>
+  )}
+</SiteLayout>

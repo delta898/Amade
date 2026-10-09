@@ -14,7 +14,7 @@ test('the checked-out Site Hosting declarations match the canonical contract ver
     assert.equal(result.version, contract.version);
 });
 
-test('one Amade version source synchronizes package manifests, schemas, and current documentation', () => {
+test('one Amade version source synchronizes package manifests, schemas, and current documentation without rewriting legacy history', () => {
     const sourceRoot = path.resolve(__dirname, '../..');
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'amade-site-contract-version-'));
     const copy = (relativePath) => {
@@ -26,14 +26,18 @@ test('one Amade version source synchronizes package manifests, schemas, and curr
     try {
         copy('amade/catalog/index.json');
         copy('amade/spec/site-hosting-contract-version.json');
-        copy('amade/spec/site-hosting-family-v0.1.schema.json');
-        copy('amade/spec/site-hosting-template-v0.1.schema.json');
+        copy('amade/spec/site-hosting-family-v0.2.schema.json');
+        copy('amade/spec/site-hosting-content-model-v0.2.schema.json');
+        copy('amade/spec/site-hosting-template-v0.2.schema.json');
         copy('amade/spec/README.md');
-        copy('amade/spec/site-hosting-family-v0.1-draft.md');
         const index = JSON.parse(fs.readFileSync(path.join(tempRoot, 'amade/catalog/index.json'), 'utf8'));
         for (const family of index.families) {
             copy(family.manifest);
-            for (const template of family.templates) copy(template.manifest);
+            for (const template of family.templates) {
+                copy(template.manifest);
+                const declaration = JSON.parse(fs.readFileSync(path.join(sourceRoot, template.manifest), 'utf8'));
+                copy(declaration.content_model.manifest);
+            }
         }
 
         const versionPath = path.join(tempRoot, 'amade/spec/site-hosting-contract-version.json');
@@ -45,13 +49,16 @@ test('one Amade version source synchronizes package manifests, schemas, and curr
 
         const family = JSON.parse(fs.readFileSync(path.join(tempRoot, index.families[0].manifest), 'utf8'));
         assert.equal(family.spec_version, '0.1.0-dev99');
-        assert.equal(family.content_contract_version, '0.1.0-dev99');
+        assert.equal(Object.hasOwn(family, 'content_contract_version'), false);
         const template = JSON.parse(fs.readFileSync(path.join(tempRoot, index.families[0].templates[0].manifest), 'utf8'));
         assert.equal(template.spec_version, '0.1.0-dev99');
         assert.equal(template.compatibility.contract.version, '0.1.0-dev99');
-        const readme = fs.readFileSync(path.join(tempRoot, 'amade/spec/README.md'), 'utf8');
-        assert.match(readme, /Site Hosting Contract is currently `0\.1\.0-dev99`/);
-        assert.match(readme, /Contract `0\.1\.0-dev2` adds a `frontmatter_match`/);
+        const model = JSON.parse(fs.readFileSync(path.join(tempRoot, index.families[0].templates[0].manifest.replace(/templates\/[^/]+\/template\.json$/, 'content-models/' + template.content_model.model_id + '/content-model.json')), 'utf8'));
+        assert.equal(model.spec_version, '0.1.0-dev99');
+        const familySchema = JSON.parse(fs.readFileSync(path.join(tempRoot, 'amade/spec/site-hosting-family-v0.2.schema.json'), 'utf8'));
+        assert.equal(familySchema.properties.spec_version.const, '0.1.0-dev99');
+        const templateSchema = JSON.parse(fs.readFileSync(path.join(tempRoot, 'amade/spec/site-hosting-template-v0.2.schema.json'), 'utf8'));
+        assert.equal(templateSchema.allOf[1].properties.spec_version.const, '0.1.0-dev99');
     } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
     }

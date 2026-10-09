@@ -1,0 +1,49 @@
+---
+import SiteHead from './SiteHead.astro';
+import site from '../site-data';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  author?: string;
+  publishedAt?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+}
+
+const { title, description, image, imageAlt, type, author, publishedAt, canonicalUrl, noIndex } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="ko">
+  <SiteHead title={title} description={description} image={image} imageAlt={imageAlt} type={type} author={author} publishedAt={publishedAt} canonicalUrl={canonicalUrl} noIndex={noIndex} />
+  <body>
+    <a class="skip-link" href="#main">본문 바로가기</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label={`${site.displayName} 홈`}>
+          {site.logo ? <img src={site.logo} alt="" /> : <span class="brand-mark" aria-hidden="true">{site.displayName.slice(0, 1)}</span>}
+          <span>{site.displayName}</span>
+        </a>
+        <nav class="main-nav" aria-label="주요 메뉴">
+          {site.navigation.map((item) => <a href={item.path} aria-current={pathname === item.path ? 'page' : undefined}>{item.label}</a>)}
+        </nav>
+        <a class="header-cta" href="/services/">함께 만들기 <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <a class="brand footer-brand" href="/">
+          {site.logo ? <img src={site.logo} alt="" /> : <span class="brand-mark" aria-hidden="true">{site.displayName.slice(0, 1)}</span>}
+          <span>{site.displayName}</span>
+        </a>
+        <p>{site.tagline}</p>
+        <div class="footer-bottom"><span>© {new Date().getFullYear()} {site.displayName}</span><a href="#main">맨 위로 ↑</a></div>
+      </div>
+    </footer>
+  </body>
+</html>
