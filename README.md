@@ -2,19 +2,25 @@
 
 Amade는 BlogGenius가 외부에서 가져오는 버전 관리형 사이트 템플릿과 외모 스타일 catalog입니다. 리소스는 이 저장소에서 검토·관리하며, BlogGenius는 공개 catalog와 각 리소스의 고정된 Git revision을 읽습니다.
 
-> **규격 세대 주의:** `dev`의 `amade/catalog/index.json`은 Site Hosting Template Family **0.1.0 experimental** grouped catalog이며 BlogGenius 개발 환경이 이를 읽습니다. 기존 1.x 패키지와 문서는 legacy로 보존되어 있으나 새 catalog에는 포함하지 않습니다. `main`은 production 전환 전까지 기존 정책대로 별도 관리합니다. 두 형식은 호환되지 않습니다.
+> **규격 세대 주의:** `dev`의 `amade/catalog/index.json`은 Site Hosting Template / Content Model **0.2.0-dev1 experimental** grouped catalog이며 BlogGenius 개발 환경이 이를 읽습니다. 기존 1.x 패키지와 문서는 legacy로 보존되어 있으나 새 catalog에는 포함하지 않습니다. BlogGenius production은 `main`의 별도 `production-index.json`을 읽습니다. 두 형식은 호환되지 않습니다.
 
 ## 규격 세대
 
 | 규격 | 문서 / 위치 | 현재 역할 |
 | --- | --- | --- |
 | Amade resource v1 (legacy) | [`amade/spec/README.md`](amade/spec/README.md), 역사적 `amade/templates/site-hosting/` 경로 | 기존 패키지 형식과 당시 연동 동작을 참고용으로 기록합니다. 신규 0.1 템플릿에 적용하지 않습니다. |
-| Site Hosting Template Family 0.1.0 (experimental) | [`spec draft`](amade/spec/site-hosting-family-v0.1-draft.md), `amade/families/`, `amade/templates/` | Family 계약, 템플릿 metadata/status, 공통 site-data 및 4개 Astro 템플릿을 정의합니다. dev catalog와 BlogGenius 개발 환경에 연결되어 검증 중입니다. |
+| Site Hosting Template / Content Model 0.2.0-dev1 (experimental) | [`0.2 design`](amade/spec/site-hosting-content-model-v0.2-design.md), `amade/content-models/`, `amade/families/`, `amade/templates/` | Content Model이 콘텐츠·발행 계약을 소유하고 Template이 자체 Astro 프로젝트와 site-data seed를 제공합니다. Family는 grouping만 담당합니다. dev catalog와 BlogGenius 개발 환경에서 검증 중입니다. |
 | BlogGenius UI Style 0.1 / token contract 1.1 | [`UI Style schema`](amade/spec/bloggenius-ui-style-v0.1.schema.json), [`token schema`](amade/spec/bloggenius-ui-style-tokens-v1.1.schema.json), `amade/styles/` | dev grouped catalog에서 Style 패키지를 공급합니다. BlogGenius는 선택한 원격 패키지를 로컬 캐시에 적용하고, bundled theme은 fallback입니다. |
 
-## 제공 리소스 (dev: Site Hosting Family 0.1.0)
+## 제공 리소스 (dev: Site Hosting 0.2.0-dev1)
 
-dev catalog groups templates by family: Personal Homepage (`personal-post-list`, `personal-card-grid`) and Company Homepage (`company-service-cards`, `company-service-list`). Packages are under `amade/families/` and `amade/templates/`; the four templates are experimental and offered for development validation. Legacy v1 package files remain in their historical folders and are not listed in the 0.1 catalog.
+dev catalog groups seven experimental templates by family: Digital Garden (`digital-garden-explorer-left`, `digital-garden-explorer-right`), Company Homepage (`company-service-cards`, `company-service-list`, `company-atelier`), and Personal Homepage (`personal-card-grid`, `personal-post-list`). Packages are under `amade/content-models/`, `amade/families/`, and `amade/templates/`; they are offered for development validation. Legacy v1 package files remain in their historical folders and are not listed in the current catalog.
+
+## Production template selection
+
+`amade/catalog/index.json`은 개발용 전체 목록이고, `amade/catalog/production-index.json`은 BlogGenius 운영 앱에 노출할 Site Hosting 템플릿의 명시적 허용 목록입니다. 두 목록은 분리되어 있으므로 개발·테스트 템플릿 파일이 저장소의 `main`에 있어도 production catalog에 넣지 않으면 운영 앱에 나타나지 않습니다. 현재 운영 목록에는 `company-atelier` 하나만 포함되어 있습니다. 검증 방식과 관리 규칙은 [Site Hosting production catalog](amade/spec/site-hosting-production-catalog.md)를 따릅니다.
+
+GitHub Actions의 `validate-production-catalog` workflow는 PR 및 `main` 변경 때 운영 목록이 개발 목록의 유효한 부분집합인지 검사하고 선택된 Astro 템플릿을 빌드합니다. 이 workflow는 배포나 승격을 수행하지 않습니다.
 
 ## Legacy v1 리소스 참고
 
@@ -37,7 +43,7 @@ dev catalog groups templates by family: Personal Homepage (`personal-post-list`,
 - `amade/templates/site-hosting/{id}/{version}/` — 보존된 legacy v1 Site Hosting 패키지.
 - `amade/styles/{id}/style.json` — grouped catalog의 BlogGenius UI Style 패키지.
 
-Legacy v1 resource manifest는 파일별 SHA-256 checksum을 선언하며 BlogGenius는 내려받을 때 이를 검사합니다. 0.1 packages are pinned to one immutable Amade Git commit revision; do not overwrite a published template package version.
+Legacy v1 resource manifest는 파일별 SHA-256 checksum을 선언하며 BlogGenius는 내려받을 때 이를 검사합니다. Current 0.2 packages are pinned to one immutable Amade Git commit revision; do not overwrite a published template package version.
 
 ### Site Hosting 계약 확인
 

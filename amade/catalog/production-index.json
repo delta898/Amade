@@ -1,0 +1,19 @@
+{
+  "spec_version": "0.1.0",
+  "status": "experimental",
+  "catalog_id": "amade-production",
+  "name": "Amade Production Site Templates",
+  "families": [
+    {
+      "family_id": "company-homepage",
+      "manifest": "amade/families/company-homepage/family.json",
+      "templates": [
+        {
+          "template_id": "company-atelier",
+          "manifest": "amade/templates/company-atelier/template.json"
+        }
+      ]
+    }
+  ],
+  "styles": []
+}
