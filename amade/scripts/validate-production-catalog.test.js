@@ -7,7 +7,7 @@ const path = require('node:path');
 const test = require('node:test');
 const { validateProductionCatalog } = require('./validate-production-catalog');
 
-const CONTRACT_VERSION = '0.2.0-dev1';
+const CONTRACT_VERSION = '0.2.0';
 const FAMILY_MANIFEST = 'amade/families/sample-family/family.json';
 
 function createFixture() {

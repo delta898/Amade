@@ -16,7 +16,7 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
     };
     const contract = read('amade/spec/site-hosting-contract-version.json');
     const version = String(contract.version || '').trim();
-    if (!/^\d+\.\d+\.\d+-dev\d+$/.test(version) || !Array.isArray(contract.contract_ids) || !contract.contract_ids.length) {
+    if (!/^\d+\.\d+\.\d+(?:-dev\d+)?$/.test(version) || !Array.isArray(contract.contract_ids) || !contract.contract_ids.length) {
         throw new Error('Invalid Amade Site Hosting contract version source.');
     }
 
