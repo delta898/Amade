@@ -1,6 +1,6 @@
 {
-  "spec_version": "0.2.0-dev1",
-  "content_contract_version": "0.2.0-dev1",
+  "spec_version": "0.2.0",
+  "content_contract_version": "0.2.0",
   "family_id": "company-homepage",
   "name": "회사 홈페이지 템플릿 모음",
   "description": "회사 홈페이지 용도의 템플릿을 모아 보여줍니다."

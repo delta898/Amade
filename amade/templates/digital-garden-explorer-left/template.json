@@ -1,5 +1,5 @@
 {
-  "spec_version": "0.2.0-dev1",
+  "spec_version": "0.2.0",
   "template_id": "digital-garden-explorer-left",
   "family_id": "digital-garden",
   "name": "왼쪽 탐색기 · 노트 읽기",
@@ -22,7 +22,7 @@
     "min_bloggenius_version": "0.6.0",
     "contract": {
       "id": "bloggenius-knowledge-collection-template",
-      "version": "0.2.0-dev1"
+      "version": "0.2.0"
     }
   },
   "astro_project": "astro",

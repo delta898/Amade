@@ -1,6 +1,6 @@
-# Site Hosting Contract 0.2.0-dev1: Family and Content Model roles
+# Site Hosting Contract 0.2.0: Family and Content Model roles
 
-Status: implementation and verification in progress. The shared contract version is the user-approved `0.2.0-dev1`; this is not yet a stable release.
+Status: stable contract. The shared contract version is `0.2.0`.
 
 ## Contract roles
 
@@ -27,7 +27,7 @@ The catalog can continue to group templates under `families[]`. A consumer resol
 
 ## Versioning
 
-The unified Site Hosting contract version is `0.2.0-dev1` across Family `spec_version` and `content_contract_version`, Template `spec_version`, Content Model `spec_version`, and Template `compatibility.contract.version`. The Template's package `version` and Content Model's `model_version` are independent version axes. Contract edits require the user to choose the next exact shared contract version before any version field changes.
+The unified Site Hosting contract version is `0.2.0` across Family `spec_version` and `content_contract_version`, Template `spec_version`, Content Model `spec_version`, and Template `compatibility.contract.version`. The Template's package `version` and Content Model's `model_version` are independent version axes. Contract edits require the user to choose the next exact shared contract version before any version field changes.
 
 The v0.1 Family-based manifests and schemas remain preserved as historical input. BlogGenius should resolve them through an explicit legacy adapter where it can validate the old contract. It must not infer a Content Model from matching Family names. If a legacy contract cannot be resolved safely, the affected action should report an incompatibility rather than silently apply a guessed model.
 
