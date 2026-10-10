@@ -5,7 +5,7 @@
 - Branch: `codex/site-hosting-family-contract-version`
 - Start date: 2026-10-11
 - Base branch: `dev`
-- Status: Implementation and focused validation complete; awaiting integration.
+- Status: Complete; merged into `dev` and `main` locally on 2026-10-11.
 - Integration path: feature branch -> `dev` -> `main` after validation and user approval.
 
 ## Need and goal
@@ -24,7 +24,7 @@ BlogGenius validates that the Site Hosting Family declares both `spec_version` a
 - Do not change the selected contract version or any Template package version.
 - Do not change Family's grouping role, Content Model semantics, or BlogGenius code in this Amade feature branch.
 - Do not modify the legacy v0.1 schema or historical experiment packages.
-- Do not merge or push without an explicit request.
+- Do not push without an explicit request.
 
 ## Design and stages
 
@@ -52,7 +52,8 @@ The contract version remains `0.2.0-dev1`. Family `spec_version` and `content_co
 - BlogGenius full unit runner passed: 2,220 passed, 15 skipped, 0 failed. The standard `npm run test:unit` security precheck remains a separate blocker from the parent release task.
 - One initial synchronizer test exposed that the Family schema's `content_contract_version.const` also needed to be updated from the version source; the synchronizer now updates it and all focused tests pass.
 - `git diff --check dev` passed. No build or manual UI check is relevant to this manifest/schema-only change.
+- Feature commit `f5c5ebf` was fast-forward merged into Amade `dev`; `dev` was then merged into `main` with merge commit `319b57a` after reviewing the complete change set. No push was performed.
 
 ## Final result
 
-The Family's `content_contract_version` now matches its `spec_version` and the shared Amade contract version, enforced by the current schema, synchronizer, production catalog validator, tests, and documentation. Feature branch has not yet been committed, merged, pushed, or deleted.
+The Family's `content_contract_version` now matches its `spec_version` and the shared Amade contract version, enforced by the current schema, synchronizer, production catalog validator, tests, and documentation. Changes are integrated locally in both `dev` and `main`; `main` is two commits ahead of `origin/main`. No push was performed, and the feature branch remains available locally.
