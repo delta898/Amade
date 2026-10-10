@@ -45,7 +45,8 @@ function validateProductionCatalog(root = path.resolve(__dirname, '../..'), { bu
         requireValue(devFamily && devFamily.manifest === familyEntry.manifest, `Production Family is not present in the development catalog: ${familyId}`);
         const familyManifestPath = resolveRepoPath(familyEntry.manifest, 'amade/families/').normalized;
         const family = readJson(familyManifestPath);
-        requireValue(family.family_id === familyId && family.spec_version === version, `Production Family manifest mismatch: ${familyId}`);
+        requireValue(family.family_id === familyId && family.spec_version === version
+            && family.content_contract_version === version, `Production Family manifest mismatch: ${familyId}`);
 
         const devTemplateRefs = new Map(devFamily.templates.map((entry) => [entry.template_id, entry.manifest]));
         for (const templateEntry of familyEntry.templates) {

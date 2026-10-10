@@ -1,5 +1,6 @@
 {
   "spec_version": "0.2.0-dev1",
+  "content_contract_version": "0.2.0-dev1",
   "family_id": "personal-homepage",
   "name": "개인 홈페이지 템플릿 모음",
   "description": "개인 홈페이지 용도의 템플릿을 모아 보여줍니다."

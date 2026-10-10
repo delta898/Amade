@@ -8,6 +8,7 @@ const test = require('node:test');
 const { validateProductionCatalog } = require('./validate-production-catalog');
 
 const CONTRACT_VERSION = '0.2.0-dev1';
+const FAMILY_MANIFEST = 'amade/families/sample-family/family.json';
 
 function createFixture() {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'amade-production-catalog-'));
@@ -17,7 +18,7 @@ function createFixture() {
         fs.writeFileSync(target, `${JSON.stringify(value, null, 2)}\n`);
     };
     const templateRef = 'amade/templates/sample-template/template.json';
-    const familyRef = 'amade/families/sample-family/family.json';
+    const familyRef = FAMILY_MANIFEST;
     const modelRef = 'amade/content-models/sample-content/content-model.json';
     const catalog = { spec_version: '0.1.0', status: 'experimental', catalog_id: 'amade-official', name: 'Dev', families: [], styles: [] };
     const productionCatalog = { spec_version: '0.1.0', status: 'experimental', catalog_id: 'amade-production', name: 'Prod', families: [], styles: [] };
@@ -33,7 +34,7 @@ function createFixture() {
         fs.writeFileSync(path.join(packageRoot, 'astro/package-lock.json'), '{}\n');
         fs.writeFileSync(path.join(packageRoot, 'site-data/site.json'), '{"displayName":"Sample","navigation":[]}\n');
         fs.writeFileSync(path.join(packageRoot, 'preview.svg'), '<svg/>\n');
-        writeJson(familyRef, { spec_version: CONTRACT_VERSION, family_id: 'sample-family', name: 'Sample', description: 'Sample' });
+        writeJson(familyRef, { spec_version: CONTRACT_VERSION, content_contract_version: CONTRACT_VERSION, family_id: 'sample-family', name: 'Sample', description: 'Sample' });
         writeJson(modelRef, { spec_version: CONTRACT_VERSION, model_id: 'sample-content', model_version: '0.1.0' });
         writeJson(templateRef, {
             spec_version: CONTRACT_VERSION,
@@ -98,6 +99,18 @@ test('production catalog rejects inactive Templates', () => {
         value.status = 'deprecated';
         fs.writeFileSync(file, JSON.stringify(value));
         assert.throws(() => validateProductionCatalog(fixture.root), /Template is not active/);
+    } finally { fixture.close(); }
+});
+
+test('production catalog rejects a Family with a mismatched content contract version', () => {
+    const fixture = createFixture();
+    try {
+        fixture.addTemplate();
+        const file = path.join(fixture.root, FAMILY_MANIFEST);
+        const value = JSON.parse(fs.readFileSync(file, 'utf8'));
+        value.content_contract_version = '0.1.0-dev4';
+        fs.writeFileSync(file, JSON.stringify(value));
+        assert.throws(() => validateProductionCatalog(fixture.root), /Production Family manifest mismatch/);
     } finally { fixture.close(); }
 });
 
