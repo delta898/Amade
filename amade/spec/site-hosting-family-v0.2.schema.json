@@ -5,12 +5,16 @@
   "type": "object",
   "required": [
     "spec_version",
+    "content_contract_version",
     "family_id",
     "name",
     "description"
   ],
   "properties": {
     "spec_version": {
+      "const": "0.2.0-dev1"
+    },
+    "content_contract_version": {
       "const": "0.2.0-dev1"
     },
     "family_id": {

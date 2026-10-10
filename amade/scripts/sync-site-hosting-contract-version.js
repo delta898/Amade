@@ -25,6 +25,7 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
     for (const familyRef of index.families || []) {
         const family = read(familyRef.manifest);
         family.spec_version = version;
+        family.content_contract_version = version;
         changed.push([familyRef.manifest, family]);
         for (const templateRef of familyRef.templates || []) {
             const template = read(templateRef.manifest);
@@ -48,6 +49,7 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
     const familySchema = read(familySchemaPath);
     familySchema.title = `Amade Site Hosting Template Family Contract ${version}`;
     familySchema.properties.spec_version.const = version;
+    familySchema.properties.content_contract_version.const = version;
     changed.push([familySchemaPath, familySchema]);
     const modelSchema = read(modelSchemaPath);
     modelSchema.title = `Amade Site Hosting Content Model ${version}`;
@@ -80,8 +82,8 @@ function syncSiteHostingContractVersion(root = path.resolve(__dirname, '../..'),
         [/Site Hosting Contract Version\*\*, currently `[^`]+`/, `Site Hosting Contract Version**, currently \`${version}\``],
         [/with contract version `[^`]+`/, `with contract version \`${version}\``],
         [/## Current Site Hosting content contract \([^)]*\)/, `## Current Site Hosting content contract (${version})`],
-        [/Template and Family manifest `spec_version` plus Template `compatibility.contract.version`/, `Family, Content Model, and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\``],
-        [/Family, Content Model, and Template manifest `spec_version` plus Template `compatibility.contract.version` must all have this same value\./, `Family, Content Model, and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\` must all have this same value.`],
+        [/Family `spec_version` and `content_contract_version`, Content Model and Template manifest `spec_version` plus Template `compatibility.contract.version`/, `Family \`spec_version\` and \`content_contract_version\`, Content Model and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\``],
+        [/Family `spec_version` and `content_contract_version`, Content Model and Template manifest `spec_version` plus Template `compatibility.contract.version` must all have this same value\./, `Family \`spec_version\` and \`content_contract_version\`, Content Model and Template manifest \`spec_version\` plus Template \`compatibility.contract.version\` must all have this same value.`],
         [/### Site profile and page metadata \([^)]*\)/, `### Site profile and page metadata (${version})`],
         [/\| Site Hosting Contract [^|]+\|/, `| Site Hosting Contract ${version} |`]
     ]);

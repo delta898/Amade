@@ -49,7 +49,7 @@ test('one Amade version source synchronizes package manifests, schemas, and curr
 
         const family = JSON.parse(fs.readFileSync(path.join(tempRoot, index.families[0].manifest), 'utf8'));
         assert.equal(family.spec_version, '0.1.0-dev99');
-        assert.equal(Object.hasOwn(family, 'content_contract_version'), false);
+        assert.equal(family.content_contract_version, '0.1.0-dev99');
         const template = JSON.parse(fs.readFileSync(path.join(tempRoot, index.families[0].templates[0].manifest), 'utf8'));
         assert.equal(template.spec_version, '0.1.0-dev99');
         assert.equal(template.compatibility.contract.version, '0.1.0-dev99');
@@ -57,6 +57,7 @@ test('one Amade version source synchronizes package manifests, schemas, and curr
         assert.equal(model.spec_version, '0.1.0-dev99');
         const familySchema = JSON.parse(fs.readFileSync(path.join(tempRoot, 'amade/spec/site-hosting-family-v0.2.schema.json'), 'utf8'));
         assert.equal(familySchema.properties.spec_version.const, '0.1.0-dev99');
+        assert.equal(familySchema.properties.content_contract_version.const, '0.1.0-dev99');
         const templateSchema = JSON.parse(fs.readFileSync(path.join(tempRoot, 'amade/spec/site-hosting-template-v0.2.schema.json'), 'utf8'));
         assert.equal(templateSchema.allOf[1].properties.spec_version.const, '0.1.0-dev99');
     } finally {
