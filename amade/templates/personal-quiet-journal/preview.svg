@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="title description">
+  <title id="title">담백한 기록 템플릿 미리보기</title>
+  <desc id="description">차분한 개인 블로그의 소개와 공개 글 목록이 보이는 화면</desc>
+  <rect width="1200" height="820" fill="#fbfaf7"/>
+  <rect x="150" y="38" width="900" height="744" rx="12" fill="#fbfaf7" stroke="#e8e5dc"/>
+  <text x="198" y="91" fill="#262b28" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="19" font-weight="700">나의 기록</text>
+  <text x="960" y="91" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="15" text-anchor="end">기록　　소개</text>
+  <line x1="198" y1="119" x2="1002" y2="119" stroke="#e8e5dc"/>
+  <text x="198" y="208" fill="#a45c43" font-family="sans-serif" font-size="12" letter-spacing="3">PERSONAL JOURNAL</text>
+  <text x="198" y="280" fill="#262b28" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="48" font-weight="600">생각과 배움을 기록합니다</text>
+  <text x="198" y="326" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="18">일과 생활 속에서 만난 생각과 경험을 차분히 남기는 공간입니다.</text>
+  <line x1="198" y1="378" x2="1002" y2="378" stroke="#e8e5dc"/>
+  <text x="198" y="433" fill="#262b28" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="20" font-weight="600">최근 기록</text>
+  <text x="1002" y="433" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13" text-anchor="end">0개의 글</text>
+  <line x1="198" y1="457" x2="1002" y2="457" stroke="#e8e5dc"/>
+  <text x="198" y="516" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="15">아직 공개된 글이 없습니다.</text>
+  <line x1="198" y1="724" x2="1002" y2="724" stroke="#e8e5dc"/>
+  <text x="198" y="757" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13">© 2026 나의 기록</text>
+  <text x="1002" y="757" fill="#777c74" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="13" text-anchor="end">맨 위로 ↑</text>
+</svg>
