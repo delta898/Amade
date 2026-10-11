@@ -21,7 +21,7 @@ const publishedAt = z.preprocess((value) => {
 const content = defineCollection({
   loader: glob({
     pattern: '**/*.md',
-    base: new URL('../../site-data/data/', import.meta.url).pathname,
+    base: new URL('../../../site-data/data/', import.meta.url).pathname,
     generateId({ entry, data }) {
       const path = entry.replace(/\\/g, '/');
       const match = path.match(/^(pages)\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/)

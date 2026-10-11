@@ -1,5 +1,5 @@
 import { z } from 'astro/zod';
-import rawSite from '../../site-data/site.json';
+import rawSite from '../../../site-data/site.json';
 
 const pathSchema = z.string().regex(/^\/(?!\/)(?!.*(?:^|\/)\.{1,2}(?:\/|$))(?!.*[?#\\\\]).*$/);
 const schema = z.object({
