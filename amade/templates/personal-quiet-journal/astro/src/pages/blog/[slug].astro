@@ -29,7 +29,7 @@ const dateLabel = date instanceof Date
         </nav>
       </header>
       <main>
-        <a class="back-link" href="/">← 모든 글</a>
+        <a class="back-link" href="/blog/">← 모든 기록</a>
         <article class="article">
           <header class="article-header">
             {dateLabel && <time>{dateLabel}</time>}
@@ -39,7 +39,7 @@ const dateLabel = date instanceof Date
           <div class="prose"><Content /></div>
         </article>
       </main>
-      <footer class="site-footer"><span>© {new Date().getFullYear()} {site.displayName}</span><a href="/">글 목록으로 ↑</a></footer>
+      <footer class="site-footer"><span>© {new Date().getFullYear()} {site.displayName}</span><a href="/blog/">기록 목록으로 ↑</a></footer>
     </div>
   </body>
 </html>

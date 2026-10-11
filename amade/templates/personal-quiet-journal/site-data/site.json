@@ -6,8 +6,13 @@
   "navigation": [
     {
       "id": "home",
-      "label": "기록",
+      "label": "홈",
       "path": "/"
+    },
+    {
+      "id": "journal",
+      "label": "기록",
+      "path": "/blog/"
     },
     {
       "id": "about",
