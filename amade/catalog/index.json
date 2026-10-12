@@ -47,6 +47,10 @@
         {
           "template_id": "personal-post-list",
           "manifest": "amade/templates/personal-post-list/template.json"
+        },
+        {
+          "template_id": "personal-quiet-journal",
+          "manifest": "amade/templates/personal-quiet-journal/template.json"
         }
       ]
     }

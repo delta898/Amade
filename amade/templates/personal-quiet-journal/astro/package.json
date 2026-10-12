@@ -1,0 +1,12 @@
+{
+  "name": "amade-personal-quiet-journal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  },
+  "dependencies": {
+    "astro": "7.3.5"
+  }
+}

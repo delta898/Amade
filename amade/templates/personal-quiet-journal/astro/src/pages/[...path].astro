@@ -1,0 +1,36 @@
+---
+import SiteHead from '../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentPath, hasContentHeading, isContentPublic } from '../content-utils';
+import { getCollection, render } from 'astro:content';
+import site from '../site-data';
+import '../styles.css';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('content', (entry) => contentKind(entry) === 'page' && isContentPublic(entry));
+  return pages.map((page) => ({ params: { path: contentPath(page) }, props: { page } }));
+}
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<html lang="ko">
+  <SiteHead title={`${contentTitle(page)} · ${site.displayName}`} description={contentDescription(page) || site.biography} />
+  <body>
+    <div class="page-shell article-shell">
+      <header class="site-header">
+        <a class="wordmark" href="/">{site.displayName}</a>
+        <nav aria-label="주 메뉴">
+          {site.navigation.map((link) => <a href={link.path}>{link.label}</a>)}
+        </nav>
+      </header>
+      <main>
+        <a class="back-link" href="/">← 홈으로</a>
+        <article class="article">
+          {(!hasContentHeading(page) || page.data.title) && <header class="article-header"><h1>{contentTitle(page)}</h1></header>}
+          <div class="prose"><Content /></div>
+        </article>
+      </main>
+      <footer class="site-footer"><span>© {new Date().getFullYear()} {site.displayName}</span><a href="/">홈으로 ↑</a></footer>
+    </div>
+  </body>
+</html>

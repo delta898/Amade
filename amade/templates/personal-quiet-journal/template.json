@@ -1,0 +1,38 @@
+{
+  "spec_version": "0.2.0",
+  "template_id": "personal-quiet-journal",
+  "family_id": "personal-homepage",
+  "name": "담백한 기록",
+  "astro_project": "astro",
+  "categories": [
+    "Personal Website",
+    "Blog"
+  ],
+  "tags": [
+    "Minimal",
+    "Chronological List"
+  ],
+  "layout": "journal",
+  "description": "소개와 최신 글을 중심에 둔 차분하고 간결한 개인 블로그 Astro 템플릿.",
+  "author": "amadejjs",
+  "version": "0.1.0",
+  "created_at": "2026-10-11",
+  "license": "MIT",
+  "preview": "preview.svg",
+  "status": "active",
+  "compatibility": {
+    "min_bloggenius_version": "0.6.0",
+    "contract": {
+      "id": "bloggenius-site-hosting-template",
+      "version": "0.2.0"
+    }
+  },
+  "homepage": "https://www.bloggenius.kr",
+  "support": "mailto:amadejjs@naver.com",
+  "content_model": {
+    "model_id": "personal-homepage-content",
+    "model_version": "0.1.0",
+    "manifest": "amade/content-models/personal-homepage-content/content-model.json"
+  },
+  "site_data_seed": "site-data"
+}

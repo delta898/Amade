@@ -14,7 +14,7 @@ Amade는 BlogGenius가 외부에서 가져오는 버전 관리형 사이트 템�
 
 ## 제공 리소스 (dev: Site Hosting 0.2.0-dev1)
 
-dev catalog groups seven experimental templates by family: Digital Garden (`digital-garden-explorer-left`, `digital-garden-explorer-right`), Company Homepage (`company-service-cards`, `company-service-list`, `company-atelier`), and Personal Homepage (`personal-card-grid`, `personal-post-list`). Packages are under `amade/content-models/`, `amade/families/`, and `amade/templates/`; they are offered for development validation. Legacy v1 package files remain in their historical folders and are not listed in the current catalog.
+dev catalog groups eight experimental templates by family: Digital Garden (`digital-garden-explorer-left`, `digital-garden-explorer-right`), Company Homepage (`company-service-cards`, `company-service-list`, `company-atelier`), and Personal Homepage (`personal-card-grid`, `personal-post-list`, `personal-quiet-journal`). Packages are under `amade/content-models/`, `amade/families/`, and `amade/templates/`; they are offered for development validation. Legacy v1 package files remain in their historical folders and are not listed in the current catalog.
 
 ## Production template selection
 

@@ -1,0 +1,90 @@
+---
+import SiteHead from '../../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentPath, isContentPublic } from '../../content-utils';
+import { getCollection } from 'astro:content';
+import { sortPostsNewestFirst } from '../../post-order';
+import site from '../../site-data';
+import '../../styles.css';
+
+export async function getStaticPaths({ paginate }) {
+  const entries = await getCollection('content', (entry) => isContentPublic(entry) && contentKind(entry) === 'post');
+  const posts = sortPostsNewestFirst(entries);
+  if (!posts.length) {
+    return [{
+      params: { page: undefined },
+      props: { page: { data: [], total: 0, currentPage: 1, lastPage: 1, url: { prev: undefined, next: undefined } } },
+    }];
+  }
+  return paginate(posts, {
+    pageSize: 10,
+    format: (url) => url.endsWith('/') ? url : `${url}/`,
+  });
+}
+
+const { page } = Astro.props;
+const formatDate = (value) => {
+  const date = value instanceof Date ? value : typeof value === 'string' ? new Date(value) : null;
+  if (!date || Number.isNaN(date.valueOf())) return '';
+  return new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
+};
+---
+
+<html lang="ko">
+  <SiteHead title={`기록 · ${site.displayName}`} description={site.seoDescription || site.biography} />
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="wordmark" href="/">{site.displayName}</a>
+        <nav aria-label="주 메뉴">
+          {site.navigation.map((link) => <a href={link.path}>{link.label}</a>)}
+        </nav>
+      </header>
+
+      <main class="listing-main">
+        <section class="listing-intro" aria-labelledby="journal-title">
+          <p class="eyebrow">PERSONAL JOURNAL</p>
+          <h1 id="journal-title">기록</h1>
+          <p>{site.biography}</p>
+        </section>
+
+        <section class="post-section" aria-label="전체 기록">
+          <div class="section-heading">
+            <h2>{page.total}개의 기록</h2>
+            <span>{page.currentPage} / {page.lastPage} 페이지</span>
+          </div>
+          {page.data.length > 0 ? (
+            <ol class="post-list">
+              {page.data.map((post) => (
+                <li class="post-row">
+                  <time datetime={post.data.published_at?.toISOString?.() || post.data.date?.toISOString?.() || ''}>
+                    {formatDate(post.data.published_at || post.data.date)}
+                  </time>
+                  <div class="post-copy">
+                    <h3><a href={`/blog/${contentPath(post)}/`}>{contentTitle(post)}</a></h3>
+                    {contentDescription(post) && <p>{contentDescription(post)}</p>}
+                  </div>
+                  <a class="post-arrow" href={`/blog/${contentPath(post)}/`} aria-label={`${contentTitle(post)} 읽기`}>↗</a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="empty-state">아직 공개된 글이 없습니다.</p>
+          )}
+
+          {(page.url.prev || page.url.next) && (
+            <nav class="pagination" aria-label="기록 페이지 이동">
+              {page.url.prev ? <a href={page.url.prev}>← 이전 기록</a> : <span aria-hidden="true"></span>}
+              <span class="pagination-current">{page.currentPage} / {page.lastPage}</span>
+              {page.url.next ? <a href={page.url.next}>다음 기록 →</a> : <span aria-hidden="true"></span>}
+            </nav>
+          )}
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} {site.displayName}</span>
+        <a href="/">홈으로 ↑</a>
+      </footer>
+    </div>
+  </body>
+</html>

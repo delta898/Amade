@@ -1,0 +1,69 @@
+---
+import SiteHead from '../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentPath, isContentPublic } from '../content-utils';
+import { getCollection } from 'astro:content';
+import { sortPostsNewestFirst } from '../post-order';
+import site from '../site-data';
+import '../styles.css';
+
+const entries = await getCollection('content', (entry) => isContentPublic(entry) && contentKind(entry) === 'post');
+const posts = sortPostsNewestFirst(entries);
+const recentPosts = posts.slice(0, 3);
+const formatDate = (value: unknown) => {
+  const date = value instanceof Date ? value : typeof value === 'string' ? new Date(value) : null;
+  if (!date || Number.isNaN(date.valueOf())) return '';
+  return new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
+};
+---
+
+<html lang="ko">
+  <SiteHead title={site.displayName} description={site.seoDescription || site.biography} />
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="wordmark" href="/">{site.displayName}</a>
+        <nav aria-label="주 메뉴">
+          {site.navigation.map((link) => <a href={link.path}>{link.label}</a>)}
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="site-title">
+          <p class="eyebrow">PERSONAL JOURNAL</p>
+          <h1 id="site-title">{site.headline}</h1>
+          <p class="biography">{site.biography}</p>
+        </section>
+
+        <section class="post-section" aria-labelledby="latest-title">
+          <div class="section-heading">
+            <h2 id="latest-title">최근 기록</h2>
+            <a class="all-posts-link" href="/blog/">모든 기록 보기 <span aria-hidden="true">→</span></a>
+          </div>
+          {recentPosts.length > 0 ? (
+            <ol class="post-list">
+              {recentPosts.map((post) => (
+                <li class="post-row">
+                  <time datetime={post.data.published_at?.toISOString?.() || post.data.date?.toISOString?.() || ''}>
+                    {formatDate(post.data.published_at || post.data.date)}
+                  </time>
+                  <div class="post-copy">
+                    <h3><a href={`/blog/${contentPath(post)}/`}>{contentTitle(post)}</a></h3>
+                    {contentDescription(post) && <p>{contentDescription(post)}</p>}
+                  </div>
+                  <a class="post-arrow" href={`/blog/${contentPath(post)}/`} aria-label={`${contentTitle(post)} 읽기`}>↗</a>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p class="empty-state">아직 공개된 글이 없습니다.</p>
+          )}
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} {site.displayName}</span>
+        <a href="#site-title">맨 위로 ↑</a>
+      </footer>
+    </div>
+  </body>
+</html>

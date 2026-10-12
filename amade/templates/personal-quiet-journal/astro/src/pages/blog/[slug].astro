@@ -1,0 +1,45 @@
+---
+import SiteHead from '../../components/SiteHead.astro';
+import { contentKind, contentTitle, contentDescription, contentPath, isContentPublic } from '../../content-utils';
+import { getCollection, render } from 'astro:content';
+import site from '../../site-data';
+import '../../styles.css';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('content', (entry) => isContentPublic(entry) && contentKind(entry) === 'post');
+  return posts.map((post) => ({ params: { slug: contentPath(post) }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const date = post.data.published_at || post.data.date;
+const dateLabel = date instanceof Date
+  ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }).format(date)
+  : '';
+---
+
+<html lang="ko">
+  <SiteHead title={`${contentTitle(post)} · ${site.displayName}`} description={contentDescription(post) || site.biography} />
+  <body>
+    <div class="page-shell article-shell">
+      <header class="site-header">
+        <a class="wordmark" href="/">{site.displayName}</a>
+        <nav aria-label="주 메뉴">
+          {site.navigation.map((link) => <a href={link.path}>{link.label}</a>)}
+        </nav>
+      </header>
+      <main>
+        <a class="back-link" href="/blog/">← 모든 기록</a>
+        <article class="article">
+          <header class="article-header">
+            {dateLabel && <time>{dateLabel}</time>}
+            {(!post.body?.match(/^#\s+.+$/mu) || post.data.title) && <h1>{contentTitle(post)}</h1>}
+            {contentDescription(post) && <p>{contentDescription(post)}</p>}
+          </header>
+          <div class="prose"><Content /></div>
+        </article>
+      </main>
+      <footer class="site-footer"><span>© {new Date().getFullYear()} {site.displayName}</span><a href="/blog/">기록 목록으로 ↑</a></footer>
+    </div>
+  </body>
+</html>
