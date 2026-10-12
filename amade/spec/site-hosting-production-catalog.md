@@ -12,7 +12,7 @@ Amade `dev` is the broad development catalog. Production consumers need a separa
 - Template lifecycle status (`active`, `deprecated`, or `withdrawn`) continues to describe whether a resource can be selected inside a catalog. It does not decide production inclusion by itself.
 - No per-template `production` boolean is added. The curated catalog is the single source of truth for production selection.
 
-The production catalog selects only `company-atelier` from the `company-homepage` Family and the ten active Styles other than `remote-test-style`. Development-only Styles must not be listed in production.
+The production catalog selects `company-atelier` from the `company-homepage` Family and `personal-quiet-journal` from the `personal-homepage` Family, plus the ten active Styles other than `remote-test-style`. Development-only Styles must not be listed in production.
 
 ## BlogGenius behavior
 

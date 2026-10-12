@@ -13,6 +13,16 @@
           "manifest": "amade/templates/company-atelier/template.json"
         }
       ]
+    },
+    {
+      "family_id": "personal-homepage",
+      "manifest": "amade/families/personal-homepage/family.json",
+      "templates": [
+        {
+          "template_id": "personal-quiet-journal",
+          "manifest": "amade/templates/personal-quiet-journal/template.json"
+        }
+      ]
     }
   ],
   "styles": [
